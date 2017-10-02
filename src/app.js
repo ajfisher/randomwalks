@@ -1,11 +1,15 @@
+'use strict';
+
 import seedrandom from 'seedrandom';
 import arrayShuffle from 'array-shuffle';
-const contrast = require('wcag-contrast');
 const simplex_noise = require('simplex-noise');
 
 const palettes = require('./lib/palette.json');
 
+import PaletteMap from './lib/palette.js';
+
 let Canvas = null;
+let palette_map = null;
 
 let width, height;
 
@@ -20,74 +24,13 @@ function init() {
     //    let Canvas = require('canvas');
     }
 
-
     window._palettes = palettes;
-}
 
-function best_contrast(palette, bg) {
-    // takes a palette and returns the index of the best colour for the background
-    let best_contrast = 0;
-    let c_ratio = 0;
-    palette.forEach((colour, i) => {
-        // do the contrast check.
-        if (contrast.hex(bg, colour) > c_ratio) {
-            best_contrast = i;
-            c_ratio = contrast.hex(bg, colour);
-        }
+    console.log("initialising");
+    palette_map = new PaletteMap({
+        canvas: Canvas,
+        palettes: palettes,
     });
-
-    return best_contrast;
-}
-
-function draw_palette() {
-    // draw the palettes out.
-    Canvas.height = 0.5 * Canvas.width;
-    Canvas.style.height = (Canvas.height) / 2 + "px"; // deal with retina
-
-    const rows = 10;
-    const cols = palettes.length / rows;
-    const padding = 5;
-
-    width = Canvas.width;
-    height = Canvas.height;
-
-    const palette_h = (height + padding) / rows;
-    const palette_w = (width + padding) / cols;
-    const tile_h = palette_h - padding;
-    const tile_w = (palette_w - padding) / palettes[0].length;
-
-    let ctx = Canvas.getContext('2d');
-    //canvasDpiScaler(Canvas, ctx);
-    window.ctx = ctx;
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, width, height);
-
-    palettes.forEach((palette, i) => {
-        const col = Math.floor(i % cols);
-        const row = Math.floor(i / cols);
-
-        const x = col * palette_w;
-        const y = row * palette_h;
-
-        ctx.save();
-        ctx.translate(x, y);
-
-        let bg = palette[0];
-
-        palette.forEach((colour, j) => {
-            let tile_x = j * tile_w;
-            ctx.fillStyle = colour;
-            ctx.fillRect(tile_x, 0, tile_w, tile_h);
-        });
-
-        // draw the strip horizontally for the contrast strip.
-        ctx.fillStyle = palette[best_contrast(palette, palette[0])];
-        ctx.fillRect(0, (0.5*tile_h) - (0.5*tile_w), palette_w-padding, tile_w);
-
-        ctx.restore();
-
-    });
-
 }
 
 function draw_lines (seed) {
@@ -167,14 +110,11 @@ function draw_lines (seed) {
     ctx.restore();
 }
 
-
-
+init();
+//draw_palette();
 const draw = {
-    palette: draw_palette,
+    palette: palette_map.draw.bind(palette_map),
     lines: draw_lines,
 };
 
 window.draw = draw;
-
-init();
-//draw_palette();
