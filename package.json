@@ -1,0 +1,29 @@
+{
+  "name": "randomwalks",
+  "version": "0.0.1",
+  "description": "",
+  "main": "ndist/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cli": "babel src -d ndist && node ndist/app.js",
+    "dev": "webpack-dev-server"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-es2016": "^6.24.1",
+    "webpack": "^3.6.0",
+    "webpack-dev-server": "^2.8.2"
+  },
+  "dependencies": {
+    "array-shuffle": "^1.0.1",
+    "babel-cli": "^6.26.0",
+    "canvas": "^1.6.7",
+    "seedrandom": "^2.4.3",
+    "simplex-noise": "^2.3.0",
+    "wcag-contrast": "^0.1.0"
+  }
+}
