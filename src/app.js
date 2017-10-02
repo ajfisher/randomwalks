@@ -93,7 +93,6 @@ function draw_lines (seed) {
         //});
     }
 
-
     // put the seed on the bottom
     ctx.save();
     const txt = "#" + seed;

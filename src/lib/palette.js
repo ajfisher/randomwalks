@@ -1,8 +1,10 @@
 'use strict';
 
-import {best_contrast} from './utils';
+import { best_contrast } from './utils';
 
 class PaletteMap {
+    // draws a map of each of the palettes available and chooses the
+    // chooses the best contrast colour against the default background
 
     constructor (options) {
 
@@ -27,7 +29,8 @@ class PaletteMap {
     draw() {
         // draw the palettes out.
         this.canvas.height = 0.5 * this.canvas.width;
-        this.canvas.style.height = (this.canvas.height) / 2 + "px"; // deal with retina
+        // deal with retina displays
+        this.canvas.style.height = (this.canvas.height) / 2 + "px";
 
         const width = this.canvas.width;
         const height = this.canvas.height;

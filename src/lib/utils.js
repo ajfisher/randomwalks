@@ -4,7 +4,6 @@
 
 import contrast from 'wcag-contrast';
 
-
 export const best_contrast = (palette, bg) => {
     // takes a palette and returns the index of the best colour for the background
     let best_contrast = 0;
