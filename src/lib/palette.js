@@ -30,7 +30,9 @@ class PaletteMap {
         // draw the palettes out.
         this.canvas.height = 0.5 * this.canvas.width;
         // deal with retina displays
-        this.canvas.style.height = (this.canvas.height) / 2 + "px";
+        if (typeof(this.canvas.style) !== 'undefined') {
+            this.canvas.style.height = (this.canvas.height) / 2 + "px";
+        }
 
         const width = this.canvas.width;
         const height = this.canvas.height;
