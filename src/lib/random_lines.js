@@ -84,17 +84,17 @@ export default class RandomLines {
 
     draw (seed) {
 
-        if (typeof(seed) === 'undefined') {
-            seed = Math.floor(Math.random() * (Math.pow(2,20)));
-            console.log(seed);
-        }
+        this.seed = parseInt(seed) || Math.floor(Math.random() * (Math.pow(2,20)));
 
-        Math.seedrandom(seed);
+        console.log(this.seed);
+        Math.seedrandom(this.seed);
 
         // deal with retina DPI
         // TODO make this work for any DPI with a scalefactor
         this.canvas.height = 700 * 2;
-        this.canvas.style.height = (this.canvas.height / 2) + "px";
+        if (typeof(this.canvas.style) != 'undefined') {
+            this.canvas.style.height = (this.canvas.height / 2) + "px";
+        }
 
         let ctx = this.canvas.getContext('2d');
         let palette = arrayShuffle(this.palettes)[0];
@@ -111,7 +111,7 @@ export default class RandomLines {
         }
 
         // put the seed on the bottom
-        this.text(ctx, seed, bg, line_colour);
+        this.text(ctx, this.seed, bg, line_colour);
     }
 }
 

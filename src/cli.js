@@ -15,20 +15,7 @@ let random_lines = null;
 let output_dir = "./output/";
 let filename = '';
 
-/**function init() {
-
-    console.log("initialising");
-
-}**/
-
-//init();
-
-/**const draw = {
-    palette: palette_map.draw.bind(palette_map),
-    lines: random_lines.draw.bind(random_lines),
-};**/
-
-// call as node cli <type> <seed>
+// call as node cli <type> [seed]
 
 if (process.argv[2] === "palette") {
     console.log("outputting palette");
@@ -49,12 +36,19 @@ if (process.argv[2] === "palette") {
 } else if (process.argv[2] === "lines") {
 
     console.log("Outputting lines");
+
+    let canvas = new Canvas(1600, 1400);
+
     random_lines = new RandomLines({
-        canvas: Canvas,
+        canvas: canvas,
         palettes: palettes,
     });
 
-    filename = path.resolve(output_dir,"lines.png");
+    let seed = process.argv[3];
+    random_lines.draw(seed);
+
+    filename = path.resolve(output_dir, random_lines.seed + ".png");
+    fs.writeFileSync(filename, canvas.toBuffer());
 } else {
     console.log("Please supply an operation");
 }
