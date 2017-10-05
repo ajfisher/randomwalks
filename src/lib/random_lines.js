@@ -27,30 +27,59 @@ export default class RandomLines {
 
     }
 
-    line(ctx, x_pos, colour, simplex) {
+    line(ctx, x_pos, colour) {
 
+        const simplex = new simplex_noise(Math.random);
         const height = this.canvas.height;
         const y_gap = height / this.segments;
 
         ctx.strokeStyle = colour;
         ctx.lineWidth = 2;
-        ctx.save();
 
         let cur_y = 0;
+
+        ctx.save();
         ctx.translate(x_pos, cur_y);
+
         let x = 0;
 
         ctx.globalAlpha = Math.random();
         ctx.beginPath();
         ctx.moveTo(x, cur_y);
+
         for (let y = 1; y <= this.segments; y++ ) {
             let simplex_val = simplex.noise2D(x_pos, y);
             cur_y = y * y_gap + (simplex_val*8);
             let cur_x = x + (simplex_val*4);
             ctx.lineTo(cur_x, cur_y);
         }
+
         ctx.stroke();
+
         ctx.restore();
+    }
+
+    text(ctx, data, bg, fg) {
+        // draw the text on the bottom of the image
+        ctx.save();
+
+        const txt = "#" + data;
+        ctx.font = "20px Helvetica";
+        let txt_width = ctx.measureText(txt).width;
+        let txt_height = parseInt(ctx.font);
+
+        // draw bg
+        ctx.fillStyle = bg;
+        ctx.fillRect(5, (this.canvas.height-txt_height-10),
+                txt_width+10, (txt_height+2));
+
+        // write text
+        ctx.fillStyle = fg;
+        ctx.textBaseline = 'top';
+        ctx.fillText(txt, 10, this.canvas.height - (1.5*txt_height));
+
+        ctx.restore();
+
     }
 
     draw (seed) {
@@ -61,8 +90,6 @@ export default class RandomLines {
         }
 
         Math.seedrandom(seed);
-
-        const simplex = new simplex_noise(Math.random);
 
         // deal with retina DPI
         // TODO make this work for any DPI with a scalefactor
@@ -80,26 +107,11 @@ export default class RandomLines {
         ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
         for (let x = 0; x < this.canvas.width / this.padding; x++) {
-            this.line(ctx, x * this.padding, line_colour, simplex);
+            this.line(ctx, x * this.padding, line_colour);
         }
 
         // put the seed on the bottom
-        ctx.save();
-        const txt = "#" + seed;
-        ctx.font = "20px Helvetica";
-        let txt_width = ctx.measureText(txt).width;
-        let txt_height = parseInt(ctx.font);
-        // draw bg
-        ctx.fillStyle = bg;
-        ctx.fillRect(5, (this.canvas.height-txt_height-10),
-                txt_width+10, (txt_height+2));
-
-        ctx.fillStyle = line_colour;
-        ctx.textBaseline = 'top';
-        ctx.fillText(txt, 10, this.canvas.height - (1.5*txt_height));
-        ctx.restore();
+        this.text(ctx, seed, bg, line_colour);
     }
-
-
 }
 
