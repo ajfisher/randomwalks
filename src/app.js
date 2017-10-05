@@ -1,6 +1,5 @@
 'use strict';
 
-
 const palettes = require('./lib/palette.json');
 
 import PaletteMap from './lib/palette.js';
@@ -12,14 +11,7 @@ let random_lines = null;
 
 function init() {
 
-    if (window) {
-        Canvas = document.getElementById("canv");
-
-    } else {
-    //    let Canvas = require('canvas');
-    }
-
-    window._palettes = palettes;
+    Canvas = document.getElementById("canv");
 
     console.log("initialising");
     palette_map = new PaletteMap({
@@ -33,9 +25,7 @@ function init() {
     });
 }
 
-
 init();
-//draw_palette();
 const draw = {
     palette: palette_map.draw.bind(palette_map),
     lines: random_lines.draw.bind(random_lines),
