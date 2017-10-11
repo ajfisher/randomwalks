@@ -49,7 +49,7 @@ export default class RandomArcs {
         ctx.beginPath();
         const from_angle = this.rnd_prime() / this.rnd_prime();
         const to_angle = this.rnd_prime() / this.rnd_prime();
-        console.log("arc: ", radius, from_angle, to_angle, ctx.globalAlpha, colour);
+        //console.log("arc: ", radius, from_angle, to_angle, ctx.globalAlpha, colour);
 
         ctx.arc(0, 0, radius, from_angle, to_angle);
         ctx.stroke();
@@ -108,11 +108,11 @@ export default class RandomArcs {
         ctx.fillStyle = bg;
         ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        const arcs = this.rnd_prime();
+        const arcs = this.rnd_prime(10) * this.rnd_prime(6);
 
         for (let i = 0; i < arcs; i++ ) {
             const arc_fg = palette[Math.floor(Math.random() * (palette.length -1)) + 1];
-            this.arc(ctx, centre, (this.rnd_prime() * this.rnd_prime()), arc_fg);
+            this.arc(ctx, centre, (this.rnd_prime(10) * this.rnd_prime(10)), arc_fg);
         }
         // put the seed on the bottom
         this.text(ctx, this.seed, bg, fg);
