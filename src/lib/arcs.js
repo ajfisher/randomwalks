@@ -5,7 +5,7 @@ import arrayShuffle from 'array-shuffle';
 
 import { best_contrast } from './utils';
 
-const primes = [1, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41];
+const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41];
 
 export default class RandomArcs {
 
@@ -44,12 +44,14 @@ export default class RandomArcs {
 
         ctx.strokeStyle = colour;
         ctx.lineWidth = this.rnd_prime(6);
-        ctx.globalAlpha = Math.random();
+        ctx.globalAlpha = (Math.random() * 0.5) + 0.25;
 
         ctx.beginPath();
-        const from_angle = this.rnd_prime() / this.rnd_prime();
-        const to_angle = this.rnd_prime() / this.rnd_prime();
-        //console.log("arc: ", radius, from_angle, to_angle, ctx.globalAlpha, colour);
+        // determine the length of arc
+        const arc_length = this.rnd_prime() / this.rnd_prime() * Math.PI * 2;
+        const from_angle = this.rnd_prime() / this.rnd_prime() * Math.PI * 2;
+        const to_angle = from_angle + arc_length;
+        console.log("arc: ", radius, from_angle, to_angle, arc_length, ctx.globalAlpha, colour, ctx.lineWidth);
 
         ctx.arc(0, 0, radius, from_angle, to_angle);
         ctx.stroke();
@@ -108,11 +110,12 @@ export default class RandomArcs {
         ctx.fillStyle = bg;
         ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        const arcs = this.rnd_prime(10) * this.rnd_prime(6);
+        const arcs = this.rnd_prime(5) * this.rnd_prime(5);
 
         for (let i = 0; i < arcs; i++ ) {
             const arc_fg = palette[Math.floor(Math.random() * (palette.length -1)) + 1];
-            this.arc(ctx, centre, (this.rnd_prime(10) * this.rnd_prime(10)), arc_fg);
+            const rad = (this.rnd_prime(10) * this.rnd_prime(10));
+            this.arc(ctx, centre, rad, arc_fg);
         }
         // put the seed on the bottom
         this.text(ctx, this.seed, bg, fg);
