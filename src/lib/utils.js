@@ -19,3 +19,7 @@ export const best_contrast = (palette, bg) => {
     return best_contrast;
 };
 
+export const rnd_range = (v1, v2) => {
+    return Math.floor(Math.random() * (Math.max(v1, v2) - Math.min(v1, v2) + 1) ) + Math.min(v1, v2);
+};
+
