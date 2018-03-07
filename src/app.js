@@ -5,7 +5,7 @@ const palettes = require('./lib/palette.json');
 import PaletteMap from './lib/palette.js';
 import RandomLines from './lib/random_lines';
 import RandomArcs from './lib/arcs.js';
-import SandLines from './lib/sand_line.js';
+import SandLines from './lib/sand_line2.js';
 
 
 let Canvas = null;
