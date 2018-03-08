@@ -30,46 +30,48 @@ export default class SandLines {
         ctx.fillStyle = colour;
 
         ctx.save();
-        ctx.globalAlpha = 0.05;
+        ctx.globalAlpha = 0.01;
         ctx.translate(x, y);
-        ctx.fillRect(0, 0, 1, 1);
+        ctx.fillRect(0, 0, 4, 4);
         ctx.restore();
     }
 
 
-    line(ctx, x1, y1, x2, y2, colour, points, passes, line_points) {
+    line(ctx, x1, y1, x2, y2, colour, points, passes, line_points, volatility) {
 
         //const simplex = new simplex_noise(Math.random);
 
         // get a number of points or use all of them
         const pts = points || 100;
-        const y_volatility = 400;
+        const y_volatility = volatility || 700;
         const x_incr = (x2 - x1) / line_points;
 
         //ctx.strokeStyle = colour;
         //ctx.lineWidth = 2;
 
-        ctx.save();
-
         for (let pass_no = 0; pass_no < passes; pass_no++) {
+
+
             // walk the line
             for (let x = x1; x < x2; x = x + x_incr) {
-                //console.log(x, pts)
-                //const ny1 = rnd_range(y1-150, y1);
-                const ny1 = y1;
-                const ny2 = rnd_range(y1, y1 - y_volatility);
+
+                const cx = x + rnd_range(-5, 5);
+                const ny1 = rnd_range(y1, y1 - y_volatility);
+                const ny2 = rnd_range(y1, y1 + y_volatility);
 
                 // now work out how many y points to plot by dividing it up.
-                const y_incr = (ny1 - ny2) / pts;
+                const y_incr = (ny2 - ny1) / pts;
 
-                for (let p = 0; p < pts; p++) {
-                    const y = ny1 + (p * y_incr);
-                    this.pixel(ctx, x, y, colour);
-                }
+                window.requestAnimationFrame(() => {
+                    ctx.save()
+                    for (let p = 0; p < pts; p++) {
+                        const y = ny1 + (p * y_incr);
+                        this.pixel(ctx, cx, y, colour);
+                    }
+                    ctx.restore();
+                });
             }
         }
-
-        ctx.restore();
     }
 
     text(ctx, data, bg, fg) {
@@ -116,14 +118,19 @@ export default class SandLines {
         ctx.fillStyle = bg;
         ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        const lines = 1;
-        const passes = 20;
-        const grains = 50;
-        const line_points = 200;
+        const no_lines = 3;
+        const passes = 100;
+        const grains = 80;
+        const line_points = this.canvas.width / 10;
+        const volatility = this.canvas.height / (no_lines + 1) * 0.7;
 
-        this.line(ctx, this.canvas.width * 0.02, this.canvas.height * 0.5,
-                this.canvas.width * 0.98, this.canvas.height * 0.5, line_colour,
-                grains, passes, line_points);
+        for (let line = 1; line <= no_lines; line++) {
+
+            const y = this.canvas.height / (no_lines + 1) * line;
+
+        this.line(ctx, 0, y, this.canvas.width, y, line_colour,
+                    grains, passes, line_points, volatility);
+        }
 
         // put the seed on the bottom
         this.text(ctx, this.seed, bg, line_colour);
