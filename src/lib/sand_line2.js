@@ -119,16 +119,23 @@ export default class SandLines {
 
     path(ctx, x1, y1, x2, y2, colour,
         grains=100, passes, path_points, y_volatility=100) {
-        // creates a line between x1,y1 and x2,y2
+        // creates a path between x1,y1 and x2,y2
         // passes establishes the number of times you need to go over the work
-        // grains is the number of grains that are droped at each point along
+        // grains is the number of grains that are dropped at each point along
         // the line.
         // pass points is the number of points looked at during each pass.
 
+        // push each pass onto the drawqueue for processing.
         for (let pass_no = 0; pass_no < passes; pass_no++) {
 
-            new SandPass(x1, y1, x2, y2, path_points, grains, y_volatility)
-                .draw(ctx, colour);
+            this.draw_queue.push({
+                action: new SandPass(x1, y1, x2, y2,
+                    path_points, grains, y_volatility),
+                context: ctx,
+                colour: colour,
+            });
+            //new SandPass(x1, y1, x2, y2, path_points, grains, y_volatility)
+            //    .draw(ctx, colour);
         }
     }
 
@@ -155,10 +162,27 @@ export default class SandLines {
     }
 
     process () {
-        // does the processing of the draw queue 
+        // undertakes the processing of the draw queue
 
+        // take the first item off the draw queue and process it
+        const item = this.draw_queue.shift();
+
+        if (typeof(item.action.draw) != 'undefined') {
+            // do a drawing action
+            item.action.draw(item.context, item.colour);
+        } else {
+            // process the action in place.
+        }
+
+        if (this.draw_queue.length > 0) {
+            // deal with if we're working in browser or not.
+            if (window) {
+                window.requestAnimationFrame(() => this.process());
+            } else {
+                this.process();
+            }
+        }
     }
-
 
     draw (seed, options) {
         // set off the drawing process.
@@ -171,7 +195,6 @@ export default class SandLines {
 
         this.seed = parseInt(seed) || Math.floor(Math.random() * (Math.pow(2,20)));
         Math.seedrandom(this.seed);
-        console.log(this.seed);
 
         // deal with retina DPI
         // TODO make this work for any DPI with a scalefactor
@@ -189,7 +212,6 @@ export default class SandLines {
 
         let bg = palette[0];
         let line_colour = palette[best_contrast(palette, bg)];
-        //console.log(palette, bg, line_colour);
 
         ctx.fillStyle = bg;
         ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
@@ -197,23 +219,29 @@ export default class SandLines {
         // put the seed on the bottom
         this.text(ctx, this.seed, bg, line_colour);
 
-        const no_lines = 1;
-        const passes = 50;
-        const grains = 80;
+        const no_lines = opts.lines || rnd_range(1, 20);
+        let passes = opts.passes || Math.floor(100 / (no_lines/2));
+        if (passes < 10) { passes = 10; }
+
         const path_points = this.canvas.width / 10;
         const volatility = this.canvas.height / (no_lines + 1) * 0.7;
+
+        let grains = opts.grains || Math.floor(volatility * 0.4);
+        if (grains < 20) { grains = 20; }
+
+        console.log(this.seed, no_lines, passes, grains, volatility);
 
         for (let line = 1; line <= no_lines; line++) {
 
             const y = this.canvas.height / (no_lines + 1) * line;
 
-            // push this onto a queue for processing.
+            // add a path to be drawn
             this.path(ctx, 0, y, this.canvas.width, y, line_colour,
                 grains, passes, path_points, volatility);
         }
 
-        // now kick off the queue process.
-        //window.requestAnimationFrame(() => this.process);
+        //kick off the queue processor.
+        this.process();
     }
 }
 
