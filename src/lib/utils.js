@@ -26,9 +26,11 @@ export const rnd_range = (v1, v2) => {
 
 export const rand_range = rnd_range;
 
-export const sigmoid = (k=7) => {
+export const sigmoid = (k=12) => {
     // create a sigmoid curve that passes through 0 and 1 bounds
     // with k dictating the flatness of the curve.
+    // k:=12 by default in order to get something that more or less
+    // intersects with 0..1
 
     if ( k <= 0) {
         k = 1;

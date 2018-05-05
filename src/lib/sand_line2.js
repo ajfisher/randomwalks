@@ -4,7 +4,11 @@ import seedrandom from 'seedrandom';
 import arrayShuffle from 'array-shuffle';
 import simplex_noise from 'simplex-noise';
 
-import { best_contrast, rnd_range } from './utils';
+import { best_contrast, range_map, rnd_range, sigmoid } from './utils';
+
+const LINES = { MAX: 20, MIN: 1 };
+const GRAINS = { MAX: 80, MIN: 20 };
+const PASSES = { MAX: 100, MIN: 20 };
 
 class SandPoint {
     // used to plot a specific point at x, y
@@ -113,7 +117,7 @@ export default class SandLines {
 
         this.canvas = opts.canvas;
         this.palettes = opts.palettes;
-        this.lines = 4;
+        this.lines = 0;
         this.draw_queue = [];
     }
 
@@ -134,8 +138,6 @@ export default class SandLines {
                 context: ctx,
                 colour: colour,
             });
-            //new SandPass(x1, y1, x2, y2, path_points, grains, y_volatility)
-            //    .draw(ctx, colour);
         }
     }
 
@@ -219,15 +221,19 @@ export default class SandLines {
         // put the seed on the bottom
         this.text(ctx, this.seed, bg, line_colour);
 
-        const no_lines = opts.lines || rnd_range(1, 20);
-        let passes = opts.passes || Math.floor(100 / (no_lines/2));
-        if (passes < 10) { passes = 10; }
+        const no_lines = opts.lines || rnd_range(LINES.MIN, LINES.MAX);
+
+        // set up a logistic curve to determine balance of passes to lines etc.
+        const lfn = sigmoid();
+
+        let passes = opts.passes || Math.floor(range_map(PASSES.MAX, PASSES.MIN,
+            (no_lines/(LINES.MAX-LINES.MIN+1)), lfn));
 
         const path_points = this.canvas.width / 10;
         const volatility = this.canvas.height / (no_lines + 1) * 0.7;
 
         let grains = opts.grains || Math.floor(volatility * 0.4);
-        if (grains < 20) { grains = 20; }
+        if (grains < GRAINS.MIN) { grains = GRAINS.MIN; }
 
         console.log(this.seed, no_lines, passes, grains, volatility);
 
