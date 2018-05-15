@@ -183,6 +183,8 @@ export default class SandLines {
             } else {
                 this.process();
             }
+        } else {
+            console.log("process complete");
         }
     }
 
@@ -194,6 +196,8 @@ export default class SandLines {
         // a palette (false or undef) or the black and white palette (true)
 
         const opts = options || {};
+
+        const linestyle = opts.linestyle || "LINEAR";
 
         this.seed = parseInt(seed) || Math.floor(Math.random() * (Math.pow(2,20)));
         Math.seedrandom(this.seed);
@@ -209,6 +213,7 @@ export default class SandLines {
         let palette = arrayShuffle(this.palettes)[0];
 
         if (typeof(opts.neutral) != 'undefined' && opts.neutral) {
+            // use b&w palette.
             palette = this.palettes[0];
         }
 
@@ -221,6 +226,7 @@ export default class SandLines {
         // put the seed on the bottom
         this.text(ctx, this.seed, bg, line_colour);
 
+        // now set up the number of lines.
         const no_lines = opts.lines || rnd_range(LINES.MIN, LINES.MAX);
 
         // set up a logistic curve to determine balance of passes to lines etc.
@@ -230,7 +236,8 @@ export default class SandLines {
             (no_lines/(LINES.MAX-LINES.MIN+1)), lfn));
 
         const path_points = this.canvas.width / 10;
-        const volatility = this.canvas.height / (no_lines + 1) * 0.7;
+        // do baseline volatility as a function of the number of lines
+        let volatility = this.canvas.height / (no_lines + 1) * 0.7;
 
         let grains = opts.grains || Math.floor(volatility * 0.4);
         if (grains < GRAINS.MIN) { grains = GRAINS.MIN; }
@@ -239,7 +246,13 @@ export default class SandLines {
 
         for (let line = 1; line <= no_lines; line++) {
 
-            const y = this.canvas.height / (no_lines + 1) * line;
+            let y = 0;
+
+            if (linestyle == "LINEAR") {
+                y = this.canvas.height / (no_lines + 1) * line;
+            } else if (linestyle == "RND_V") {
+                y = rnd_range(this.canvas.height*0.05, this.canvas.height*0.95);
+            }
 
             // add a path to be drawn
             this.path(ctx, 0, y, this.canvas.width, y, line_colour,
