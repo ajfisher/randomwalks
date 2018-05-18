@@ -22,6 +22,7 @@
     "array-shuffle": "^1.0.1",
     "babel-cli": "^6.26.0",
     "canvas": "^1.6.7",
+    "color-space": "^1.16.0",
     "seedrandom": "^2.4.3",
     "simplex-noise": "^2.3.0",
     "wcag-contrast": "^0.1.0"
