@@ -6,13 +6,14 @@ import PaletteMap from './lib/palette.js';
 import RandomLines from './lib/random_lines';
 import RandomArcs from './lib/arcs.js';
 import SandLines from './lib/sand_line2.js';
-
+import Poly from './lib/polys.js';
 
 let Canvas = null;
 let palette_map = null;
 let random_lines = null;
 let random_arcs = null;
 let sand_lines = null;
+let poly = null;
 
 function init() {
 
@@ -38,6 +39,11 @@ function init() {
         canvas: Canvas,
         palettes: palettes,
     });
+
+    poly = new Poly({
+        canvas: Canvas,
+        palettes: palettes,
+    });
 }
 
 init();
@@ -46,6 +52,7 @@ const draw = {
     lines: random_lines.draw.bind(random_lines),
     arcs: random_arcs.draw.bind(random_arcs),
     sand: sand_lines.draw.bind(sand_lines),
+    poly: poly.draw.bind(poly),
 };
 
 window.draw = draw;
