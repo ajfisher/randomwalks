@@ -154,7 +154,7 @@ export default class Drawable {
 
         // draw bg
         ctx.fillStyle = hsvts(bg);
-        ctx.fillRect(gx, this.h()-txt_h-gy, txt_w+gx, txt_h+2);
+        ctx.fillRect(gx, this.h()-txt_h-gy, txt_w+(2*gx), txt_h+(2*gy));
 
         // write text
         ctx.fillStyle = hsvts(fg);
