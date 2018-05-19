@@ -26,14 +26,17 @@ export default class Poly extends Drawable {
         this.seed = parseInt(seed) || null;
         const opts = options || {};
 
+        // prep the object with all the base conditions
         super.init(opts);
 
+        // add the specific drawing actions now
         let palette = this.palette;
 
         opts.bg = palette[0];
         opts.fg = palette[best_contrast(palette, opts.bg)];
 
-        super.draw(opts);
+        // now execute the drawing.
+        super.execute(opts);
 
     }
 }

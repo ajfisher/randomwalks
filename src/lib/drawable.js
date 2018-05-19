@@ -24,8 +24,8 @@ export default class Drawable {
         this.draw_queue = [];
     }
 
-    draw(options) {
-        // guides the drawing process
+    execute(options) {
+        // executes the drawing process
         // options can provide a `bg` and a `fg`
 
         const opts = options || {};
@@ -70,13 +70,13 @@ export default class Drawable {
 
         // get the size to make the image
         const {w, h, dpi} = opts.size || { w: 6.5, h: 6.5, dpi: 220};
-        this.w = w;
-        this.h = h;
+        this.width = w;
+        this.height = h;
         this.dpi = dpi;
 
         // deal with different DPIs
-        this.canvas.height = this.h * this.dpi;
-        this.canvas.width = this.w * this.dpi;
+        this.canvas.height = this.height * this.dpi;
+        this.canvas.width = this.width * this.dpi;
 
         if (typeof(this.canvas.style) != 'undefined') {
             // account for this with scale factors in browser
@@ -128,20 +128,31 @@ export default class Drawable {
         ctx.save();
 
         const txt = "#" + data;
-        ctx.font = "20px Helvetica";
-        let txt_width = ctx.measureText(txt).width;
-        let txt_height = parseInt(ctx.font);
+        ctx.font = this.h(0.015) + "px Helvetica"; // 1.5% of height of canvas
+        const txt_w = ctx.measureText(txt).width;
+        const txt_h = parseInt(ctx.font);
+        // work out the gutters relative to the text height as reference point
+        const gx = 0.25 * txt_h;
+        const gy = 0.5 * txt_h
 
         // draw bg
         ctx.fillStyle = bg;
-        ctx.fillRect(5, (this.canvas.height-txt_height-10),
-                txt_width+10, (txt_height+2));
+        ctx.fillRect(gx, this.h()-txt_h-gy, txt_w+gx, txt_h+2);
 
         // write text
         ctx.fillStyle = fg;
         ctx.textBaseline = 'top';
-        ctx.fillText(txt, 10, this.canvas.height - (1.5*txt_height));
+        ctx.fillText(txt, gx*2, this.h() - (1.5*txt_h));
 
         ctx.restore();
     }
+
+    // various helper functions
+    //
+
+    // transforms a percentage to concrete pixel value
+    // default to 100% to cope with empty requests
+    h(v=1.0) { return v * this.height * this.dpi; }
+    w(v=1.0) { return v * this.width * this.dpi;  }
+
 }
