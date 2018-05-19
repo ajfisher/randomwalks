@@ -1,19 +1,29 @@
 'use strict';
 
-//const contrast = require('wcag-contrast');
+import space from 'color-space';
+import contrast from 'get-contrast';
 
-import contrast from 'wcag-contrast';
+export const hsvts = (c)  => {
+
+    // convert first from hsv to hsl
+    c = space.hsv.hsl(c);
+    // now write it back as an hsl string
+    return "hsl(" + c[0] + ", " + c[1] + "%, " + c[2] + "%)";
+};
 
 export const best_contrast = (palette, bg) => {
     // takes a palette and returns the index of the best colour for the background
 
     let best_contrast = 0;
     let c_ratio = 0;
+
+
     palette.forEach((colour, i) => {
         // do the contrast check.
-        if (contrast.hex(bg, colour) > c_ratio) {
+
+        if (contrast.ratio(hsvts(bg), hsvts(colour)) > c_ratio) {
             best_contrast = i;
-            c_ratio = contrast.hex(bg, colour);
+            c_ratio = contrast.ratio(hsvts(bg), hsvts(colour));
         }
     });
 
