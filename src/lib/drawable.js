@@ -25,12 +25,16 @@ export default class Drawable {
     }
 
     draw(options) {
+        // guides the drawing process
+        // options can provide a `bg` and a `fg`
 
         const opts = options || {};
         let ctx = this.canvas.getContext('2d');
-        let bg = this.palette[0];
-        let fg = this.palette[best_contrast(this.palette, bg)];
+        const palette = this.palette;
+        let bg = opts.bg || palette[0];
+        let fg = opts.fg || palette[best_contrast(palette, bg)];
 
+        // draw the background
         ctx.fillStyle = bg;
         ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
