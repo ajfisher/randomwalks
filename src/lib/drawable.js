@@ -41,7 +41,7 @@ export default class Drawable {
         // put the seed on the bottom
         this.text(ctx, this.seed, bg, fg);
 
-        //kick off the queue processor.
+        //kick off the drawing queue processor.
         this.process();
     }
 
@@ -51,17 +51,27 @@ export default class Drawable {
         // `options` is an object
         // `neutral` is a `boolean` which if set determines whether to use
         // a palette (false or undef) or the black and white palette (true)
+        // `size` is an object with `w`, `h` and `dpi` where
+        // `w` and `h` are inches
 
         const opts = options || {};
 
         this.seed = parseInt(seed) || Math.floor(Math.random() * (Math.pow(2,20)));
         Math.seedrandom(this.seed);
 
-        // deal with retina DPI
-        // TODO make this work for any DPI with a scalefactor
-        this.canvas.height = 700 * 2;
+        const {w, h, dpi} = opts.size || { w: 6.5, h: 6.5, dpi: 220};
+        this.w = w;
+        this.h = h;
+        this.dpi = dpi;
+
+        // deal with different DPIs
+        this.canvas.height = this.h * this.dpi;
+        this.canvas.width = this.w * this.dpi;
+
         if (typeof(this.canvas.style) != 'undefined') {
+            // account for this with scale factors in browser
             this.canvas.style.height = (this.canvas.height / 2) + "px";
+            this.canvas.style.width = (this.canvas.height / 2) + "px";
         }
 
         this.palette = arrayShuffle(this.palettes)[0];
@@ -70,7 +80,6 @@ export default class Drawable {
             // use b&w palette.
             this.palette = this.palettes[0];
         }
-
     }
 
     process () {
@@ -78,6 +87,12 @@ export default class Drawable {
 
         // take the first item off the draw queue and process it
         const item = this.draw_queue.shift();
+
+        // edge case of nothing in the queue
+        if (item === undefined) {
+            console.log("Nothing in the queue to process");
+            return;
+        }
 
         if (typeof(item.action.draw) != 'undefined') {
             // do a drawing action
@@ -119,6 +134,4 @@ export default class Drawable {
 
         ctx.restore();
     }
-
-
 }
