@@ -4,7 +4,7 @@ import space from 'color-space';
 import seedrandom from 'seedrandom';
 import arrayShuffle from 'array-shuffle';
 
-import { best_contrast, range_map, rnd_range, sigmoid } from './utils';
+import { best_contrast, hsvts, range_map, rnd_range, sigmoid } from './utils';
 export default class Drawable {
 
     constructor (options) {
@@ -46,15 +46,12 @@ export default class Drawable {
         this.ctx = this.canvas.getContext('2d');
 
         const palette = this.palette;
-        let bg = opts.bg || palette[0];
-        let fg = opts.fg || palette[best_contrast(palette, bg)];
+        this.bg = opts.bg || palette[0];
+        this.fg = opts.fg || palette[best_contrast(palette, bg)];
 
         // draw the background
-        this.ctx.fillStyle = bg;
+        this.ctx.fillStyle = hsvts(this.bg);
         this.ctx.fillRect(0, 0, this.w(), this.h());
-
-        // put the seed on the bottom
-        this.text(this.ctx, this.seed, bg, fg);
 
         // print the seed to the console for use
         console.log(this.seed);
@@ -132,12 +129,19 @@ export default class Drawable {
                 this.process();
             }
         } else {
+            // we're done so wind it up.
+
+            // put the seed on the bottom
+            this.text(this.ctx, this.seed, this.bg, this.fg);
+
             console.log("process complete");
         }
     }
 
     text(ctx, data, bg, fg) {
         // draw the text on the bottom of the image
+        //
+        ({fg, bg} = this);
         ctx.save();
 
         const txt = "#" + data;
@@ -149,11 +153,11 @@ export default class Drawable {
         const gy = 0.5 * txt_h
 
         // draw bg
-        ctx.fillStyle = bg;
+        ctx.fillStyle = hsvts(bg);
         ctx.fillRect(gx, this.h()-txt_h-gy, txt_w+gx, txt_h+2);
 
         // write text
-        ctx.fillStyle = fg;
+        ctx.fillStyle = hsvts(fg);
         ctx.textBaseline = 'top';
         ctx.fillText(txt, gx*2, this.h() - (1.5*txt_h));
 
