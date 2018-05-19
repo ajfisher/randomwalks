@@ -6,7 +6,9 @@ import arrayShuffle from 'array-shuffle';
 
 import Drawable from './drawable';
 
-import { best_contrast, hsvts, range_map, rnd_range, sigmoid } from './utils';
+import { best_contrast, hsvts, range_map, rescale, rnd_range, sigmoid } from './utils';
+
+let canv_height = 0; // placeholder for static prop equiv
 
 class Rect {
     // builds a simple rectangle on the screen
@@ -20,13 +22,25 @@ class Rect {
 
     }
 
+    static config (options) {
+
+        let opts = options || {};
+
+        canv_height = opts.height;
+    }
+
     draw (ctx, colour) {
 
         // work out what colour this should be
+        let h = Math.round(colour[0]);
+        let yh_scale = Math.round(rescale(0, canv_height, 0, 60, this.y));
+        //console.log(this.y, yh_scale);
+        h = rnd_range(h-yh_scale, h + yh_scale);
+        const s = 100, v = 100;
 
-        ctx.fillStyle = hsvts(colour);
+        ctx.fillStyle = hsvts([h, s, v]);
         ctx.save();
-        ctx.globalAlpha = 0.1;
+        ctx.globalAlpha = 0.15;
         ctx.fillRect(this.x, this.y, this.w, this.h);
         ctx.restore();
 
@@ -54,6 +68,7 @@ export default class Poly extends Drawable {
         // prep the object with all the base conditions
         super.init(opts);
 
+        Rect.config({height: this.h()});
         // add the specific drawing actions now
         let palette = this.palette;
 
@@ -61,15 +76,15 @@ export default class Poly extends Drawable {
         opts.fg = palette[best_contrast(palette, opts.bg)];
 
         // draw rectangles across the screen with differing values.
-        this.no_rects = rnd_range(1000, 2000);
+        this.no_rects = rnd_range(40, 70);
         console.log(this.no_rects);
         for (let i = 0; i < this.no_rects; i++) {
 
             // get some values
-            const x = rnd_range(0.0001, 0.9);
-            const y = rnd_range(0.0001, 0.9);
-            const w = rnd_range(0.01, 0.2);
-            const h = rnd_range(0.01, 0.1);
+            const x = rnd_range(-0.1, 1.0);
+            const y = rnd_range(-0.1, 1.0);
+            const w = rnd_range(0.1, 0.4);
+            const h = rnd_range(0.1, 0.4);
 
             this.enqueue(
                 new Rect(this.w(x), this.h(y), this.w(w), this.h(h)),
