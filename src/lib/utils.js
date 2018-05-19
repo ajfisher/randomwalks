@@ -17,10 +17,8 @@ export const best_contrast = (palette, bg) => {
     let best_contrast = 0;
     let c_ratio = 0;
 
-
     palette.forEach((colour, i) => {
         // do the contrast check.
-
         if (contrast.ratio(hsvts(bg), hsvts(colour)) > c_ratio) {
             best_contrast = i;
             c_ratio = contrast.ratio(hsvts(bg), hsvts(colour));
@@ -70,10 +68,16 @@ export const range_map = (l=0, u=1, v=0.5, fn) => {
     // fn is always assumed to have bounds of  0..1
     if (typeof(fn) == 'undefined') {
         // linear function
-        fn = (t) => { return t };
+        fn = (t) => { return t / (u - l) };
     }
 
     // determine how far along the path you are.
     return ( l + fn(v) * (u - l) );
 
+};
+
+export const rescale = (sl, sh, dl, dh, v) => {
+    // takes a source range `sl` and `sh` and rescales `v` to the
+    // destination range `dl` and `dh`
+    return ((v / (sh - sl)) * (dh-dl)) + dl;
 };
