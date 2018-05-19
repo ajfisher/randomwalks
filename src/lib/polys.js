@@ -20,21 +20,20 @@ export default class Poly extends Drawable {
     draw (seed, options) {
         // set off the drawing process.
         // `seed` provides a random seed as an `int` to use for recreation
-        // `options` is an object
-        // `neutral` is a `boolean` which if set determines whether to use
-        // a palette (false or undef) or the black and white palette (true)
+        // `options` is an object which is inherited from `super` and
+        // then any other options specific
 
+        this.seed = parseInt(seed) || null;
         const opts = options || {};
 
-        this.seed = parseInt(seed) || Math.floor(Math.random() * (Math.pow(2,20)));
-        Math.seedrandom(this.seed);
+        super.init(opts);
 
-        super.init(seed, opts);
+        let palette = this.palette;
 
-        let bg = this.palette[0];
-        let fg = this.palette[best_contrast(this.palette, bg)];
+        opts.bg = palette[0];
+        opts.fg = palette[best_contrast(palette, opts.bg)];
 
-        super.draw(seed, opts);
+        super.draw(opts);
 
     }
 }

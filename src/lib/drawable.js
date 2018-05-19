@@ -29,7 +29,9 @@ export default class Drawable {
         // options can provide a `bg` and a `fg`
 
         const opts = options || {};
+
         let ctx = this.canvas.getContext('2d');
+
         const palette = this.palette;
         let bg = opts.bg || palette[0];
         let fg = opts.fg || palette[best_contrast(palette, bg)];
@@ -41,13 +43,15 @@ export default class Drawable {
         // put the seed on the bottom
         this.text(ctx, this.seed, bg, fg);
 
+        // print the seed to the console for use
+        console.log(this.seed);
+
         //kick off the drawing queue processor.
         this.process();
     }
 
-    init (seed, options) {
+    init (options) {
         // initialises things to get ready to draw.
-        // `seed` provides a random seed as an `int` to use for recreation
         // `options` is an object
         // `neutral` is a `boolean` which if set determines whether to use
         // a palette (false or undef) or the black and white palette (true)
@@ -56,9 +60,15 @@ export default class Drawable {
 
         const opts = options || {};
 
-        this.seed = parseInt(seed) || Math.floor(Math.random() * (Math.pow(2,20)));
+        if (this.seed === null) {
+            // choose a random seed to use
+            this.seed = Math.floor(Math.random() * (Math.pow(2,20)));
+        }
+
+        // kick off the PRNG
         Math.seedrandom(this.seed);
 
+        // get the size to make the image
         const {w, h, dpi} = opts.size || { w: 6.5, h: 6.5, dpi: 220};
         this.w = w;
         this.h = h;
