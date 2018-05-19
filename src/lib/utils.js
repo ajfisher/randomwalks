@@ -21,8 +21,16 @@ export const best_contrast = (palette, bg) => {
 };
 
 export const rnd_range = (v1, v2) => {
-    // takes a range of values and returns a value between them inclusive
-    return Math.floor(Math.random() * (Math.max(v1, v2) - Math.min(v1, v2) + 1) ) + Math.min(v1, v2);
+    // takes a range of values and returns a value between them
+
+    if (v1 % 1 === 0) {
+        // int values
+        // need to calculate an int version slightly differently as we want
+        // to get the min and max inclusively.
+        return Math.floor((Math.random() * (Math.max(v1, v2) - Math.min(v1, v2) + 1) ) + Math.min(v1, v2));
+    } else {
+        return (Math.random() * (Math.max(v1, v2) - Math.min(v1, v2)) ) + Math.min(v1, v2);
+    }
 };
 
 export const rand_range = rnd_range;
