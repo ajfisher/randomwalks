@@ -1,6 +1,7 @@
 const path = require('path');
 //const nodeExternals = require('webpack-node-externals');
 
+
 module.exports = {
 	context: __dirname + "/src",
 
@@ -28,6 +29,12 @@ module.exports = {
 	devServer: {
 		contentBase: path.resolve(__dirname, 'src'),
 	},
+	devtool: 'source-map',
+
+    node: {
+        fs: "empty",
+        module: "empty",
+    },
 
     //target: 'node',
     //externals: [nodeExternals()],
