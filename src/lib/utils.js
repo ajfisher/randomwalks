@@ -150,3 +150,21 @@ export const rescale = (sl, sh, dl, dh, v) => {
     // destination range `dl` and `dh`
     return ((v / (sh - sl)) * (dh-dl)) + dl;
 };
+
+export const weight_rnd = (choices, weights) => {
+    // takes a set of choices and their corresponding weights and then
+    // uses this to randomly pick an item from the choice array
+    const total_weights = weights.reduce((sum, val) => {
+        return sum + val;
+    }, 0);
+
+    let rnd = Math.floor(Math.random() * (total_weights + 1));
+
+    for (let i = 0; i < choices.length; i++) {
+        rnd = rnd - weights[i];
+
+        if (rnd <= 0) {
+            return choices[i];
+        }
+    }
+}
