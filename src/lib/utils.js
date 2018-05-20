@@ -28,6 +28,75 @@ export const best_contrast = (palette, bg) => {
     return best_contrast;
 };
 
+export const rank_contrast = (palette) => {
+    // takes a palette and returns an object with a chosen bg and rank orders
+    // the remaining colours by contrast ratio.
+
+    let best_bg = -1;
+
+    // work out the best background
+    palette.forEach((bg, i) => {
+        // go through each colour as the background and check against each other
+        // colour in the palette
+
+        //console.log("New BG");
+        let ratio_sum = 0;
+        let best_avg_ratio = 1;
+
+        palette.forEach((fg, j) => {
+
+            const cr = contrast.ratio(hsvts(bg), hsvts(fg));
+            //console.log(hsvts(bg), hsvts(fg), cr);
+            ratio_sum = ratio_sum + cr;
+        });
+
+        //console.log("Avg ratio: ", ratio_sum / palette.length, hsvts(bg));
+        if (ratio_sum / palette.length > best_avg_ratio) {
+            best_bg = i;
+        }
+    });
+
+    const bg = palette[best_bg];
+
+    // now create a sorted array of fg colours by contrast
+    let fg = [];
+
+    palette.forEach((c, i) => {
+        const cr = contrast.ratio(hsvts(bg), hsvts(c));
+
+        const item = {c: c, cr: cr};
+
+        // iterate over the the fg array and insert in rank order.
+        if (fg.length == 0) {
+            fg.push(item);
+        } else {
+
+            let insert_ix = -1;
+
+            fg.forEach((c_item, j) => {
+                if (c_item.cr < cr) {
+                    insert_ix = j;
+                }
+            });
+            // insert_ix is the index of the last index that is under current
+            // constrast ratio. So we insert it after that.
+            if (insert_ix + 1 == fg.length) {
+                // add to the end
+                fg.push(item);
+            } else {
+                fg.splice(insert_ix + 1, 0, item);
+            }
+        }
+    });
+
+    fg = fg.reverse();
+    fg = fg.map((item) => {
+        return item.c;
+    });
+
+    return { bg: bg, fgs: fg };
+};
+
 export const rnd_range = (v1, v2) => {
     // takes a range of values and returns a value between them
 
