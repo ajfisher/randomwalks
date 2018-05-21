@@ -8,11 +8,12 @@ export const hsvts = (c)  => {
     // convert first from hsv to hsl
     c = space.hsv.hsl(c);
     // now write it back as an hsl string
-    return "hsl(" + c[0] + ", " + c[1] + "%, " + c[2] + "%)";
+    return "hsl(" + Math.round(c[0]) + ", " + Math.round(c[1]) + "%, " + Math.round(c[2]) + "%)";
 };
 
 export const best_contrast = (palette, bg) => {
-    // takes a palette and returns the index of the best colour for the background
+    // takes a palette in hsv format and returns the index of the best colour
+    // for the background
 
     let best_contrast = 0;
     let c_ratio = 0;
