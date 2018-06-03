@@ -81,6 +81,7 @@ export default class Drawable {
     this.width = w;
     this.height = h;
     this.dpi = dpi;
+    this.scale_factor = 1.0;
 
     // deal with different DPIs
     this.canvas.height = this.height * this.dpi;
@@ -88,8 +89,9 @@ export default class Drawable {
 
     if (typeof(this.canvas.style) != 'undefined') {
       // account for this with scale factors in browser
-      this.canvas.style.height = (this.canvas.height / 2) + 'px';
-      this.canvas.style.width = (this.canvas.height / 2) + 'px';
+      this.scale_factor = 2.0;
+      this.canvas.style.height = (this.canvas.height / this.scale_factor) + 'px';
+      this.canvas.style.width = (this.canvas.height / this.scale_factor) + 'px';
     }
 
     this.palette = arrayShuffle(this.palettes)[0];
