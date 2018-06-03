@@ -6,7 +6,7 @@ import arrayShuffle from 'array-shuffle';
 
 import Drawable from './drawable';
 
-import { best_contrast, hsvts, rank_contrast, range_map, rescale, rnd_range, weight_rnd } from './utils';
+import { best_contrast, hsvts, nrand, rank_contrast, range_map, rescale, rnd_range, weight_rnd } from './utils';
 
 let canv_height = 0; // placeholder for static prop equiv
 let canv_width = 0;
@@ -27,8 +27,8 @@ class Rect {
 
     const {height, width} = options || {};
 
-    canv_height = opts.height;
-    canv_width = opts.width;
+    canv_height = height;
+    canv_width = width;
   }
 
   draw(ctx, colours) {
@@ -59,14 +59,36 @@ class Rect {
     // h = rnd_range(h-yh_scale, h + yh_scale);
     const s = c[1];
     const v = c[2];
-    // const s = 100, v = 100;
 
     ctx.fillStyle = hsvts([h, s, v]);
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0)';
     ctx.save();
     ctx.translate(this.x, this.y);
     ctx.rotate(rot * Math.PI / 180);
     ctx.globalAlpha = Math.abs(xa); // rnd_range(0.05, Math.abs(xa));
-    ctx.fillRect(0, 0, this.w, this.h);
+    // draw a series of lines
+    const xw = rnd_range(1, 4) * 2;
+    const xg = xw + rnd_range(2, 5);
+    // console.log(xw, xg);
+    for (let x = 0; x < this.w; x=x+xg) {
+      ctx.fillRect(x, 0, xw, this.h);
+    }
+    // do a rect fill using dots (50% fill)
+    // const min_width = 0.5 * this.w;
+    // ctx.fillRect(0, 0, min_width, this.h);
+    /**
+    for (let y = 0; y < this.h; y=y+7) {
+      for (let x = 0; x < this.w; x=x+7) {
+        ctx.fillRect(x, y, 4, 4);
+        // const z = Math.abs(nrand(0, this.w * 0.5));
+        // console.log(z);
+        // x = x + z;
+        // ctx.beginPath();
+        // ctx.arc(x, y, 1, 0, 2 * Math.PI, false);
+        // ctx.fill();
+      }
+    }
+    // ctx.fillRect(0, 0, this.w, this.h); **/
     ctx.restore();
   }
 }
@@ -103,7 +125,7 @@ export default class Poly extends Drawable {
     opts.fgs = fgs;
 
     // draw rectangles across the screen with differing values.
-    this.no_rects = rnd_range(300, 600);
+    this.no_rects = rnd_range(200, 400);
     console.log(this.no_rects);
     for (let i = 0; i < this.no_rects; i++) {
       // get some values
