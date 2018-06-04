@@ -1,6 +1,6 @@
 'use strict';
 
-import { best_contrast } from './utils';
+import { best_contrast, hsvts } from './utils';
 
 class PaletteMap {
     // draws a map of each of the palettes available and chooses the
@@ -60,7 +60,7 @@ class PaletteMap {
 
             palette.forEach((colour, j) => {
                 const tile_x = j * tile_w;
-                ctx.fillStyle = colour;
+                ctx.fillStyle = hsvts(colour);
                 ctx.fillRect(tile_x, 0, tile_w, tile_h);
             });
 
