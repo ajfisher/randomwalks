@@ -44,7 +44,7 @@ function init() {
     console.log("initialising");
     palette_map = new PaletteMap({
         canvas: Canvas,
-        palettes: palettes,
+        palettes: palettes_hsv,
     });
 
     random_lines = new RandomLines({
