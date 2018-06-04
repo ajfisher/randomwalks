@@ -120,7 +120,9 @@ export const nrand = (mean, stddev) => {
     spare_ready = false;
     return spare * stddev + mean;
   } else {
-    let u, v, s;
+    let u;
+    let v;
+    let s;
 
     do {
       u = Math.random() * 2 - 1;

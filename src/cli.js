@@ -17,58 +17,55 @@ import Poly from './lib/polys.js';
 let drawing = null;
 let seed = undefined;
 
-let output_dir = "./output/";
+const output_dir = './output/';
 let filename = '';
 
 // call as node cli <type> [seed]
 
-let canvas = new Canvas(1600, 1400);
+const canvas = new Canvas(1600, 1400);
 
-function convert(palettes) {
-    // goes through all of the palettes and converts each one to HSV
-    // colour space to allow easier manipulation
+function convert(palette_list) {
+  // goes through all of the palettes and converts each one to HSV
+  // colour space to allow easier manipulation
 
-    return palettes.map((palette) => {
-        return palette.map((colour) => {
+  return palette_list.map((palette) => {
+    return palette.map((colour) => {
+      let rgb = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(colour);
+      rgb = rgb ? [
+        parseInt(rgb[1], 16), parseInt(rgb[2], 16), parseInt(rgb[3], 16)
+      ] : null;
 
-            let rgb = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(colour);
-            rgb = rgb ? [
-                parseInt(rgb[1], 16), parseInt(rgb[2], 16), parseInt(rgb[3], 16)
-            ] : null;
-
-            return space.rgb.hsv(rgb);
-        });
+      return space.rgb.hsv(rgb);
     });
+  });
 }
 
-let palettes_hsv = convert(palettes);
+const palettes_hsv = convert(palettes);
 
-if (process.argv[2] === "palette") {
-    console.log("outputting palette");
+if (process.argv[2] === 'palette') {
+  console.log('outputting palette');
 
-    drawing = new PaletteMap({
-        canvas: canvas,
-        palettes: palettes_hsv,
-    });
+  drawing = new PaletteMap({
+    canvas,
+    palettes: palettes_hsv
+  });
+} else if (process.argv[2] === 'lines') {
+  console.log('Outputting lines');
 
-} else if (process.argv[2] === "lines") {
+  drawing = new RandomLines({
+    canvas,
+    palettes
+  });
 
-    console.log("Outputting lines");
-
-    drawing = new RandomLines({
-        canvas: canvas,
-        palettes: palettes,
-    });
-
-    let seed = process.argv[3];
+  seed = process.argv[3];
 } else {
-    console.log("Please supply an operation");
-    process.exit(1);
+  console.log('Please supply an operation');
+  process.exit(1);
 }
 
 // now do the drawing
 drawing.draw(seed);
-filename = path.resolve(output_dir, drawing.seed + ".png");
+filename = path.resolve(output_dir, drawing.seed + '.png');
 fs.writeFileSync(filename, canvas.toBuffer());
 
 console.log(filename);
