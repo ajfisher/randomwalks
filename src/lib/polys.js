@@ -71,7 +71,13 @@ class Rect {
     const xg = xw + rnd_range(2, 5);
     // console.log(xw, xg);
     for (let x = 0; x < this.w; x=x+xg) {
-      ctx.fillRect(x, 0, xw, this.h);
+      const ys = rnd_range(-0.1*this.h, 0.1*this.h);
+      const yf = rnd_range(-0.1*this.h, 0.1*this.h);
+      ctx.save()
+      const r = rnd_range(0.5, 1.5);
+      ctx.rotate(r * Math.PI / 180);
+      ctx.fillRect(x, ys, xw, this.h+yf);
+      ctx.restore()
     }
     // do a rect fill using dots (50% fill)
     // const min_width = 0.5 * this.w;
@@ -88,7 +94,8 @@ class Rect {
         // ctx.fill();
       }
     }
-    // ctx.fillRect(0, 0, this.w, this.h); **/
+    **/
+    // ctx.fillRect(0, 0, this.w, this.h);
     ctx.restore();
   }
 }
