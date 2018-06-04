@@ -119,22 +119,22 @@ export const nrand = (mean, stddev) => {
   if (spare_ready) {
     spare_ready = false;
     return spare * stddev + mean;
-  } else {
-    let u;
-    let v;
-    let s;
-
-    do {
-      u = Math.random() * 2 - 1;
-      v = Math.random() * 2 - 1;
-      s = u * u + v * v;
-    } while (s >= 1 || s == 0);
-
-    const mul = Math.sqrt(-2.0 * Math.log(s) / s);
-    spare = v * mul;
-    spare_ready = true;
-    return mean + stddev * u * mul;
   }
+
+  let u;
+  let v;
+  let s;
+
+  do {
+    u = Math.random() * 2 - 1;
+    v = Math.random() * 2 - 1;
+    s = u * u + v * v;
+  } while (s >= 1 || s == 0);
+
+  const mul = Math.sqrt(-2.0 * Math.log(s) / s);
+  spare = v * mul;
+  spare_ready = true;
+  return mean + stddev * u * mul;
 };
 
 
