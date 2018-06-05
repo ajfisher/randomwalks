@@ -9,6 +9,7 @@ import RandomLines from './lib/random_lines';
 import RandomArcs from './lib/arcs.js';
 import SandLines from './lib/sand_line2.js';
 import Poly from './lib/polys.js';
+import DeformedQuads from './lib/deformed_quads.js';
 
 let Canvas = null;
 let palette_map = null;
@@ -16,6 +17,7 @@ let random_lines = null;
 let random_arcs = null;
 let sand_lines = null;
 let poly = null;
+let deformed_quads = null;
 
 function convert(palette_list) {
   // goes through all of the palettes and converts each one to HSV
@@ -64,6 +66,10 @@ function init() {
     canvas: Canvas,
     palettes: palettes_hsv
   });
+  deformed_quads = new DeformedQuads({
+    canvas: Canvas,
+    palettes: palettes_hsv
+  });
 }
 
 init();
@@ -72,7 +78,8 @@ const draw = {
   lines: random_lines.draw.bind(random_lines),
   arcs: random_arcs.draw.bind(random_arcs),
   sand: sand_lines.draw.bind(sand_lines),
-  poly: poly.draw.bind(poly)
+  poly: poly.draw.bind(poly),
+  dquads: deformed_quads.draw.bind(deformed_quads)
 };
 
 window.draw = draw;
