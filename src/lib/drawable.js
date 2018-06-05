@@ -44,7 +44,7 @@ export default class Drawable {
 
     const palette = this.palette;
     this.bg = opts.bg || palette[0];
-    this.fg = opts.fg || palette[best_contrast(palette, bg)];
+    this.fg = opts.fg || palette[best_contrast(palette, this.bg)];
     this.fgs = opts.fgs || palette;
 
     // draw the background
