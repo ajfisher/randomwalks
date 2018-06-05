@@ -171,4 +171,7 @@ export default class Drawable {
   // default to 100% to cope with empty requests
   h(v=1.0) { return v * this.height * this.dpi; }
   w(v=1.0) { return v * this.width * this.dpi;  }
+  // takes a number of centimeters and gives an approximation of pixels
+  // back.
+  cm(v=1.0) { return Math.round(v * this.dpi / 2.54); }
 }
