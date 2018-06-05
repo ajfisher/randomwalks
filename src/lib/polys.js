@@ -150,5 +150,3 @@ export default class Poly extends Drawable {
     super.execute(opts);
   }
 }
-
-
