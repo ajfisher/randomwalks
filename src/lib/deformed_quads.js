@@ -51,8 +51,8 @@ export default class DeformedQuads extends Drawable {
     super(options);
 
     const opts = options || {};
-    this.rows = 13;
-    this.cols = 13;
+    this.rows = 17;
+    this.cols = 17;
     this
   }
 
