@@ -51,9 +51,8 @@ export default class DeformedQuads extends Drawable {
     super(options);
 
     const opts = options || {};
-    this.rows = 17;
-    this.cols = 17;
-    this
+    this.rows = 19;
+    this.cols = 19;
   }
 
   draw(seed, options) {
@@ -104,18 +103,42 @@ export default class DeformedQuads extends Drawable {
     const quad_h = 0.67 * quad_max_h;
     const max_deform = (quad_max_w - quad_w) / quad_max_w;
     const neg_max_deform = 0.5 % max_deform * -1;
-    const s_d = 0.15 * max_deform; // starting deform max
-    const s_n_d = 0.15 * neg_max_deform; // starting negative deform max
+    const s_d = 0.25 * max_deform; // starting deform max
+    const s_n_d = 0.25 * neg_max_deform; // starting negative deform max
 
-    const dvecs = [
-      [rand_range(s_n_d, s_d), rand_range(s_n_d, s_d)],
-      [rand_range(s_n_d, s_d), rand_range(s_n_d, s_d)],
-      [rand_range(s_n_d, s_d), rand_range(s_n_d, s_d)],
-      [rand_range(s_n_d, s_d), rand_range(s_n_d, s_d)]
-    ];
+    let rvecs = [ [0,0], [0,0], [0,0], [0,0] ];
+    let dvecs = [ [0,0], [0,0], [0,0], [0,0] ];
 
     for (let y = 0; y < this.rows; y++) {
+      // create the starting row vectors for deformation
+      // const cvecs = [[0,0], [0,0], [0,0], [0,0]];
+      // walk the y axis deformations
+      rvecs = rvecs.map((vec, i) => {
+        let yd = vec[1] + rand_range(s_n_d, s_d);
+        console.log(yd, max_deform, neg_max_deform);
+        if (yd > 0.5 * max_deform) {
+          yd = 0.5 * max_deform;
+        } else if (yd < neg_max_deform) {
+          yd = neg_max_deform;
+        }
+
+        return [ vec[0], yd ];
+      });
+
+      // create the starting conditions for the row
+      dvecs = rvecs.map((vec, i) => {
+        return [ vec[0], vec[1] ]
+      });
+
       for (let x = 0; x < this.cols; x++) {
+        // now walk along and create changes for the x axis
+        dvecs.forEach((vec, i) => {
+          dvecs[i] = [
+            vec[0] + rand_range(s_n_d, s_d),
+            vec[1]
+          ];
+        });
+
         const a = [left_x + x * grid_w + gtr + dvecs[0][0]*quad_w, top_y + y * grid_h + gtr + dvecs[0][1]*quad_h];
         const b = [a[0] + quad_w + dvecs[1][0] * quad_w, a[1] + dvecs[1][1]*quad_h];
         const c = [b[0] + dvecs[2][0] * quad_w, b[1] + quad_h + dvecs[2][1] * quad_h];
