@@ -3,6 +3,7 @@
 import space from 'color-space';
 import seedrandom from 'seedrandom';
 import arrayShuffle from 'array-shuffle';
+import SimplexNoise from 'simplex-noise';
 
 import Drawable from './drawable.js';
 
@@ -53,6 +54,7 @@ export default class DeformedQuads extends Drawable {
     const opts = options || {};
     this.rows = 19;
     this.cols = 19;
+    this.simplex = new SimplexNoise();
   }
 
   draw(seed, options) {
@@ -134,7 +136,7 @@ export default class DeformedQuads extends Drawable {
         // now walk along and create changes for the x axis
         dvecs.forEach((vec, i) => {
           dvecs[i] = [
-            vec[0] + rand_range(s_n_d, s_d),
+            vec[0] + this.simplex.noise2D(x, y) * s_n_d,
             vec[1]
           ];
         });
