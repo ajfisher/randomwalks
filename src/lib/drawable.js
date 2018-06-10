@@ -123,7 +123,7 @@ export default class Drawable {
 
     if (this.draw_queue.length > 0) {
       // deal with if we're working in browser or not.
-      if (window) {
+      if (typeof(window) !== 'undefined') {
         window.requestAnimationFrame(() => this.process());
       } else {
         this.process();
