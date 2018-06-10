@@ -7,7 +7,7 @@ import SimplexNoise from 'simplex-noise';
 
 import Drawable from './drawable.js';
 
-import { hsvts, rand_range } from './utils.js';
+import { choose, hsvts, rand_range, weight_rnd } from './utils.js';
 
 class Grid {
   // overlays a grid on the space.
@@ -21,7 +21,6 @@ class Grid {
 
   draw(ctx, colours) {
     // render the grid
-    console.log('drawing the grid');
     ctx.strokeStyle = '#000000';
     ctx.lineWidth = 1;
     for (let y = 0; y <= this.rows; y++) {
@@ -37,7 +36,6 @@ class Grid {
       const x1 = this.left_x + x * this.grid_w;
       const y1 = this.top_y;
       const y2 = this.top_y + this.total_h;
-      console.log(x1, y1, x1, y2);
       ctx.beginPath();
       ctx.moveTo(x1, y1);
       ctx.lineTo(x1, y2);
@@ -47,30 +45,42 @@ class Grid {
 }
 
 class Quad {
-  // a single quadrilateral defined as a set of vertices
-  constructor(vertices, colour=[0, 0, 0], fill=false, options) {
-    // pass in a bunch of veritce
+  // a single quadrilateral is defined as a centre point and then
+  // four vectors which are used to express the components leading
+  // to the vertex.
+  constructor(centre, vertices, fill=false, options) {
+    // center is a 2d vector expressing x, y position
+    // vertices are 2d vectors expressing the x and y components of the
+    // vector leading from the centre.
+    this.centre = centre;
     this.vertices = vertices;
-    this.colour = colour;
+    this.fill = fill;
+
+    const opts = options || {};
+    this.line_width = opts.line_width || 4;
   }
 
-  draw(ctx, colours) {
+  draw(ctx, colour) {
     // render the actual quadrilateral out
-    const { vertices } = this;
+    const { centre, vertices } = this;
 
-    // console.log(this, vertices);
-
-    ctx.fillStyle = hsvts(this.colour);
-    ctx.strokeStyle = hsvts(this.colour);
+    ctx.fillStyle = hsvts(colour);
+    ctx.strokeStyle = hsvts(colour);
+    ctx.save();
+    ctx.translate(centre[0], centre[1]);
     ctx.beginPath();
     ctx.moveTo(vertices[0][0], vertices[0][1]);
-    ctx.lineTo(vertices[1][0], vertices[1][1]);
-    ctx.lineTo(vertices[2][0], vertices[2][1]);
-    ctx.lineTo(vertices[3][0], vertices[3][1]);
+    for (let i = 1; i < vertices.length; i++) {
+      ctx.lineTo(vertices[i][0], vertices[i][1]);
+    }
     ctx.closePath();
-    // ctx.lineTo(vertices[0][0], vertices[0][1]);
-    ctx.lineWidth = 4;
-    ctx.stroke();
+    if (this.fill) {
+      ctx.fill();
+    } else {
+      ctx.lineWidth = this.line_width;
+      ctx.stroke();
+    }
+    ctx.restore();
   }
 }
 
@@ -89,8 +99,8 @@ export default class DeformedQuads extends Drawable {
     super(options);
 
     const opts = options || {};
-    this.rows = 19;
-    this.cols = 19;
+    this.rows = 23;
+    this.cols = this.rows;
     this.simplex = new SimplexNoise(this.seed);
   }
 
@@ -106,11 +116,7 @@ export default class DeformedQuads extends Drawable {
     // prep the object with all the base conditions
     super.init(opts);
     const palette = this.palette;
-    // opts.bg = [46, 11, 94];
-    // opts.bg = [50, 5, 95];
     opts.bg = [60, 6, 100];
-    // opts.bg = [71, 13, 96];
-    // now execute the drawing.
 
     // in some fashion get a starting quad.
     // then take the vertices and then for each row, start deforming
@@ -143,69 +149,53 @@ export default class DeformedQuads extends Drawable {
     const top_y = border;
     const grid_w = total_w / this.cols;
     const grid_h = total_h / this.rows;
-    const gtr = 0.025 * grid_w; // gutter between grids is 2.5% of grid w
-    const quad_max_w = grid_w - 2 * gtr;
-    const quad_max_h = grid_h - 2 * gtr;
-    const quad_w = 0.67 * quad_max_w;
-    const quad_h = 0.67 * quad_max_h;
-    const max_deform = (quad_max_w - quad_w) / quad_max_w;
-    const neg_max_deform = 0.5 % max_deform * -1;
-    const s_d = 0.25 * max_deform; // starting deform max
-    const s_n_d = 0.25 * neg_max_deform; // starting negative deform max
+    const quad_w = 0.72 * grid_w; // quad_max_w;
+    const quad_h = 0.72 * grid_h; // quad_max_h;
+    const line_width = Math.floor(this.cm(0.1) / this.scale_factor);
+    const max_d = 0.1 * grid_w;
 
+    /**
     this.enqueue(new Grid({
       total_w, total_h, left_x, top_y, grid_w, grid_h,
       rows: this.rows, cols: this.cols
     }), palette[0]);
-
-    let rvecs = [ [0,0], [0,0], [0,0], [0,0] ];
-    let dvecs = [ [0,0], [0,0], [0,0], [0,0] ];
+    **/
+    const a = [-0.5, -0.5];
+    const b = [ 0.5, -0.5];
+    const c = [ 0.5,  0.5];
+    const d = [-0.5,  0.5];
 
     for (let y = 0; y < this.rows; y++) {
-      // create the starting row vectors for deformation
-      // const cvecs = [[0,0], [0,0], [0,0], [0,0]];
-      // walk the y axis deformations
-      let x = 0;
+      // walk the grid and draw quads as you go
 
-      rvecs = rvecs.map((vec, i) => {
-        let xd = vec[0] + this.simplex.noise4D(x, y, i, 0) * s_d;
-        let yd = vec[1] + this.simplex.noise4D(x, y, i, 1) * s_d;
+      for (let x = 0; x < this.cols; x++) {
+        // set up a row of quads
 
-        xd = xd < 0.5 * max_deform ? xd : max_deform;
-        yd = yd < 0.5 * max_deform ? yd : max_deform;
+        let dvecs = [[0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [0.0, 0.0]];
 
-        return [ xd, yd ];
-      });
-
-      // create the starting conditions for the row
-      dvecs = rvecs.map((vec, i) => {
-        return [ vec[0], vec[1] ]
-      });
-
-      for (x = 0; x < this.cols; x++) {
-        // now walk along and create changes for the x axis
-        dvecs.forEach((vec, i) => {
-          let xd = vec[0] + this.simplex.noise4D(x, y, i, 0) * s_d;
-          let yd =  vec[1] + this.simplex.noise4D(x, y, i, 1) * s_d;
-
-          xd = xd < 0.5 * max_deform ? xd : max_deform;
-          yd = yd < 0.5 * max_deform ? yd : max_deform;
-
-          dvecs[i] = [xd, yd];
+        dvecs = dvecs.map((vec, i) => {
+          const xd = vec[0] + this.simplex.noise4D(x, y, i, 0);
+          const yd = vec[1] + this.simplex.noise4D(x, y, i, 1);
+          return [xd, yd];
         });
 
-        /**
-        const a = [left_x + x * grid_w + gtr + dvecs[0][0]*quad_w, top_y + y * grid_h + gtr + dvecs[0][1]*quad_h];
-        const b = [a[0] + quad_w + dvecs[1][0] * quad_w, a[1] + dvecs[1][1]*quad_h];
-        const c = [b[0] + dvecs[2][0] * quad_w, b[1] + quad_h + dvecs[2][1] * quad_h];
-        const d = [a[0] + dvecs[3][0] * quad_w, c[1] + dvecs[3][1] * quad_h];
-        **/
-        const a = [left_x + x * grid_w + gtr, top_y + y * grid_h + gtr];
-        const b = [a[0] + quad_w, a[1]];
-        const c = [b[0], b[1] + quad_h];
-        const d = [a[0], c[1]];
+        const cx = left_x + x * grid_w + 0.5 * grid_w;
+        const cy = top_y + y * grid_h + 0.5 * grid_h;
+        let vertices = [a, b, c, d];
 
-        this.enqueue(new Quad([a, b, c, d]), palette[0] );
+        vertices = vertices.map((vtx, i) => {
+          return [
+            vtx[0] * quad_w + dvecs[i][0] * max_d,
+            vtx[1] * quad_h + dvecs[i][1] * max_d
+          ];
+        });
+
+        const fill = weight_rnd([true, false, null ], [50, 35, 15]);
+        const colour = choose(palette);
+
+        if (fill != null) {
+          this.enqueue(new Quad([cx, cy], vertices, fill, {line_width}), colour);
+        }
       }
     }
 
