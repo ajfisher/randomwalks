@@ -9,6 +9,55 @@ import Drawable from './drawable.js';
 
 import { choose, hsvts, rand_range, weight_rnd } from './utils.js';
 
+class Distortion {
+  // creates an alpha blend distortion on the fg items of the
+  // image
+  constructor(w, h, bg) {
+    this.bg = bg;
+    this.h = h;
+    this.w = w;
+    this.simplex = new SimplexNoise();
+  }
+
+  draw(ctx) {
+    const img_data = ctx.getImageData(0, 0, this.w, this.h);
+    const pdata = img_data.data;
+
+    // figure out the bg colour and convert it to rgb for comparison
+    let bg = space.hsv.rgb(this.bg);
+    bg = bg.map((c) => Math.round(c));
+    const v_max = 15;
+
+    for (let x = 0; x < this.w; x++) {
+      for (let y = 0; y < this.h; y++) {
+        // walk the image, grab each pixel and then blend it based on a value
+        // for the distortion map.
+        const luma = this.simplex.noise2D(x, y);
+        const p = y * (this.w * 4) + (x * 4);
+        const rgb = [pdata[p], pdata[p+1], pdata[p+2]];
+
+        // check if the px doesn't equal the bg. If it's not then we just
+        // distort it up a little.
+        if (rgb.toString() !== bg.toString()) {
+          const px = space.rgb.hsv(rgb);
+          px[2] = px[2] + Math.round(luma * v_max);
+          px[2] = px[2] > 100 ? 100 : px[2]; // constrain if needed
+
+          // now construct the new pixel value, cast it back to RGB vals
+          let new_px = space.hsv.rgb(px);
+          new_px = new_px.map((c) => Math.round(c));
+          // write the pixel back to the original pixel data
+          pdata[p] = new_px[0];
+          pdata[p+1] = new_px[1];
+          pdata[p+2] = new_px[2];
+        }
+      }
+    }
+    ctx.putImageData(img_data, 0, 0);
+  }
+}
+
+
 class Grid {
   // overlays a grid on the space.
   constructor(opts) {
@@ -116,7 +165,8 @@ export default class DeformedQuads extends Drawable {
     // prep the object with all the base conditions
     super.init(opts);
     const palette = this.palette;
-    opts.bg = [60, 6, 100];
+    // opts.bg = [60, 6, 100];
+    opts.bg = [47, 6, 100];
 
     // in some fashion get a starting quad.
     // then take the vertices and then for each row, start deforming
@@ -199,6 +249,7 @@ export default class DeformedQuads extends Drawable {
       }
     }
 
+    this.enqueue(new Distortion(this.w(), this.h(), opts.bg, this.simplex), null);
     super.execute(opts);
   }
 }
