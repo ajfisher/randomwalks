@@ -174,7 +174,7 @@ export default class DeformedQuads extends Drawable {
     const opts = options || {};
     this.rows = 23;
     this.cols = this.rows;
-    this.simplex = new SimplexNoise(this.seed);
+    this.simplex = null;
   }
 
   draw(seed, options) {
@@ -191,6 +191,8 @@ export default class DeformedQuads extends Drawable {
     const palette = this.palette;
     // opts.bg = [60, 6, 100];
     opts.bg = [47, 6, 100];
+
+    this.simplex = new SimplexNoise(this.seed);
 
     // in some fashion get a starting quad.
     // then take the vertices and then for each row, start deforming

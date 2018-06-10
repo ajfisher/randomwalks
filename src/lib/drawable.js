@@ -139,7 +139,10 @@ export default class Drawable {
         this.text(this.ctx, this.seed, this.bg, this.fg);
       }
 
-      console.log('process complete');
+      // let the user know when the process is finished if it's in browser
+      if (typeof(window) !== 'undefined') {
+        console.log('process complete');
+      }
     }
   }
 
