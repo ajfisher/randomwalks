@@ -13,11 +13,12 @@ import RandomLines from './lib/random_lines';
 import RandomArcs from './lib/arcs.js';
 import SandLines from './lib/sand_line2.js';
 import Poly from './lib/polys.js';
+import DeformedQuads from './lib/deformed_quads.js';
 
 let drawing = null;
 let seed = undefined;
 
-const output_dir = './output/';
+let output_dir = './output/';
 let filename = '';
 
 // call as node cli <type> [seed]
@@ -58,6 +59,17 @@ if (process.argv[2] === 'palette') {
   });
 
   seed = process.argv[3];
+} else if (process.argv[2] === 'dquads' ) {
+  console.log('Outputting dquads');
+  output_dir = output_dir + 'dquads/';
+
+  drawing = new DeformedQuads({
+    canvas,
+    palettes: palettes_hsv,
+    show_text: false
+  });
+
+  seed = process.argv[3]
 } else {
   console.log('Please supply an operation');
   process.exit(1);

@@ -225,7 +225,7 @@ export default class DeformedQuads extends Drawable {
     const grid_h = total_h / this.rows;
     const quad_w = 0.72 * grid_w; // quad_max_w;
     const quad_h = 0.72 * grid_h; // quad_max_h;
-    const line_width = Math.floor(this.cm(0.1) / this.scale_factor);
+    const line_width = Math.floor(this.cm(0.05));
     const max_d = 0.1 * grid_w;
 
     /**

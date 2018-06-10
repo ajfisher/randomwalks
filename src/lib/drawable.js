@@ -5,6 +5,7 @@ import seedrandom from 'seedrandom';
 import arrayShuffle from 'array-shuffle';
 
 import { best_contrast, hsvts, range_map, rnd_range, sigmoid } from './utils';
+
 export default class Drawable {
   constructor(options) {
     const opts = options || {};
@@ -19,6 +20,8 @@ export default class Drawable {
 
     this.canvas = opts.canvas;
     this.palettes = opts.palettes;
+    // have to do it this way due to sending a false will always || to true
+    this.show_text = (typeof(opts.show_text) == 'undefined') ? true : opts.show_text;
     this.draw_queue = [];
   }
 
@@ -131,8 +134,10 @@ export default class Drawable {
     } else {
       // we're done so wind it up.
 
-      // put the seed on the bottom
-      this.text(this.ctx, this.seed, this.bg, this.fg);
+      if (this.show_text) {
+        // put the seed on the bottom
+        this.text(this.ctx, this.seed, this.bg, this.fg);
+      }
 
       console.log('process complete');
     }
