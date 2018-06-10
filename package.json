@@ -25,6 +25,7 @@
     "babel-cli": "^6.26.0",
     "canvas": "^1.6.11",
     "color-space": "^1.16.0",
+    "commander": "^2.15.1",
     "get-contrast": "^2.0.0",
     "seedrandom": "^2.4.3",
     "simplex-noise": "^2.4.0",
