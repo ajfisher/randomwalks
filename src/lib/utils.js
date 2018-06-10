@@ -192,4 +192,11 @@ export const weight_rnd = (choices, weights) => {
       return choices[i];
     }
   }
+};
+
+export const choose = (choices) => {
+  // take an array of items and chooses one of them
+
+  const rnd = Math.floor(Math.random() * choices.length);
+  return choices[rnd];
 }
