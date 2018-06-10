@@ -22,8 +22,9 @@ let output_dir = './output/';
 let filename = '';
 
 // call as node cli <type> [seed]
+const size = { w: 6.5, h: 6.5, dpi: 220 };
 
-const canvas = new Canvas(1600, 1400);
+const canvas = new Canvas(size.w * size.dpi, size.h * size.dpi);
 
 function convert(palette_list) {
   // goes through all of the palettes and converts each one to HSV
@@ -76,7 +77,7 @@ if (process.argv[2] === 'palette') {
 }
 
 // now do the drawing
-drawing.draw(seed);
+drawing.draw(seed, {size });
 filename = path.resolve(output_dir, drawing.seed + '.png');
 fs.writeFileSync(filename, canvas.toBuffer());
 
