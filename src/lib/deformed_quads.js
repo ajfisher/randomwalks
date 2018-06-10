@@ -12,15 +12,17 @@ import { choose, hsvts, rand_range, weight_rnd } from './utils.js';
 class Distortion {
   // creates an alpha blend distortion on the fg items of the
   // image
-  constructor(w, h, bg) {
+  constructor(x1, y1, x2, y2, bg) {
     this.bg = bg;
-    this.h = h;
-    this.w = w;
+    this.x = Math.floor(x1);
+    this.y = Math.floor(y1);
+    this.w = Math.ceil(x2) - this.x;
+    this.h = Math.ceil(y2) - this.y;
     this.simplex = new SimplexNoise();
   }
 
   draw(ctx) {
-    const img_data = ctx.getImageData(0, 0, this.w, this.h);
+    const img_data = ctx.getImageData(this.x, this.y, this.w, this.h);
     const pdata = img_data.data;
 
     // figure out the bg colour and convert it to rgb for comparison
@@ -53,7 +55,7 @@ class Distortion {
         }
       }
     }
-    ctx.putImageData(img_data, 0, 0);
+    ctx.putImageData(img_data, this.x, this.y);
   }
 }
 
@@ -107,6 +109,7 @@ class Quad {
 
     const opts = options || {};
     this.line_width = opts.line_width || 4;
+    this.bg = opts.bg;
   }
 
   draw(ctx, colour) {
@@ -130,6 +133,27 @@ class Quad {
       ctx.stroke();
     }
     ctx.restore();
+
+    // get the bounding box for the quad
+    let x1 = centre[0];
+    let x2 = centre[0];
+    let y1 = centre[1];
+    let y2 = centre[1];
+    vertices.forEach((vec, i) => {
+      const v = [
+        vec[0] + centre[0],
+        vec[1] + centre[1]
+      ];
+
+      // do simple comparison to min / max the coords
+      x1 = v[0] < x1 ? v[0] : x1;
+      x2 = v[0] > x2 ? v[0] : x2;
+      y1 = v[1] < y1 ? v[1] : y1;
+      y2 = v[1] > y2 ? v[1] : y2;
+    });
+
+    const d = new Distortion(x1, y1, x2, y2, this.bg);
+    d.draw(ctx);
   }
 }
 
@@ -244,12 +268,12 @@ export default class DeformedQuads extends Drawable {
         const colour = choose(palette);
 
         if (fill != null) {
-          this.enqueue(new Quad([cx, cy], vertices, fill, {line_width}), colour);
+          this.enqueue(new Quad([cx, cy], vertices, fill,
+            {line_width, bg: opts.bg}), colour);
         }
       }
     }
 
-    this.enqueue(new Distortion(this.w(), this.h(), opts.bg, this.simplex), null);
     super.execute(opts);
   }
 }
