@@ -11,13 +11,13 @@ import SandLines from './lib/sand_line2.js';
 import Poly from './lib/polys.js';
 import DeformedQuads from './lib/deformed_quads.js';
 
+import Drawables from './lib';
+
 let Canvas = null;
-let palette_map = null;
 let random_lines = null;
 let random_arcs = null;
 let sand_lines = null;
 let poly = null;
-let deformed_quads = null;
 
 function convert(palette_list) {
   // goes through all of the palettes and converts each one to HSV
@@ -35,6 +35,7 @@ function convert(palette_list) {
   });
 }
 
+let draw = {};
 
 function init() {
   const palettes_hsv = convert(palettes);
@@ -42,10 +43,6 @@ function init() {
   Canvas = document.getElementById('canv');
 
   console.log('initialising');
-  palette_map = new PaletteMap({
-    canvas: Canvas,
-    palettes: palettes_hsv
-  });
 
   random_lines = new RandomLines({
     canvas: Canvas,
@@ -66,20 +63,27 @@ function init() {
     canvas: Canvas,
     palettes: palettes_hsv
   });
-  deformed_quads = new DeformedQuads({
-    canvas: Canvas,
-    palettes: palettes_hsv
-  });
+
+  draw = {
+    lines: random_lines.draw.bind(random_lines),
+    arcs: random_arcs.draw.bind(random_arcs),
+    sand: sand_lines.draw.bind(sand_lines),
+    poly: poly.draw.bind(poly)
+  };
+
+  for (const key in Drawables) {
+    if (typeof(key) !== 'undefined') {
+      console.log(key);
+      const drawable = new Drawables[key]({
+        canvas: Canvas,
+        palettes: palettes_hsv
+      });
+
+      draw[key] = drawable.draw.bind(drawable);
+    }
+  }
 }
 
 init();
-const draw = {
-  palette: palette_map.draw.bind(palette_map),
-  lines: random_lines.draw.bind(random_lines),
-  arcs: random_arcs.draw.bind(random_arcs),
-  sand: sand_lines.draw.bind(sand_lines),
-  poly: poly.draw.bind(poly),
-  dquads: deformed_quads.draw.bind(deformed_quads)
-};
 
 window.draw = draw;
