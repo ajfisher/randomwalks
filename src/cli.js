@@ -16,6 +16,8 @@ import SandLines from './lib/sand_line2.js';
 import Poly from './lib/polys.js';
 import DeformedQuads from './lib/deformed_quads.js';
 
+import { convert } from './lib/utils.js';
+
 let drawing = null;
 
 let output_dir = './output/';
@@ -42,25 +44,10 @@ const size = {
   h: program.height || 0,
   dpi: program.dpi || 220
 };
+
 const show_text = program.text || false;
 
 const canvas = new Canvas(size.w * size.dpi, size.h * size.dpi);
-
-function convert(palette_list) {
-  // goes through all of the palettes and converts each one to HSV
-  // colour space to allow easier manipulation
-
-  return palette_list.map((palette) => {
-    return palette.map((colour) => {
-      let rgb = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(colour);
-      rgb = rgb ? [
-        parseInt(rgb[1], 16), parseInt(rgb[2], 16), parseInt(rgb[3], 16)
-      ] : null;
-
-      return space.rgb.hsv(rgb);
-    });
-  });
-}
 
 const palettes_hsv = convert(palettes);
 

@@ -4,36 +4,19 @@ const palettes = require('./lib/palette.json');
 
 import space from 'color-space';
 
-import PaletteMap from './lib/palette.js';
 import RandomLines from './lib/random_lines';
 import RandomArcs from './lib/arcs.js';
 import SandLines from './lib/sand_line2.js';
 import Poly from './lib/polys.js';
-import DeformedQuads from './lib/deformed_quads.js';
 
 import Drawables from './lib';
+import { convert } from './lib/utils.js';
 
 let Canvas = null;
 let random_lines = null;
 let random_arcs = null;
 let sand_lines = null;
 let poly = null;
-
-function convert(palette_list) {
-  // goes through all of the palettes and converts each one to HSV
-  // colour space to allow easier manipulation
-
-  return palette_list.map((palette) => {
-    return palette.map((colour) => {
-      let rgb = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(colour);
-      rgb = rgb ? [
-        parseInt(rgb[1], 16), parseInt(rgb[2], 16), parseInt(rgb[3], 16)
-      ] : null;
-
-      return space.rgb.hsv(rgb);
-    });
-  });
-}
 
 let draw = {};
 
