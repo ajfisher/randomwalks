@@ -17,6 +17,7 @@ class PaletteMap {
       throw new Error('PalettesNotDefined');
     }
 
+    this.name = 'palette';
     this.canvas = opts.canvas;
     this.palettes = opts.palettes;
     this.rows = opts.rows || 10;

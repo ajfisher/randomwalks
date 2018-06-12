@@ -104,9 +104,9 @@ export default class Poly extends Drawable {
   // poly class creates a polygon
 
   constructor(options) {
-    super(options);
-
     const opts = options || {};
+    opts.name = 'polys';
+    super(opts);
   }
 
   draw(seed, options) {

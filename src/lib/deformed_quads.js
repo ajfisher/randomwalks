@@ -99,6 +99,9 @@ class Quad {
   // a single quadrilateral is defined as a centre point and then
   // four vectors which are used to express the components leading
   // to the vertex.
+  // a --- b
+  // |     |
+  // d --- c
   constructor(centre, vertices, fill=false, options) {
     // center is a 2d vector expressing x, y position
     // vertices are 2d vectors expressing the x and y components of the
@@ -160,18 +163,15 @@ class Quad {
 export default class DeformedQuads extends Drawable {
   // creates a set of deformed quadrilaterals
   // Deformed quadrilaterals creates a grid of quadrilaterals
-  // that starts off sort of square-like but then the vertices
-  // are pertubed a small amount on each iteration. This advances
-  // in the X and Y planes of the grid to multiply the effect
-  // through the progression.
-  // a --- b
-  // |     |
-  // d --- c
+  // which are perturbed using perlin noise on each of the vertices
 
   constructor(options) {
-    super(options);
-
+    // no real constructor options needed and so inherits the basic
+    // ones from `Drawable`
     const opts = options || {};
+    opts.name = 'deformedquads';
+    super(opts);
+
     this.rows = 23;
     this.cols = this.rows;
     this.simplex = null;

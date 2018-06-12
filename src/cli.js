@@ -7,88 +7,106 @@ import Canvas from 'canvas';
 import program from 'commander'
 import space from 'color-space';
 
-const palettes = require('./lib/palette.json');
-
-import PaletteMap from './lib/palette.js';
 import RandomLines from './lib/random_lines';
 import RandomArcs from './lib/arcs.js';
 import SandLines from './lib/sand_line2.js';
 import Poly from './lib/polys.js';
-import DeformedQuads from './lib/deformed_quads.js';
+
+import Drawables from './lib';
 
 import { convert } from './lib/utils.js';
 
-let drawing = null;
+const palettes = require('./lib/palette.json');
+const palettes_hsv = convert(palettes);
+
+const drawables_string = [];
 
 let output_dir = './output/';
-let filename = '';
+let full_file_name = '';
 
-// call as node cli <type> [seed]
-
+// get the drawables we have available in the directory
+for (const key in Drawables) {
+  if (typeof(key) !== 'undefined') {
+    drawables_string.push(key);
+  }
+}
+// set up the program hooks
 program
   .version('0.1.0')
-  .option('-t, --type [name]', '[name] of drawing type', ['dquads', 'palette', 'polys'])
+  .option('-t, --type [name]', '[name] of drawing type', drawables_string)
   .option('-s, --seed <n>', 'Seed for the drawing', parseInt)
-  .option('-w, --width <n>', 'Width of the drawing in inches', parseFloat)
-  .option('-h, --height <n>', 'Height of the drawing in inches', parseFloat)
-  .option('-d, --dpi <n>', 'Dots per inch for scaling', parseInt)
+  .option('--width <n>', 'Width of the drawing in inches', parseFloat)
+  .option('--height <n>', 'Height of the drawing in inches', parseFloat)
+  .option('--dpi <n>', 'Dots per inch for scaling', parseInt)
   .option('-n, --no <n>', 'Number of images to produce', parseInt)
   .option('--no-text', 'Remove text from the bottom of the image')
   .parse(process.argv);
 
 let seed = program.seed || undefined;
+
 const dtype = program.type || 'palette';
 const no = program.no || 1;
 const size = {
-  w: program.width || 0,
-  h: program.height || 0,
+  w: program.width || 6.5,
+  h: program.height || 6.5,
   dpi: program.dpi || 220
 };
 
 const show_text = program.text || false;
 
 const canvas = new Canvas(size.w * size.dpi, size.h * size.dpi);
+let drawing = null;
 
-const palettes_hsv = convert(palettes);
+// based on the dtype set in, compare it to the objects available and if
+// the same, we then call it.
+for (const key in Drawables) {
+  if (typeof(key) !== 'undefined') {
+    if (key.toLowerCase() === dtype.toLowerCase()) {
+      drawing = new Drawables[key]({
+        palettes: palettes_hsv,
+        canvas
+      });
+      output_dir = output_dir + drawing.name;
+    }
+  }
+}
 
-if (dtype === 'palette') {
-  console.log('outputting palette');
-
-  drawing = new PaletteMap({
-    canvas,
-    palettes: palettes_hsv
-  });
-} else if (dtype === 'lines') {
+// essentially a catch at this point to get other drawings.
+// TODO refactor these out.
+if (dtype === 'lines') {
   console.log('Outputting lines');
-
   drawing = new RandomLines({
     canvas,
     palettes
   });
-} else if (dtype === 'dquads' ) {
-  console.log('Outputting dquads');
-  output_dir = output_dir + 'dquads/';
+}
 
-  drawing = new DeformedQuads({
-    canvas,
-    palettes: palettes_hsv,
-    show_text: false
-  });
-
-  size.w = (size.w == 0) ? 6.5 : size.w;
-  size.h = (size.h == 0) ? 6.5 : size.h;
-} else {
+// if there's really nothing set then throw an error and exit
+if (drawing == null) {
   console.log('Please supply an operation');
   process.exit(1);
 }
 
+// now process as many drawings as needed.
 for (let d = 0; d < no; d++) {
   // now do a drawing
   if (no > 1) { seed = null }
 
   drawing.draw(seed, {size });
-  filename = path.resolve(output_dir, drawing.seed + '.png');
-  fs.writeFileSync(filename, canvas.toBuffer());
 
-  console.log(filename);
+  const file_name = drawing.seed || 'default';
+  full_file_name = path.resolve(output_dir, file_name + '.png');
+
+  try {
+    fs.writeFileSync(full_file_name, canvas.toBuffer());
+  } catch (e) {
+    if (e.code === 'ENOENT') {
+      fs.mkdirSync(path.resolve(output_dir));
+      fs.writeFileSync(full_file_name, canvas.toBuffer());
+    } else {
+      throw e;
+    }
+  }
+
+  console.log(full_file_name);
 }

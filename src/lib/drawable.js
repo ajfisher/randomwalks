@@ -18,6 +18,11 @@ export default class Drawable {
       throw new Error('PalettesNotDefined');
     }
 
+    if (typeof(opts.name) === 'undefined') {
+      throw new Error('Drawable name not defined');
+    }
+
+    this.name = opts.name || '';
     this.canvas = opts.canvas;
     this.palettes = opts.palettes;
     // have to do it this way due to sending a false will always || to true
