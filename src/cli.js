@@ -95,7 +95,8 @@ for (let d = 0; d < no; d++) {
   drawing.draw(seed, {size });
 
   const file_name = drawing.seed || 'default';
-  full_file_name = path.resolve(output_dir, file_name + '.png');
+  full_file_name = path.resolve(output_dir,
+    `${file_name}-${size.w}-${size.h}-${size.dpi}.png`);
 
   try {
     fs.writeFileSync(full_file_name, canvas.toBuffer());
