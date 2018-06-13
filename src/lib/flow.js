@@ -13,9 +13,10 @@ export default class Flow extends Drawable {
   // creates a flow test
 
   constructor(options) {
-    super(options);
-
     const opts = options || {};
+    opts.name = 'flow';
+    super(opts);
+
     this.simplex = null;
   }
 
@@ -37,5 +38,69 @@ export default class Flow extends Drawable {
     this.simplex = new SimplexNoise(this.seed);
 
     super.execute(opts);
+
+    const { ctx } = this;
+    const steps = 900;
+    const x1 = 50;
+    const x2 = x1 + steps;
+    const segs = 15;
+    const seg_length = steps / segs;
+    const tau = 2 * Math.PI;
+    const y1 = 400;
+    const y2 = 600;
+    const y3 = 800;
+    const y4 = 1000;
+    const r1 = 10;
+    const max_r = 0.2 * r1;
+    ctx.fillStyle = '#000000';
+    // ctx.globalAlpha = 0.01;
+    for (let x = x1; x < x2; x++) {
+      // let r = r1 - (((x - x1) / steps) * r1);
+      // r = (r <= 0) ? 1 : r;
+      const r = r1 + (this.simplex.noise2D(x, y1) * max_r);
+      x = x + 0.5 * r;
+
+      // const y = y1 + (this.simplex.noise2D(x, y1) * r);
+      const y = y1;
+      ctx.arc(x, y, r, 0, tau);
+      ctx.fill();
+    }
+
+    let last_x = x1;
+    let last_y = y2;
+    for (let x = x1 + seg_length; x < x2; x = x + seg_length) {
+      const lw = 5 * (r1 + (this.simplex.noise2D(x, y2) * max_r));
+      const y = last_y + this.simplex.noise2D(x, last_y) * 10;
+      ctx.beginPath();
+      ctx.lineWidth = lw;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.strokeStyle = hsvts([x, 100, 100]);
+      ctx.globalAlpha = 0.3;
+      ctx.moveTo(last_x, last_y);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      last_x = x;
+      last_y = y;
+    }
+
+    // try using quadratic curves now.
+    // first make an array of points.
+    const pts = [];
+    for (let x = x1; x < x2; x = x + seg_length) {
+      const y = y3 + this.simplex.noise2D(x, y3) * 30;
+      pts.push({x, y});
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    let i = 0;
+    for (i = 1; i < pts.length - 2; i++) {
+      const c = (pts[i].x + pts[i+1].x) / 2;
+      const d = (pts[i].y + pts[i+1].y) / 2;
+      ctx.quadraticCurveTo(pts[i].x, pts[i].y, c, d);
+    }
+    ctx.quadraticCurveTo(pts[i].x, pts[i].y, pts[i+1].x, pts[i+1].y);
+    ctx.stroke();
   }
 }
