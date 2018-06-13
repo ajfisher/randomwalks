@@ -64,7 +64,8 @@ for (const key in Drawables) {
     if (key.toLowerCase() === dtype.toLowerCase()) {
       drawing = new Drawables[key]({
         palettes: palettes_hsv,
-        canvas
+        canvas,
+        show_text
       });
       output_dir = output_dir + drawing.name;
     }
