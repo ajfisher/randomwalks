@@ -218,7 +218,8 @@ export default class DeformedQuads extends Drawable {
     // vector is a matrix that is the x&y displacement from the centre
     // or could be an angle and a magnitude...
 
-    const border = this.cm(1);
+    // const border = this.cm(1);
+    const border = this.w(0.06);
     const total_w = this.w() - 2 * border;
     const total_h = this.h() - 2 * border;
     const left_x = border;
