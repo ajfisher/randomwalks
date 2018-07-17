@@ -52,9 +52,42 @@ class Circle {
     ctx.restore();
   }
 
-  chord(ctx, colour, theta, b0) {
+  chord(ctx, colour, t1, t2) {
+    // draws a specific chord using a method of providing two angles relative
+    // on the circle, t1 and t2. From this, using the angle, x and y can be
+    // derived by knowing the circle radius and from there x = cos(t) . r
+    // and y = sin(t) . r
 
+    // derive the location of points on the circle perimeter
+    const x1 = Math.cos(t1) * this.r;
+    const y1 = Math.sin(t1) * this.r;
+    const x2 = Math.cos(t2) * this.r;
+    const y2 = Math.sin(t2) * this.r;
 
+    // convergence point
+    const tc = t1 + (t2 - t1) / 2;
+    const tx = Math.cos(tc) * this.r;
+    const ty = Math.sin(tc) * this.r;
+
+    ctx.save();
+    ctx.translate(this.p, this.q); // now we can run the circle at (0,0)
+    ctx.fillStyle = 'black';
+    ctx.beginPath();
+    ctx.arc(x1, y1, 5, 0, TAU);
+    ctx.fill();
+    ctx.fillStyle = 'red';
+    ctx.beginPath();
+    ctx.arc(x2, y2, 5, 0, TAU);
+    ctx.fill();
+    ctx.fillStyle = 'green';
+    ctx.beginPath();
+    ctx.arc(tx, ty, 5, 0, TAU);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    ctx.restore();
   }
 }
 
@@ -109,7 +142,9 @@ export default class CircleChord extends Drawable {
     const c = new Circle({p, q, r, fill: false, colour: this.fg});
     c.draw(ctx);
 
-
+    const t1 = rand_range(0.00001, TAU);
+    const t2 = rand_range(0.00001, TAU);
+    c.chord(ctx, this.fg, t1, t2);
     // now, work out angle of a line to draw the chord.
     // only need to do this for half a circle
     const theta = Math.random() * Math.PI; // in rads
