@@ -52,9 +52,43 @@ class Circle {
     ctx.restore();
   }
 
-  chord(ctx, colour, theta, b0) {
+  chord(ctx, colour, t1, t2) {
+    // draws a specific chord using a method of providing two angles relative
+    // on the circle, t1 and t2. From this, using the angle, x and y can be
+    // derived by knowing the circle radius and from there x = cos(t) . r
+    // and y = sin(t) . r
 
+    // derive the location of points on the circle perimeter
+    const x1 = Math.cos(t1) * this.r;
+    const y1 = Math.sin(t1) * this.r;
+    const x2 = Math.cos(t2) * this.r;
+    const y2 = Math.sin(t2) * this.r;
 
+    ctx.save();
+    ctx.translate(this.p, this.q); // now we can run the circle at (0,0)
+    ctx.strokeStyle = hsvts(colour);
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  chord_fill(ctx, colour, p1, p2, options) {
+    // starts with a pair of angles and then proceeds to draw parallel chords
+    // to that point.
+
+    const opts = options || {};
+
+    const pc = p1 + (p2 - p1) / 2;
+    const no_chords = opts.no || rand_range(15, 40);
+    const angle_step = (pc - p1) / no_chords;
+    console.log(p1, p2, (p2-p1), (p2-p1) / 2, pc, angle_step);
+
+    for (let i=0; i< no_chords; i++) {
+      const angle_amt = i * angle_step;
+      this.chord(ctx, colour, p1 + angle_amt, p2 - angle_amt);
+    }
   }
 }
 
@@ -109,14 +143,18 @@ export default class CircleChord extends Drawable {
     const c = new Circle({p, q, r, fill: false, colour: this.fg});
     c.draw(ctx);
 
+    // get the points you want to draw a chord between, expressed as angles
+    const p1 = rand_range(0.00001, TAU);
+    const p2 = rand_range(0.00001, TAU);
+    c.chord_fill(ctx, this.fg, p1, p2);
 
+    /**
     // now, work out angle of a line to draw the chord.
     // only need to do this for half a circle
     const theta = Math.random() * Math.PI; // in rads
     const m = Math.tan(theta); // tan θ = opp / adj = m
     const b0 = rand_range(-0.999, 0.999) * r;
 
-    const no_chords = rand_range(15, 40);
     const dir = choose([-1, 1]);
     // const b_end = rand_range(b, (dir * r));
     const chord_step = rand_range(0.02 * r, 0.1 * r);
@@ -190,7 +228,7 @@ export default class CircleChord extends Drawable {
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
     ctx.stroke();
-
+    **/
     ctx.restore();
   }
 }
