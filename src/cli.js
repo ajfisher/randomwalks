@@ -16,7 +16,8 @@ import Drawables from './lib';
 
 import { convert } from './lib/utils.js';
 
-const palettes = require('./lib/palette.json');
+// const palettes = require('./lib/palette.json');
+import palettes from './lib/palette.json';
 const palettes_hsv = convert(palettes);
 
 const drawables_string = [];

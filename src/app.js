@@ -1,6 +1,7 @@
 'use strict';
 
-const palettes = require('./lib/palette.json');
+// const palettes = require('./lib/palette.json');
+import palettes from './lib/palette.json';
 
 import space from 'color-space';
 
