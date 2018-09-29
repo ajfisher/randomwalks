@@ -1,41 +1,41 @@
 const path = require('path');
-//const nodeExternals = require('webpack-node-externals');
+// const nodeExternals = require('webpack-node-externals');
 
 
 module.exports = {
-	context: __dirname + "/src",
+  context: __dirname + '/src',
 
-	module: {
-		rules: [{
-			test: /\.js$/,
-			exclude: [/node_modules/],
-			use: [{
-				loader: 'babel-loader',
-				options: { presets: ['env'] },
-			}],
-		},],
-	},
+  module: {
+    rules: [{
+      test: /\.js$/,
+      exclude: [/node_modules/],
+      use: [{
+        loader: 'babel-loader',
+        options: { presets: ['env'] }
+      }]
+    }]
+  },
 
-	entry: {
-		app: "./app.js",
-	},
+  entry: {
+    app: './app.js'
+  },
 
-	output: {
-		filename: "[name].bundle.js",
-		path: path.resolve(__dirname, "dist", "assets"),
-		publicPath: "/assets",
-	},
+  output: {
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, 'dist', 'assets'),
+    publicPath: '/assets'
+  },
 
-	devServer: {
-		contentBase: path.resolve(__dirname, 'src'),
-	},
-	devtool: 'source-map',
+  devServer: {
+    contentBase: path.resolve(__dirname, 'src')
+  },
+  devtool: 'source-map',
 
-    node: {
-        fs: "empty",
-        module: "empty",
-    },
+  node: {
+    fs: 'empty',
+    module: 'empty'
+  }
 
-    //target: 'node',
-    //externals: [nodeExternals()],
+  // target: 'node',
+  // externals: [nodeExternals()],
 };
