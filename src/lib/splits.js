@@ -7,7 +7,7 @@ import SimplexNoise from 'simplex-noise';
 
 import Drawable from './drawable';
 
-import { best_contrast, choose, hsvts, nrand, rank_contrast } from './utils';
+import { best_contrast, choose, constrain, hsvts, nrand, rank_contrast } from './utils';
 import { range_map, rescale, rnd_range } from './utils';
 
 const VERT = 0;
@@ -86,26 +86,34 @@ class Pass {
     ctx.translate(this.translate.x, this.translate.y);
     ctx.globalAlpha = this.line_alpha;
 
-    const top_extent = Math.floor(0.9 * top.h);
-    const bottom_extent = Math.floor(0.9 * bottom.h);
+    // const top_extent = Math.floor(0.9 * top.h);
+    // const bottom_extent = Math.floor(0.9 * bottom.h);
 
-    let y1 = rnd_range(-top_extent, bottom_extent);
-    let y2 = rnd_range(-top_extent, bottom_extent);
-    const mv = 0.1 * (bottom_extent - top_extent);
+    let y1 = rnd_range(-0.9, 0.9);
+    let y2 = rnd_range(-0.9, 0.9);
+    const mv = 0.1;
 
     // draw the lines
     for (let l = 0; l < this.lines; l++) {
       // for each line, choose high and low points
       // choose a point somewhere in the range of -top -> +bottom
+      // y positions are always expressed as proportions of the extent
+      // and then only converted when you need to draw them.
       const x = l * line_width;
 
-      y1 = Math.floor(y1 + simplex.noise2D(x, y1) * mv);
-      y2 = Math.floor(y2 + simplex.noise2D(x, y2) * mv);
+      y1 = y1 + (simplex.noise3D(l, t, y1) * mv);
+      y2 = y2 + (simplex.noise3D(l, t, y2) * mv);
+
+      // y1 = constrain(y1, [-1, 1]);
+      // y2 = constrain(y2, [-1, 1]);
 
       // const y1 = Math.floor(rnd_range(0.9*-top.h, 0.9*bottom.h));
       // const y2 = Math.floor(rnd_range(0.9*-top.h, 0.9*bottom.h));
-      const min_y = Math.min(y1, y2);
-      const max_y = Math.max(y1, y2);
+
+      let min_y = Math.min(y1, y2);
+      let max_y = Math.max(y1, y2);
+      min_y = Math.floor((min_y <= 0) ? min_y * top.h : min_y * bottom.h);
+      max_y = Math.floor((max_y <= 0) ? max_y * top.h : max_y * bottom.h);
 
       if ((min_y < 0 && max_y < 0) || (min_y >= 0 && max_y > 0)) {
         // we only need to draw on one side
@@ -114,9 +122,9 @@ class Pass {
       } else {
         // need to draw both sides now.
         ctx.fillStyle = hsvts(top.colour);
-        ctx.fillRect(x, min_y, this.line_width, 0 - min_y); // will end on zero
+        ctx.fillRect(x, min_y, line_width, 0 - min_y); // will end on zero
         ctx.fillStyle = hsvts(bottom.colour);
-        ctx.fillRect(x, 0, this.line_width, max_y);
+        ctx.fillRect(x, 0, line_width, max_y);
       }
     }
     ctx.restore();
@@ -148,6 +156,7 @@ export default class Split extends Drawable {
     const opts = options || {};
     opts.name = 'splits';
     super(opts);
+    this.simplex = null;
   }
 
   draw(seed, options) {
@@ -172,8 +181,6 @@ export default class Split extends Drawable {
     opts.fg2 = fgs[0];
     opts.fgs = fgs;
 
-    this.simplex = new SimplexNoise(seed);
-
     // determine proportion and direction of the split
     const proportions_list = [0.619, 0.381];
     const direction_list = [VERT, HORIZ];
@@ -194,14 +201,17 @@ export default class Split extends Drawable {
     const bottom_split = Math.floor(total_h - top_split);
 
     // determine the number of lines we'll produce on each pass.
-    const no_lines = rnd_range(Math.floor(0.2*total_w), Math.floor(0.4*total_w));
+    const no_lines = rnd_range(500, 1200);
     const line_width = Math.ceil(total_w / no_lines);
 
     // how many passes to produce and their opacity proportionately.
-    const no_passes = rnd_range(2, 40);
-    const line_alpha = rescale(2, 40, 0.25, 0.05, no_passes);
+    const no_passes = rnd_range(2, 8);
+    const line_alpha = rescale(2, 8, 0.55, 0.25, no_passes);
     const translate = {x: x_l, y: y_t + top_split};
     const rotate = {};
+
+    // simplex noise pulls uses the next prng from seedrandom
+    this.simplex = new SimplexNoise();
 
     // draw the background blocks
     this.enqueue(new Block(x_l, y_t, total_w, top_split), opts.fg1);
