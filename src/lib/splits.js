@@ -86,30 +86,22 @@ class Pass {
     ctx.translate(this.translate.x, this.translate.y);
     ctx.globalAlpha = this.line_alpha;
 
-    // const top_extent = Math.floor(0.9 * top.h);
-    // const bottom_extent = Math.floor(0.9 * bottom.h);
-
     let y1 = rnd_range(-0.9, 0.9);
     let y2 = rnd_range(-0.9, 0.9);
     const mv = 0.1;
 
     // draw the lines
     for (let l = 0; l < this.lines; l++) {
-      // for each line, choose high and low points
-      // choose a point somewhere in the range of -top -> +bottom
-      // y positions are always expressed as proportions of the extent
-      // and then only converted when you need to draw them.
+      // walk the line and then use simplex noise to guide the change amount.
+
+      // convert to the actual x point needed.
       const x = l * line_width;
 
+      // get y as a proportion still, using simplex noise.
       y1 = y1 + (simplex.noise3D(l, t, y1) * mv);
       y2 = y2 + (simplex.noise3D(l, t, y2) * mv);
 
-      // y1 = constrain(y1, [-1, 1]);
-      // y2 = constrain(y2, [-1, 1]);
-
-      // const y1 = Math.floor(rnd_range(0.9*-top.h, 0.9*bottom.h));
-      // const y2 = Math.floor(rnd_range(0.9*-top.h, 0.9*bottom.h));
-
+      // normalise the proportional values to actual pixel values.
       let min_y = Math.min(y1, y2);
       let max_y = Math.max(y1, y2);
       min_y = Math.floor((min_y <= 0) ? min_y * top.h : min_y * bottom.h);
