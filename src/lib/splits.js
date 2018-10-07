@@ -123,24 +123,6 @@ class Pass {
   }
 }
 
-class Line {
-  // draws a line from one point to another
-
-  constructor(p1, p2, width, options) {
-    // expects two points and a width
-
-    this.p1 = p1 || [0, 0];
-    this.p2 = p2 || [0, 0];
-    this.width = width || 1;
-  }
-
-  draw(ctx, colour) {
-    // draws the line
-
-    const { p1, p2, w } = this;
-  }
-}
-
 export default class Split extends Drawable {
   // split class creates a split screen with a colout.
 
