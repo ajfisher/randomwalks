@@ -3,6 +3,24 @@
 import space from 'color-space';
 import contrast from 'get-contrast';
 
+export const constrain = (v, range) => {
+  // takes an array in `range` and then constrains `v` to
+  // that range
+
+  const min = Math.min(range[0], range[1]);
+  const max = Math.max(range[0], range[1]);
+
+  if (v < min) {
+    return min;
+  }
+
+  if (v > max) {
+    return max;
+  }
+
+  return v;
+}
+
 export const convert = (palette_list) => {
   // goes through all of the palettes and converts each one to HSV
   // colour space to allow easier manipulation
