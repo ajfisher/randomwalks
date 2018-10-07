@@ -13,6 +13,8 @@ import { range_map, rescale, rnd_range } from './utils';
 const VERT = 0;
 const HORIZ = 1;
 
+const TAU = Math.PI * 2;
+
 class Border {
   // puts a border around the image
 
@@ -37,20 +39,35 @@ class Border {
 class Block {
   // draws a block of colour
 
-  constructor(x, y, w, h, colour) {
+  constructor(x, y, w, h, colour, options) {
     // sets up a block of colour to draw.
     this.x = x || 0;
     this.y = y || 0;
     this.w = w || 100;
     this.h = h || 100;
     this.colour = colour || [0, 100, 100];
+
+    const opts = options || {};
+    this.rotate = opts.rotate || 0;
+    this.mirror = opts.mirror || false;
   }
 
   draw(ctx, colour) {
-    // draws the block
-    const {x, y, w, h} = this;
+    // draws a block of colour, first by translating to the x,y coord
+    // and then drawing a block for the width and the height.
+    // Can optionally take a mirror option where it will draw the same block
+    // mirrored back along the line of rotation.
+    const {x, y, w, h, rotate, mirror} = this;
+
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rotate * TAU);
     ctx.fillStyle = hsvts(colour);
-    ctx.fillRect(x, y, w, h);
+    ctx.fillRect(0, 0, w, h);
+    if (mirror) {
+      ctx.fillRect(1, 0, -w, h);
+    }
+    ctx.restore();
   }
 }
 
@@ -81,9 +98,10 @@ class Pass {
 
     const { bottom, line_width, simplex, t, top } = this;
 
-    // translate to the new origin
+    // translate to the new origin and rotate appropriately.
     ctx.save();
     ctx.translate(this.translate.x, this.translate.y);
+    ctx.rotate(this.rotate * TAU);
     ctx.globalAlpha = this.line_alpha;
 
     let y1 = rnd_range(-0.9, 0.9);
@@ -91,15 +109,17 @@ class Pass {
     const mv = 0.1;
 
     // draw the lines
-    for (let l = 0; l < this.lines; l++) {
+    for (let l = this.lines * -1; l < this.lines; l++) {
       // walk the line and then use simplex noise to guide the change amount.
 
       // convert to the actual x point needed.
       const x = l * line_width;
 
       // get y as a proportion still, using simplex noise.
-      y1 = y1 + (simplex.noise3D(l, t, y1) * mv);
-      y2 = y2 + (simplex.noise3D(l, t, y2) * mv);
+      y1 = constrain(y1, [-1.1, 1.1]);
+      y2 = constrain(y2, [-1.1, 1.1]);
+      y1 = y1 + (simplex.noise3D(l, t, y1*1) * mv);
+      y2 = y2 + (simplex.noise3D(l, t, y2*10) * mv);
 
       // normalise the proportional values to actual pixel values.
       let min_y = Math.min(y1, y2);
@@ -160,7 +180,7 @@ export default class Split extends Drawable {
     const direction_list = [VERT, HORIZ];
     // how much of a tau to rotate.
     const rotations = [-0.25, -0.15, -0.05, 0, 0.05, 0.15, 0.25];
-    const focus = [0.381, 0.5, 0.619];
+    const focuses = [0.381, 0.5, 0.619];
 
     // get the basic dimensions of what we need to draw
     const border = Math.floor(this.w(0.05));
@@ -171,8 +191,11 @@ export default class Split extends Drawable {
 
     // work out how the canvas will be split up
     const proportion = choose(proportions_list);
+    const focus = choose(focuses);
     const top_split = Math.floor(proportion * total_h);
     const bottom_split = Math.floor(total_h - top_split);
+    const left = Math.floor(focus * total_w);
+    const right = Math.floor(total_w - left);
 
     // determine the number of lines we'll produce on each pass.
     const no_lines = rnd_range(500, 1200);
@@ -181,15 +204,27 @@ export default class Split extends Drawable {
     // how many passes to produce and their opacity proportionately.
     const no_passes = rnd_range(2, 8);
     const line_alpha = rescale(2, 8, 0.55, 0.25, no_passes);
-    const translate = {x: x_l, y: y_t + top_split};
-    const rotate = {};
+    const translate = {x: x_l + left, y: y_t + top_split};
+    const rotate = choose(rotations) * Math.random();
 
     // simplex noise pulls uses the next prng from seedrandom
     this.simplex = new SimplexNoise();
 
     // draw the background blocks
-    this.enqueue(new Block(x_l, y_t, total_w, top_split), opts.fg1);
-    this.enqueue(new Block(x_l, y_t + top_split, total_w, bottom_split), opts.fg2);
+    this.enqueue(new Block(
+      translate.x, translate.y, total_w, -top_split*2, null,
+      {
+        rotate,
+        mirror: true
+      }
+    ), opts.fg1);
+    this.enqueue(new Block(
+      translate.x, translate.y, total_w, bottom_split*2, null,
+      {
+        rotate,
+        mirror: true
+      }
+    ), opts.fg2);
 
     // do a pass of the lines.
     for (let p = 0; p < no_passes; p++) {
@@ -199,10 +234,8 @@ export default class Split extends Drawable {
         line_alpha,
         top: {colour: opts.fg2, h: top_split},
         bottom: {colour: opts.fg1, h: bottom_split},
-        width: total_w,
-        height: total_h,
-        translate,
-        rotate,
+        width: total_w, height: total_h,
+        translate, rotate,
         simplex: this.simplex,
         t: p
       }), null);
