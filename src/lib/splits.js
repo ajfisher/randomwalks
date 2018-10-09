@@ -1,19 +1,13 @@
 'use strict';
 
-import space from 'color-space';
-import seedrandom from 'seedrandom';
-import arrayShuffle from 'array-shuffle';
 import SimplexNoise from 'simplex-noise';
 
 import Drawable from './drawable';
 
 import { Block, Border } from './primatives';
 
-import { best_contrast, choose, constrain, hsvts, nrand, rank_contrast } from './utils';
-import { range_map, rescale, rnd_range } from './utils';
-
-const VERT = 0;
-const HORIZ = 1;
+import { choose, constrain, hsvts, rank_contrast } from './utils';
+import { rescale, rnd_range } from './utils';
 
 const TAU = Math.PI * 2;
 
@@ -123,7 +117,6 @@ export default class Split extends Drawable {
 
     // determine proportion and direction of the split
     const proportions_list = [0.619, 0.381];
-    const direction_list = [VERT, HORIZ];
     // how much of a tau to rotate.
     const rotations = [-0.25, -0.15, -0.05, 0, 0.05, 0.15, 0.25];
     const focuses = [0.381, 0.5, 0.619];
