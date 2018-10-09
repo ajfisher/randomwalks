@@ -1,10 +1,9 @@
 'use strict';
 
-import space from 'color-space';
 import seedrandom from 'seedrandom';
 import arrayShuffle from 'array-shuffle';
 
-import { best_contrast, hsvts, range_map, rnd_range, sigmoid } from './utils';
+import { best_contrast, hsvts } from './utils';
 
 export default class Drawable {
   constructor(options) {
