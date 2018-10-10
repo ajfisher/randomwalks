@@ -24,6 +24,8 @@ export default class Drawable {
     this.name = opts.name || '';
     this.canvas = opts.canvas;
     this.palettes = opts.palettes;
+    this.border = opts.border || 0;
+
     // have to do it this way due to sending a false will always || to true
     this.show_text = (typeof(opts.show_text) == 'undefined') ? true : opts.show_text;
     this.draw_queue = [];
@@ -72,6 +74,7 @@ export default class Drawable {
     // a palette (false or undef) or the black and white palette (true)
     // `size` is an object with `w`, `h` and `dpi` where
     // `w` and `h` are inches
+    // `border` is the proportion of the canvas to be given as a border.
 
     const opts = options || {};
 
@@ -101,6 +104,9 @@ export default class Drawable {
       this.canvas.style.width = (this.canvas.height / this.scale_factor) + 'px';
     }
 
+    this._border = this.w(this.border); // pixel value of the border.
+
+    // sort out the palettes
     this.palette = arrayShuffle(this.palettes)[0];
 
     if (typeof(opts.neutral) != 'undefined' && opts.neutral) {
@@ -119,6 +125,42 @@ export default class Drawable {
     if (item === undefined) {
       console.log('Nothing in the queue to process');
       return;
+    }
+
+    this.ctx.save();
+    if (this.border > 0) {
+      // create clipping path for the border
+      const { border, _border } = this;
+
+      // note that it's possible to add additional clipping points in here
+      // this is very handy. The default is to apply a border to the outside
+      // of the image. But others are possible.
+      this.ctx.beginPath()
+      this.ctx.rect(_border, _border, this.w(1.0-2*border), this.h(1.0-2*border));
+      this.ctx.clip();
+      /** leaving all of this in here because it's super useful.
+      const ctx = this.ctx;
+      ctx.beginPath();
+      ctx.moveTo(this.w(0.5), this.h(0.05));
+      ctx.lineTo(this.w(0.95), this.h(0.95));
+      ctx.lineTo(this.w(0.05), this.h(0.95));
+      ctx.lineTo(this.w(0.5), this.h(0.05));
+      ctx.moveTo(this.w(0.5), this.h(0.95));
+      ctx.lineTo(this.w(0.05), this.h(0.05));
+      ctx.lineTo(this.w(0.95), this.h(0.05));
+      ctx.lineTo(this.w(0.5), this.h(0.95));
+      ctx.clip();
+      this.ctx.beginPath();
+      this.ctx.arc(this.w(0.3), this.h(0.3), this.w(0.25), 0, Math.PI*2);
+      this.ctx.moveTo(this.w(0.8), this.h(0.7));
+      this.ctx.arc(this.w(0.8), this.h(0.5), this.w(0.1), 0, Math.PI*2);
+      this.ctx.moveTo(this.w(0.6), this.h(0.7));
+      this.ctx.arc(this.w(0.6), this.h(0.7), this.w(0.15), 0, Math.PI*2);
+      // this.ctx.rect(0, _border, this.w(), this.h(0.1));
+      // this.ctx.rect(0, this.h(0.152), this.w(), this.h(0.1));
+      // this.ctx.rect(0, this.h(0.755), this.w(), this.h(0.1));
+      this.ctx.clip();
+      **/
     }
 
     if (typeof(item.action.draw) != 'undefined') {
@@ -148,6 +190,8 @@ export default class Drawable {
         console.log('process complete');
       }
     }
+
+    this.ctx.restore();
   }
 
   text(ctx, data, bg, fg) {
