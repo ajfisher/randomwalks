@@ -81,13 +81,13 @@ class Pass extends Actionable {
 }
 
 export default class Split extends Drawable {
-  // split class creates a split screen with a colout.
+  // split class creates a split screen with a colour.
 
   constructor(options) {
     const opts = options || {};
     opts.name = 'splits';
+    opts.border = 0.05;
     super(opts);
-    this.simplex = null;
   }
 
   draw(seed, options) {
@@ -108,6 +108,7 @@ export default class Split extends Drawable {
     const { bg, fgs } = rank_contrast(palette);
 
     opts.bg = [47, 6, 100];
+    // opts.bg = bg;
     opts.fg1 = bg;
     opts.fg2 = fgs[0];
     opts.fgs = fgs;
@@ -119,7 +120,7 @@ export default class Split extends Drawable {
     const focuses = [0.381, 0.5, 0.619];
 
     // get the basic dimensions of what we need to draw
-    const border = Math.floor(this.w(0.05));
+    const border = Math.floor(this.w(this.border));
     const total_w = this.w() - 2 * border;
     const total_h = this.h() - 2 * border;
     const x_l = border;
@@ -147,20 +148,22 @@ export default class Split extends Drawable {
     this.simplex = new SimplexNoise();
 
     // draw the background blocks
-    this.enqueue(new Block(
-      translate.x, translate.y, total_w, -top_split*2, null,
-      {
-        rotate,
-        mirror: true
-      }
-    ), opts.fg1);
-    this.enqueue(new Block(
-      translate.x, translate.y, total_w, bottom_split*2, null,
-      {
-        rotate,
-        mirror: true
-      }
-    ), opts.fg2);
+    this.enqueue(new Block({
+      alpha: 1.0,
+      width: total_w,
+      height: -top_split*2,
+      translate,
+      rotate,
+      mirror: true
+    }), opts.fg1);
+    this.enqueue(new Block({
+      alpha: 1.0,
+      width: total_w,
+      height: bottom_split*2,
+      translate,
+      rotate,
+      mirror: true
+    }), opts.fg2);
 
     // do a pass of the lines.
     for (let p = 0; p < no_passes; p++) {
@@ -177,7 +180,7 @@ export default class Split extends Drawable {
       }), null);
     }
 
-    this.enqueue(new Border(border, this.w(), this.h()), opts.bg);
+    // this.enqueue(new Border(border, this.w(), this.h()), opts.bg);
     super.execute(opts);
   }
 }
