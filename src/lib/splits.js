@@ -2,6 +2,7 @@
 
 import SimplexNoise from 'simplex-noise';
 
+import Actionable from './actions/actionable';
 import Drawable from './drawable';
 
 import { Block, Border } from './primatives';
@@ -11,26 +12,21 @@ import { rescale, rnd_range } from './utils';
 
 const TAU = Math.PI * 2;
 
-class Pass {
+class Pass extends Actionable {
   // draws a set of lines in one pass.
 
   constructor(options) {
     // sets up the pass. Quite a complex set up so requires an object to
-    // do it with.
+    // do it with the baseline parts sent back to the Actionable AC.
     //
     const opts = options || {};
+    super(opts);
 
-    this.width = opts.width || 100;
-    this.height = opts.height || 100;
     this.lines = opts.lines || this.width || 10;
     this.line_width = opts.line_width || this.width / this.lines;
-    this.line_alpha = opts.line_alpha || 0.05;
     this.top = opts.top || { colour: [0, 100, 100], h: this.height / 2};
     this.bottom = opts.bottom || { colour: [180, 100, 100], h: this.height / 2};
-    this.translate = opts.translate || {x: 0, y:0};
-    this.rotate = opts.rotate || 0;
     this.simplex = opts.simplex;
-    this.t = opts.t; // time or pass number
   }
 
   draw(ctx, ...rest) {
@@ -38,12 +34,12 @@ class Pass {
 
     const { bottom, line_width, simplex, t, top } = this;
 
-    // translate to the new origin and rotate appropriately.
     ctx.save();
-    ctx.translate(this.translate.x, this.translate.y);
-    ctx.rotate(this.rotate * TAU);
-    ctx.globalAlpha = this.line_alpha;
 
+    // handle draw set up
+    super.draw(ctx)
+
+    // get the starting points for the lines.
     let y1 = rnd_range(-0.9, 0.9);
     let y2 = rnd_range(-0.9, 0.9);
     const mv = 0.1;
@@ -79,6 +75,7 @@ class Pass {
         ctx.fillRect(x, 0, line_width, max_y);
       }
     }
+
     ctx.restore();
   }
 }
@@ -170,7 +167,7 @@ export default class Split extends Drawable {
       this.enqueue(new Pass({
         lines: no_lines,
         line_width,
-        line_alpha,
+        alpha: line_alpha,
         top: {colour: opts.fg2, h: top_split},
         bottom: {colour: opts.fg1, h: bottom_split},
         width: total_w, height: total_h,
