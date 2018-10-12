@@ -5,7 +5,7 @@ import SimplexNoise from 'simplex-noise';
 import Actionable from './actions/actionable';
 import Drawable from './drawable';
 
-import { Block, Border } from './primatives';
+import { Block } from './primatives';
 
 import { choose, constrain, hsvts, rank_contrast } from './utils';
 import { rescale, rnd_range } from './utils';
@@ -180,7 +180,6 @@ export default class Split extends Drawable {
       }), null);
     }
 
-    // this.enqueue(new Border(border, this.w(), this.h()), opts.bg);
     super.execute(opts);
   }
 }

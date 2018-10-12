@@ -14,13 +14,9 @@ export default class Block extends Actionable {
     //
     const opts = options || {}
     super(opts);
-    // this.x = x || 0;
-    // this.y = y || 0;
-    // this.w = w || 100;
-    // this.h = h || 100;
+
     this.colour = opts.colour || [0, 100, 100];
 
-    // this.rotate = opts.rotate || 0;
     this.mirror = opts.mirror || false;
   }
 
