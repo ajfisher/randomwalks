@@ -9,12 +9,12 @@ import Drawable from './drawable.js';
 
 import { choose, hsvts, rand_range, weight_rnd } from './utils.js';
 
-export default class Flow extends Drawable {
-  // creates a flow test
+export default class Scratch extends Drawable {
+  // creates a test
 
   constructor(options) {
     const opts = options || {};
-    opts.name = 'flow';
+    opts.name = 'scratch';
     super(opts);
 
     this.simplex = null;

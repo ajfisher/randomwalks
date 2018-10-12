@@ -4,15 +4,15 @@
 
 import CircleChord from './circles';
 import DeformedQuads from './deformed_quads';
-import Flow from './flow';
 import Palette from './palette';
+import Scratch from './scratch';
 import Split from './splits';
 
 export default {
   CircleChord,
   DeformedQuads,
-  Flow,
   Palette,
+  Scratch,
   Split
 };
 
