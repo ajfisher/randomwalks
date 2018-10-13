@@ -4,6 +4,7 @@
 
 import CircleChord from './circles';
 import DeformedQuads from './deformed_quads';
+import FlowField from './flow';
 import Palette from './palette';
 import Scratch from './scratch';
 import Split from './splits';
@@ -11,6 +12,7 @@ import Split from './splits';
 export default {
   CircleChord,
   DeformedQuads,
+  FlowField,
   Palette,
   Scratch,
   Split
