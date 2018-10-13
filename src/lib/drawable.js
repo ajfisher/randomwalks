@@ -182,6 +182,7 @@ export default class Drawable {
 
       if (this.show_text) {
         // put the seed on the bottom
+        this.ctx.restore();
         this.text(this.ctx, this.seed, this.bg, this.fg);
       }
 
@@ -200,6 +201,7 @@ export default class Drawable {
     ({fg, bg} = this);
     ctx.save();
 
+    ctx.globalAlpha = 1.0;
     const txt = '#' + data;
     ctx.font = this.h(0.015) + 'px Helvetica'; // 1.5% of height of canvas
     const txt_w = ctx.measureText(txt).width;
