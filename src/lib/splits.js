@@ -42,7 +42,14 @@ class Pass extends Actionable {
     // get the starting points for the lines.
     let y1 = rnd_range(-0.9, 0.9);
     let y2 = rnd_range(-0.9, 0.9);
-    const mv = 0.1;
+
+    let mv = 0.05;
+    let s = 0.05;
+
+    if (this.classic) {
+      mv = 0.1;
+      s = 1;
+    }
 
     // draw the lines
     for (let l = this.lines * -1; l < this.lines; l++) {
@@ -54,8 +61,8 @@ class Pass extends Actionable {
       // get y as a proportion still, using simplex noise.
       y1 = constrain(y1, [-1.1, 1.1]);
       y2 = constrain(y2, [-1.1, 1.1]);
-      y1 = y1 + (simplex.noise3D(l, t, y1*1) * mv);
-      y2 = y2 + (simplex.noise3D(l, t, y2*10) * mv);
+      y1 = y1 + (simplex.noise3D(l*s, t*s, y1*1) * mv);
+      y2 = y2 + (simplex.noise3D(l*s, t*s, y2*10) * mv);
 
       // normalise the proportional values to actual pixel values.
       let min_y = Math.min(y1, y2);
