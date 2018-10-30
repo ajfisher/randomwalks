@@ -1,13 +1,16 @@
 'use strict';
 
+import EventEmitter from 'events';
+
 import seedrandom from 'seedrandom';
 import arrayShuffle from 'array-shuffle';
 
 import { best_contrast, hsvts } from './utils';
 
-export default class Drawable {
+export default class Drawable extends EventEmitter {
   constructor(options) {
     const opts = options || {};
+    super(opts);
 
     if (typeof(opts.canvas) === 'undefined') {
       throw new Error('CanvasNotDefined');
@@ -175,7 +178,9 @@ export default class Drawable {
       if (typeof(window) !== 'undefined') {
         window.requestAnimationFrame(() => this.process());
       } else {
-        this.process();
+        setTimeout((o) => {
+          o.process();
+        }, 1, this);
       }
     } else {
       // we're done so wind it up.
@@ -189,6 +194,8 @@ export default class Drawable {
       // let the user know when the process is finished if it's in browser
       if (typeof(window) !== 'undefined') {
         console.log('process complete');
+      } else {
+        this.emit('completed');
       }
     }
 
