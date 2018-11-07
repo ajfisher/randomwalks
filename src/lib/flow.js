@@ -115,7 +115,7 @@ class Particle {
     const x2 = this.position.x * this.bounds.x;
     const y2 = this.position.y * this.bounds.y;
 
-    ctx.lineWidth = 8; // this.size;
+    ctx.lineWidth = this.size;
 
     ctx.beginPath();
     ctx.moveTo(x1, y1);
@@ -320,7 +320,7 @@ export default class FlowField extends Drawable {
 
     const opts = options || {};
     opts.name = 'flowfield';
-    opts.border = 0.01;
+    opts.border = 0.04;
     super(opts);
   }
 
@@ -347,18 +347,20 @@ export default class FlowField extends Drawable {
 
     // get the basic dimensions of what we need to draw
     const border = Math.floor(this.w(this.border));
-    const width = this.w() - 2 * border;
-    const height = this.h() - 2 * border;
+    const width = this.w(); // - 2 * border;
+    const height = this.h(); // - 2 * border;
 
+    const scales = [0.03, 0.01, 0.05, 0.07, 0.1 ];
     const cell_nos = choose([13, 37, 53, 103, 153]);
     const no_particles = choose([1000, 2000, 3000, 5000]);
-    const scale = choose([0.01, 0.05, 0.07]);
 
-    console.log(cell_nos, no_particles, scale);
     const cols = cell_nos;
     const rows = cell_nos;
 
     this.simplex = new SimplexNoise();
+
+    const scale = choose(scales)
+    console.log(cell_nos, no_particles, scale);
 
     const particles = new ParticleSystem({
       no_particles,
@@ -370,7 +372,7 @@ export default class FlowField extends Drawable {
     particles.init();
 
     this.enqueue(new FlowGrid({
-      alpha: 0.001,
+      alpha: 0.0001,
       width,
       height,
       translate: { x: border, y: border },
@@ -381,7 +383,7 @@ export default class FlowField extends Drawable {
       colours: opts.fgs,
       field: particles.force_field,
       t: 1
-    }), opts.fg);
+    }), opts.fgs[0]);
 
     const iter = 1000;
     for (let i = 0; i < iter; i++) {
@@ -390,8 +392,8 @@ export default class FlowField extends Drawable {
         width,
         height,
         system: particles,
-        t:i
-      }), opts.fg);
+        t: i
+      }), opts.fgs[0]);
     }
 
     super.execute(opts);
