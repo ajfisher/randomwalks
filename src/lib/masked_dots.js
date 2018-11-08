@@ -29,10 +29,29 @@ class BlockMask extends Mask {
   // the canvas
   constructor(options) {
     const opts = options || {};
-
     super(opts);
+
+    this.rotate = opts.rotate || 0;
+    this.translate = opts.translate || { x: 0.5, y: 0.5};
   }
   draw(ctx) {
+    // creates a mask that is a division block that can be drawn in.
+    const xt = this.translate.x * this.width;
+    const yt = this.translate.y * this.height;
+
+    // we start the path, save the context then do the translation and
+    // rotation before drawing the clipping region. This allows us to do a
+    // restoration within the draw action and then finally effect the clip
+    // in the stack, which gets passed back. At the end of this we'll have
+    // an appropriately rotated clip plane but the canvas will obey standard
+    // orientation rules.
+    ctx.beginPath()
+    ctx.save();
+    ctx.translate(xt, yt);
+    ctx.rotate(this.rotate);
+    ctx.rect(-this.width, 0, this.width * 2, this.height);
+    ctx.restore();
+    ctx.clip();
   }
 }
 
@@ -70,13 +89,14 @@ class Dots extends Actionable {
     super(opts);
 
     this.no_dots = opts.no || 10;
+    this.post_mask_dots = opts.post_mask_dots || 0.02;
     this.min = 0.001;
     this.max = 0.006;
     this.centre = opts.centre || {x: 0.5, y: 0.5};
     this.tightness = opts.tightness || 0.2;
     this.simplex = opts.simplex;
     this.mask = opts.mask;
-    this.over_dots = Math.floor(this.no_dots * 0.02);
+    this.over_dots = Math.floor(this.no_dots * this.post_mask_dots);
   }
 
   dot(ctx, colour, ...rest) {
@@ -103,7 +123,6 @@ class Dots extends Actionable {
     for (let d = 0; d < this.no_dots - this.over_dots; d++) {
       this.dot(ctx, colour);
     }
-
     ctx.restore();
 
     for (let od = 0; od < this.over_dots; od++) {
@@ -152,18 +171,29 @@ export default class MaskedDots extends Drawable {
 
     const r = rnd_range(0.15, 0.3);
 
+    const centre = {
+      x: choose([0.37, 0.5, 0.67]),
+      y: choose([0.37, 0.5, 0.67])
+    };
+
+    const ism = new InvertedSquareMask({width, height, r_w: r, r_h: r});
+    const bm = new BlockMask({
+      width,
+      height,
+      translate: centre,
+      rotate: Math.random() * TAU
+    });
+
     this.enqueue(new Dots({
       alpha: 0.5,
       width,
       height,
       simplex: this.simplex,
-      centre: {
-        x: choose([0.37, 0.5, 0.67]),
-        y: choose([0.37, 0.5, 0.67])
-      },
+      centre,
       tightness: rnd_range(0.1, 0.3),
       no: 10000,
-      mask: new InvertedSquareMask({width, height, r_w: r, r_h: r})
+      mask: bm,
+      post_mask_dots: rnd_range(0.01, 0.05)
     }), opts.fg);
 
     super.execute(opts);
