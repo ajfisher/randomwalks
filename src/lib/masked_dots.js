@@ -5,81 +5,12 @@ import SimplexNoise from 'simplex-noise';
 import Actionable from './actions/actionable';
 import Drawable from './drawable';
 
+import { BlockMask, InvertedSquareMask } from './masks';
+
 import { choose, hsvts, rank_contrast, nrand } from './utils';
 import { rescale, rnd_range } from './utils';
 
 const TAU = Math.PI * 2;
-
-class Mask {
-  // provides the mask that is needed
-  constructor(options) {
-    // build a new mask
-    const opts = options || {};
-    this.height = opts.height;
-    this.width = opts.width;
-  }
-
-  draw(ctx) {
-    // abstract interface for the mask drawing actions.
-  }
-}
-
-class BlockMask extends Mask {
-  // creates a mask that basically creates a line going through
-  // the canvas
-  constructor(options) {
-    const opts = options || {};
-    super(opts);
-
-    this.rotate = opts.rotate || 0;
-    this.translate = opts.translate || { x: 0.5, y: 0.5};
-  }
-  draw(ctx) {
-    // creates a mask that is a division block that can be drawn in.
-    const xt = this.translate.x * this.width;
-    const yt = this.translate.y * this.height;
-
-    // we start the path, save the context then do the translation and
-    // rotation before drawing the clipping region. This allows us to do a
-    // restoration within the draw action and then finally effect the clip
-    // in the stack, which gets passed back. At the end of this we'll have
-    // an appropriately rotated clip plane but the canvas will obey standard
-    // orientation rules.
-    ctx.beginPath()
-    ctx.save();
-    ctx.translate(xt, yt);
-    ctx.rotate(this.rotate);
-    ctx.rect(-this.width, 0, this.width * 2, this.height);
-    ctx.restore();
-    ctx.clip();
-  }
-}
-
-class InvertedSquareMask extends Mask {
-  // creates a mask that is an inversion of a square
-  constructor(options) {
-    const opts = options || {};
-    super(opts);
-    this.r_w = opts.r_w || 0.4;
-    this.r_h = opts.r_h || 0.4;
-  }
-
-  draw(ctx) {
-    // draw the various parts of the clipping path
-    super.draw(ctx);
-    const { width, height, r_w, r_h } = this;
-
-    const outer_h = (1.0 - r_h) / 2;
-    const outer_w = (1.0 - r_w) / 2;
-
-    ctx.beginPath();
-    ctx.rect(0, 0, width, outer_h * height);
-    ctx.rect(0, (r_h + outer_h) * height, width, outer_h * height);
-    ctx.rect(0, 0, outer_w * width, height);
-    ctx.rect((r_w + outer_w) * width, 0, outer_w * width, height);
-    ctx.clip();
-  }
-}
 
 class Dots extends Actionable {
   // draws the dots to the canvas, with the mask
@@ -118,7 +49,7 @@ class Dots extends Actionable {
     // callback to execute the drawing
 
     ctx.save();
-    this.mask.draw(ctx);
+    this.mask.clip(ctx);
 
     for (let d = 0; d < this.no_dots - this.over_dots; d++) {
       this.dot(ctx, colour);
