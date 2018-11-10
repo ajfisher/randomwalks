@@ -41,16 +41,22 @@ class Dots extends Actionable {
     const dot_size = rnd_range(min, max) * this.width;
 
     ctx.fillStyle = hsvts(colour);
+    // TODO use the shadow colour and blur to create glowy dots
+    // ctx.shadowColor = hsvts([colour[0], 100.0, colour[2]]);
+    // ctx.shadowBlur = dot_size * 5;
+    // TODO use a soft mask to determine whether we can draw here or not.
     ctx.globalAlpha = this.alpha;
     ctx.beginPath();
     ctx.arc(x*this.width, y*this.height, dot_size, 0, TAU);
     ctx.fill();
+    ctx.shadowColor = 'transparent';
   }
 
   draw(ctx, colour, ...rest) {
     // callback to execute the drawing
 
     ctx.save();
+    // TODO potentially use a soft mask on here.
     this.mask.clip(ctx);
 
     for (let d = 0; d < this.no_dots - this.over_dots; d++) {
@@ -104,7 +110,7 @@ export default class MaskedDots extends Drawable {
 
     const max_lines = rnd_range(1, 5);
 
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < max_lines; i++) {
       const centre = {
         x: choose([0.37, 0.5, 0.67]),
         y: choose([0.37, 0.5, 0.67])
@@ -113,6 +119,7 @@ export default class MaskedDots extends Drawable {
       /**
       const r = rnd_range(0.15, 0.3);
       const ism = new InvertedSquareMask({width, height, r_w: r, r_h: r});
+      **/
 
       const bm = new BlockMask({
         width,
@@ -120,7 +127,6 @@ export default class MaskedDots extends Drawable {
         translate: centre,
         rotate: Math.random() * TAU
       });
-      **/
 
       const lm = new LineMask({
         width, height, translate: centre, rotate: Math.random() * TAU,
