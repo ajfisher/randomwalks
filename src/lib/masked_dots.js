@@ -5,7 +5,7 @@ import SimplexNoise from 'simplex-noise';
 import Actionable from './actions/actionable';
 import Drawable from './drawable';
 
-import { BlockMask, InvertedSquareMask } from './masks';
+import { BlockMask, InvertedSquareMask, LineMask } from './masks';
 
 import { choose, hsvts, rank_contrast, nrand } from './utils';
 import { rescale, rnd_range } from './utils';
@@ -25,6 +25,8 @@ class Dots extends Actionable {
     this.max = 0.006;
     this.centre = opts.centre || {x: 0.5, y: 0.5};
     this.tightness = opts.tightness || 0.2;
+    this.tightness_x = opts.tightness_x || this.tightness;
+    this.tightness_y = opts.tightness_y || this.tightness;
     this.simplex = opts.simplex;
     this.mask = opts.mask;
     this.over_dots = Math.floor(this.no_dots * this.post_mask_dots);
@@ -34,8 +36,8 @@ class Dots extends Actionable {
     // gets a dot and draws it to the context
     const {centre, min, max, scale} = this;
 
-    const x = nrand(centre.x, this.tightness);
-    const y = nrand(centre.y, this.tightness);
+    const x = nrand(centre.x, this.tightness_x);
+    const y = nrand(centre.y, this.tightness_y);
     const dot_size = rnd_range(min, max) * this.width;
 
     ctx.fillStyle = hsvts(colour);
@@ -100,32 +102,45 @@ export default class MaskedDots extends Drawable {
     const height = this.h(); // - 2 * border;
     this.simplex = new SimplexNoise();
 
-    const r = rnd_range(0.15, 0.3);
+    const max_lines = rnd_range(1, 5);
 
-    const centre = {
-      x: choose([0.37, 0.5, 0.67]),
-      y: choose([0.37, 0.5, 0.67])
-    };
+    for (let i = 0; i < 3; i++) {
+      const centre = {
+        x: choose([0.37, 0.5, 0.67]),
+        y: choose([0.37, 0.5, 0.67])
+      };
 
-    const ism = new InvertedSquareMask({width, height, r_w: r, r_h: r});
-    const bm = new BlockMask({
-      width,
-      height,
-      translate: centre,
-      rotate: Math.random() * TAU
-    });
+      /**
+      const r = rnd_range(0.15, 0.3);
+      const ism = new InvertedSquareMask({width, height, r_w: r, r_h: r});
 
-    this.enqueue(new Dots({
-      alpha: 0.5,
-      width,
-      height,
-      simplex: this.simplex,
-      centre,
-      tightness: rnd_range(0.1, 0.3),
-      no: 10000,
-      mask: bm,
-      post_mask_dots: rnd_range(0.01, 0.05)
-    }), opts.fg);
+      const bm = new BlockMask({
+        width,
+        height,
+        translate: centre,
+        rotate: Math.random() * TAU
+      });
+      **/
+
+      const lm = new LineMask({
+        width, height, translate: centre, rotate: Math.random() * TAU,
+        line_width: 2.0,
+        line_height: rnd_range(0.05, 0.25)
+      });
+
+      this.enqueue(new Dots({
+        alpha: 0.5,
+        width,
+        height,
+        // simplex: this.simplex,
+        centre,
+        tightness: rnd_range(0.1, 0.4),
+        // tightness_x: rnd_range(0.01, 0.05),
+        no: choose([1000, 3000, 5000, 10000]),
+        mask: lm,
+        post_mask_dots: rnd_range(0.01, 0.02)
+      }), opts.fgs[i % 4]);
+    }
 
     super.execute(opts);
   }
