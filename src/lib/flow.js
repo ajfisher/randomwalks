@@ -8,8 +8,8 @@ import { Actionable, FieldGrid, ParticleUpdate } from './actions';
 import { ParticleSystem } from './systems';
 import { SimplexField } from './fields';
 
-import { choose, constrain, hsvts, rank_contrast } from './utils';
-import { rescale, rnd_range } from './utils';
+import { choose, rnd_range } from './utils/random';
+import { hsvts, rank_contrast } from './utils/draw';
 
 export default class FlowField extends Drawable {
   // flow field drives a set of particles across a field of simplex noise
