@@ -3,6 +3,7 @@
 // web app.
 
 import CircleChord from './circles';
+import Concentrics from './concentrics';
 import DeformedQuads from './deformed_quads';
 import FlowField from './flow';
 import MaskedDots from './masked_dots';
@@ -12,6 +13,7 @@ import Split from './splits';
 
 export default {
   CircleChord,
+  Concentrics,
   DeformedQuads,
   FlowField,
   MaskedDots,
