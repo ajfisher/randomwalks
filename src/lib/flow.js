@@ -4,43 +4,13 @@ import SimplexNoise from 'simplex-noise';
 
 import Actionable from './actions/actionable';
 import Drawable from './drawable';
+import { SimplexField } from './fields';
+import { FieldGrid } from './actions';
 
 import { choose, constrain, hsvts, rank_contrast } from './utils';
 import { rescale, rnd_range } from './utils';
 
 const TAU = Math.PI * 2;
-
-class ForceField {
-  // creates a field of forces based on a grid.
-  constructor(rows, cols, noise, scale) {
-    // creates a new `ForceField` of rows and cosl
-    // can take any noise function which must take a x and y value and will
-    // return a -1.0..1.0 float.
-
-    this.rows = rows;
-    this.cols = cols;
-    this.noise = noise;
-
-    this.scale = scale || 0.05;
-
-    this.forces = [];
-    for (let x = 0; x < cols; x++) {
-      const col = [];
-      for (let y = 0; y < rows; y++) {
-        const c = {
-          f: this.noise.noise2D(x * this.scale, y * this.scale) * Math.PI
-        };
-
-        // work out the components of the force vector
-        c.xf = Math.cos(c.f);
-        c.yf = Math.sin(c.f);
-
-        col.push(c);
-      }
-      this.forces.push(col);
-    }
-  }
-}
 
 class Particle {
   // provides a single particle which x,y is represented as value between
@@ -203,114 +173,6 @@ class ParticleUpdate extends Actionable {
   }
 }
 
-class FlowGrid extends Actionable {
-  // Draws a grid of items that represents the flow field.
-  constructor(options) {
-    const opts = options || {};
-    super(opts);
-
-    this.cols = opts.cols;
-    this.rows = opts.rows;
-    this.cell_w = Math.round(this.width / this.cols);
-    this.cell_h = Math.round(this.height / this.rows);
-    this.simplex = opts.simplex;
-    this.field = opts.field || [];
-    this.bg = opts.bg;
-    this.colours = opts.colours;
-  }
-
-  draw(ctx, colour, ...rest) {
-    // draws the flow field grid.
-    super.draw(ctx, colour);
-
-    const hue = colour[0];
-
-    const cw_h = this.cell_w * 0.5;
-    const ch_h = this.cell_h * 0.5;
-
-    for (let x = 0; x < this.cols; x++) {
-      for (let y = 0; y < this.rows; y++) {
-        // iterate over the grid and draw the force field
-
-        ctx.save();
-        ctx.translate(x * this.cell_w, y * this.cell_h);
-        ctx.lineWidth =  2;
-        ctx.globalAlpha = this.alpha;
-
-        // draw a line from the middle, aligned to the flow field.
-        ctx.save();
-        ctx.translate(cw_h, ch_h);
-        ctx.rotate(this.field.forces[x][y].f);
-
-        ctx.beginPath();
-        let ll = 0.4 * this.cell_w; // * 0.5;
-        if (ll < cw_h) ll = cw_h;
-
-        ctx.moveTo(-ll, 0);
-        ctx.lineTo(ll, 0);
-        ctx.stroke();
-
-        // draw a ball on the end
-        ctx.beginPath();
-        ctx.fillStyle = hsvts([180, 100, 100]);
-        ctx.globalAlpha = this.alpha;
-        ctx.arc(ll, 0, 4, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.restore(); // restore the rotation
-        ctx.restore(); // restore the translation.
-      }
-    }
-
-    /**
-    for (let x = 0; x < this.cols; x++) {
-      for (let y = 0; y < this.rows; y++) {
-        const s = 0.05;
-        const noise = this.simplex.noise2D(x * s, y * s);
-
-        ctx.save();
-        ctx.translate(x * this.cell_w, y * this.cell_h);
-        ctx.strokeStyle = hsvts([0, 100, 100]) // hsvts([h, colour[1], colour[2]]);
-        ctx.lineWidth =  2; // rnd_range(Math.round(0.1 * this.cell_w), cw_h);
-        ctx.globalAlpha = 0.45;
-
-        // draw the grid
-        /**
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(this.cell_w, 0);
-        ctx.lineTo(this.cell_w, this.cell_h);
-        ctx.lineTo(0, this.cell_h);
-        ctx.lineTo(0, 0);
-        ctx.stroke();
-
-        // draw a line from the middle, aligned to the flow field.
-        ctx.save();
-        ctx.translate(cw_h, ch_h);
-        ctx.rotate(noise * Math.PI);
-
-        ctx.beginPath();
-        let ll = 0.4 * this.cell_w; // * 0.5;
-        if (ll < cw_h) ll = cw_h;
-
-        ctx.moveTo(-ll, 0);
-        ctx.lineTo(ll, 0);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.fillStyle = hsvts([0, 100, 100]);
-        ctx.globalAlpha = 0.5;
-        ctx.arc(ll, 0, 4, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.restore();
-        // go back to the other space.
-        ctx.restore(); 
-      }
-    } **/
-  }
-}
-
 export default class FlowField extends Drawable {
   // flow field shows a field of simplex noise in a grid where you can see
   // the flow lines.
@@ -365,13 +227,13 @@ export default class FlowField extends Drawable {
     const particles = new ParticleSystem({
       no_particles,
       bounds: {x: width, y: height},
-      force_field: new ForceField(rows, cols, this.simplex, scale),
+      force_field: new SimplexField(rows, cols, this.simplex, scale),
       size: this.cm(0.02)
     });
 
     particles.init();
 
-    this.enqueue(new FlowGrid({
+    this.enqueue(new FieldGrid({
       alpha: 0.0001,
       width,
       height,
@@ -379,7 +241,6 @@ export default class FlowField extends Drawable {
       rotate: 0,
       cols,
       rows,
-      simplex: this.simplex,
       colours: opts.fgs,
       field: particles.force_field,
       t: 1
