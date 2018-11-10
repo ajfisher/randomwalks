@@ -10,11 +10,16 @@ export default class FieldGrid extends Actionable {
     const opts = options || {};
     super(opts);
 
-    this.cols = opts.cols;
-    this.rows = opts.rows;
+    if (typeof opts.field === 'undefined') {
+      throw new Error('field is required');
+    }
+    this.field = opts.field;
+
+    this.cols = this.field.cols;
+    this.rows = this.field.rows;
     this.cell_w = Math.round(this.width / this.cols);
     this.cell_h = Math.round(this.height / this.rows);
-    this.field = opts.field || [];
+
     this.bg = opts.bg;
     this.colours = opts.colours;
   }

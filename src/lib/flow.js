@@ -174,11 +174,13 @@ class ParticleUpdate extends Actionable {
 }
 
 export default class FlowField extends Drawable {
-  // flow field shows a field of simplex noise in a grid where you can see
-  // the flow lines.
+  // flow field drives a set of particles across a field of simplex noise
+  // arranged in a grid which will use some basic physics to manipulate their
+  // direction of travel. As they draw, this will result in visible flow lines
+  // across the field.
 
   constructor(options) {
-    // build a new flow field.
+    // build a new flow field container.
 
     const opts = options || {};
     opts.name = 'flowfield';
@@ -224,27 +226,29 @@ export default class FlowField extends Drawable {
     const scale = choose(scales)
     console.log(cell_nos, no_particles, scale);
 
+    const field = new SimplexField(rows, cols, this.simplex, scale);
+
     const particles = new ParticleSystem({
       no_particles,
       bounds: {x: width, y: height},
-      force_field: new SimplexField(rows, cols, this.simplex, scale),
+      force_field: field,
       size: this.cm(0.02)
     });
 
     particles.init();
 
+    /**
     this.enqueue(new FieldGrid({
-      alpha: 0.0001,
+      field,
+      alpha: 1.0,
       width,
       height,
       translate: { x: border, y: border },
       rotate: 0,
-      cols,
-      rows,
       colours: opts.fgs,
-      field: particles.force_field,
       t: 1
     }), opts.fgs[0]);
+    **/
 
     const iter = 1000;
     for (let i = 0; i < iter; i++) {
