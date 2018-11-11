@@ -3,6 +3,7 @@
 // web app.
 
 import CircleChord from './circles';
+import CircleField from './circle_field';
 import Concentrics from './concentrics';
 import DeformedQuads from './deformed_quads';
 import FlowField from './flow';
@@ -13,6 +14,7 @@ import Split from './splits';
 
 export default {
   CircleChord,
+  CircleField,
   Concentrics,
   DeformedQuads,
   FlowField,
