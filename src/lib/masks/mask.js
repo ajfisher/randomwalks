@@ -13,5 +13,8 @@ export default class Mask {
 
   clip(ctx) {
     // abstract interface for the mask drawing actions.
+    if (typeof(ctx) === 'undefined') {
+      throw new Error('Clip must take a context as an argument');
+    }
   }
 }

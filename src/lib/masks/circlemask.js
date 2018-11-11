@@ -17,6 +17,8 @@ export default class CircleMask extends Mask {
   }
 
   clip(ctx) {
+    super.clip(ctx);
+
     const xt = this.translate.x * this.width;
     const yt = this.translate.y * this.height;
 
