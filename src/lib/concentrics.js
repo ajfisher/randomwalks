@@ -7,6 +7,7 @@ import Drawable from './drawable';
 import { Actionable } from './actions';
 // import { SimplexField } from './fields';
 import { CircleMask } from './masks';
+import { CircleFrame } from './primatives';
 
 import { choose, rnd_range } from './utils/random';
 import { hsvts, rank_contrast } from './utils/draw';
@@ -144,30 +145,6 @@ class CircleFill extends Actionable {
   }
 }
 
-class Frame extends Actionable {
-  constructor(options) {
-    const opts = options || {};
-    super(opts);
-
-    this.radius = opts.radius || 0.4;
-    this.line_width = opts.line_width || 0.01;
-  }
-
-  draw(ctx, colour, ...rest) {
-    const {width, height, translate, radius, line_width} = this;
-
-    ctx.save();
-    ctx.lineWidth = line_width * width;
-    ctx.strokeStyle = hsvts(colour);
-    ctx.globalAlpha = this.alpha;
-    ctx.translate(translate.x*width, translate.y*height);
-    ctx.beginPath()
-    ctx.arc(0, 0, radius * width, 0, TAU);
-    ctx.stroke();
-    ctx.restore();
-  }
-}
-
 export default class Concentrics extends Drawable {
   // Concentrics creates a set of concentric rings that play across the
   // surface of a central circle that is a central mask.
@@ -262,7 +239,7 @@ export default class Concentrics extends Drawable {
     }), opts.fg);
     **/
 
-    this.enqueue(new Frame({
+    this.enqueue(new CircleFrame({
       alpha: 1.0,
       width, height,
       translate: { x: 0.5, y: 0.5 },

@@ -4,9 +4,11 @@
 
 import Block from './block';
 import Border from './border';
+import CircleFrame from './circle_frame';
 
 export {
   Block,
-  Border
+  Border,
+  CircleFrame
 };
 
