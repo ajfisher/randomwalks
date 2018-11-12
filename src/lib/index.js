@@ -10,6 +10,7 @@ import FlowField from './flow';
 import MaskedDots from './masked_dots';
 import Palette from './palette';
 import Scratch from './scratch';
+import SimplexBands from './simplex_bands';
 import Split from './splits';
 
 export default {
@@ -21,6 +22,7 @@ export default {
   MaskedDots,
   Palette,
   Scratch,
+  SimplexBands,
   Split
 };
 
