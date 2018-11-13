@@ -8,6 +8,7 @@ import Concentrics from './concentrics';
 import DeformedQuads from './deformed_quads';
 import FlowField from './flow';
 import MaskedDots from './masked_dots';
+import MultiBands from './multi_bands';
 import Palette from './palette';
 import Scratch from './scratch';
 import SimplexBands from './simplex_bands';
@@ -20,6 +21,7 @@ export default {
   DeformedQuads,
   FlowField,
   MaskedDots,
+  MultiBands,
   Palette,
   Scratch,
   SimplexBands,
