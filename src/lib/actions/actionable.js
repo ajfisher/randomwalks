@@ -30,7 +30,7 @@ export default class Actionable {
       const op = op_order[i];
 
       if (op === 'T') {
-        ctx.translate(this.translate.x, this.translate.y);
+        ctx.translate(this.translate.x * this.width, this.translate.y * this.height);
       } else if (op === 'R') {
         ctx.rotate(this.rotate * TAU);
       }
