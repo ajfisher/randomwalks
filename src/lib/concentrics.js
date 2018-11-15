@@ -65,7 +65,7 @@ class Circles extends Actionable {
   }
 }
 
-class ApplyGrain extends Actionable {
+export class ApplyGrain extends Actionable {
   constructor(options) {
     const opts = options || {};
     super(opts);
