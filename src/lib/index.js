@@ -7,6 +7,7 @@ import CircleField from './circle_field';
 import Concentrics from './concentrics';
 import DeformedQuads from './deformed_quads';
 import FlowField from './flow';
+import Grasses from './grasses';
 import MaskedDots from './masked_dots';
 import MultiBands from './multi_bands';
 import Palette from './palette';
@@ -20,6 +21,7 @@ export default {
   Concentrics,
   DeformedQuads,
   FlowField,
+  Grasses,
   MaskedDots,
   MultiBands,
   Palette,
