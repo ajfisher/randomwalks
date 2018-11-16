@@ -8,6 +8,7 @@ import Concentrics from './concentrics';
 import DeformedQuads from './deformed_quads';
 import FlowField from './flow';
 import Grasses from './grasses';
+import Lamps from './lamps';
 import MaskedDots from './masked_dots';
 import MultiBands from './multi_bands';
 import Palette from './palette';
@@ -23,6 +24,7 @@ export default {
   DeformedQuads,
   FlowField,
   Grasses,
+  Lamps,
   MaskedDots,
   MultiBands,
   Palette,
