@@ -12,7 +12,7 @@ import { rescale, rnd_range } from './utils';
 
 const TAU = Math.PI * 2;
 
-class Dots extends Actionable {
+export class Dots extends Actionable {
   // draws the dots to the canvas, with the mask
   constructor(options) {
     const opts = options || {};
@@ -21,23 +21,36 @@ class Dots extends Actionable {
 
     this.no_dots = opts.no || 10;
     this.post_mask_dots = opts.post_mask_dots || 0.02;
-    this.min = 0.001;
-    this.max = 0.006;
+    this.min = opts.min || 0.001;
+    this.max = opts.max || 0.006;
     this.centre = opts.centre || {x: 0.5, y: 0.5};
     this.tightness = opts.tightness || 0.2;
     this.tightness_x = opts.tightness_x || this.tightness;
     this.tightness_y = opts.tightness_y || this.tightness;
-    this.simplex = opts.simplex;
-    this.mask = opts.mask;
+    // this.simplex = opts.simplex;
+    this.mask = opts.mask || false;
+    this.direction = opts.direction || {x: Dots.ANY, y: Dots.ANY};
     this.over_dots = Math.floor(this.no_dots * this.post_mask_dots);
   }
 
   dot(ctx, colour, ...rest) {
     // gets a dot and draws it to the context
-    const {centre, min, max, scale} = this;
+    const {centre, direction, min, max, scale} = this;
 
-    const x = nrand(centre.x, this.tightness_x);
-    const y = nrand(centre.y, this.tightness_y);
+    let x = nrand(centre.x, this.tightness_x);
+    if (direction.x === Dots.LEFT && x > centre.x) {
+      x = centre.x - Math.abs(x);
+    } else if (direction.x === Dots.RIGHT && x < centre.x) {
+      x = centre.x + Math.abs(x);
+    }
+
+    let y = nrand(centre.y, this.tightness_y);
+    if (direction.y === Dots.UP && y > centre.y) {
+      y = centre.y; // - Math.abs(y);
+    } else if (direction.y === Dots.DOWN && y < centre.y) {
+      y = centre.y; // + Math.abs(y);
+    }
+
     const dot_size = rnd_range(min, max) * this.width;
 
     ctx.fillStyle = hsvts(colour);
@@ -57,18 +70,29 @@ class Dots extends Actionable {
 
     ctx.save();
     // TODO potentially use a soft mask on here.
-    this.mask.clip(ctx);
+    if (this.mask) {
+      this.mask.clip(ctx);
+    }
 
     for (let d = 0; d < this.no_dots - this.over_dots; d++) {
       this.dot(ctx, colour);
     }
-    ctx.restore();
+    if (this.mask) {
+      ctx.restore();
+    }
 
     for (let od = 0; od < this.over_dots; od++) {
       this.dot(ctx, colour);
     }
   }
 }
+
+// define some static vals
+Dots.ANY = 0;
+Dots.LEFT = -1;
+Dots.RIGHT = 1;
+Dots.UP = -1;
+Dots.Down = 1;
 
 export default class MaskedDots extends Drawable {
   // draws a bunch of dots masked by a poly
