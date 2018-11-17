@@ -129,6 +129,7 @@ export default class Scratch extends Drawable {
     pd_ctx.save();
     pd_ctx.strokeStyle = ctx.strokeStyle;
     pd_ctx.lineWidth = ctx.lineWidth;
+    pd_ctx.globalAlpha = 1.0;
     pd_ctx.beginPath();
     pd_ctx.moveTo(pts[0].x, pts[0].y);
     let i = 0;
@@ -147,6 +148,7 @@ export default class Scratch extends Drawable {
     pd_ctx.restore();
 
     // now merge back to the main canvas
+    ctx.globalAlpha = 1.0;
     ctx.drawImage(this.predraw, 0, 0);
   }
 }
