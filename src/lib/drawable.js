@@ -192,7 +192,7 @@ export default class Drawable extends EventEmitter {
 
     if (typeof(item.action.draw) != 'undefined') {
       // do a drawing action
-      item.action.draw(this.ctx, item.colour);
+      item.action.draw(this.ctx, item.colour, this.tx_ctx, this.pd_ctx);
     } else {
       // process the action in place.
     }
@@ -263,4 +263,7 @@ export default class Drawable extends EventEmitter {
   // takes a number of centimeters and gives an approximation of pixels
   // back.
   cm(v=1.0) { return Math.round(v * this.dpi / 2.54); }
+
+  // deals with clearing out canvases
+  clear(canv, ctx) { ctx.clearRect(0,0, canv.width, canv.height); }
 }
