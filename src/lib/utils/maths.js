@@ -56,6 +56,6 @@ export const range_map = (l=0, u=1, v=0.5, fn) => {
 export const rescale = (sl, sh, dl, dh, v) => {
   // takes a source range `sl` and `sh` and rescales `v` to the
   // destination range `dl` and `dh`
-  return ((v / (sh - sl)) * (dh-dl)) + dl;
+  return dl + ( ((v - sl) * (dh - dl)) / (sh - sl) )
 };
 
