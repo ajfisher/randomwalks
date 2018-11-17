@@ -56,6 +56,8 @@ const size = {
 const show_text = program.text || false;
 
 const canvas = new Canvas(size.w * size.dpi, size.h * size.dpi);
+const texture = new Canvas(size.w * size.dpi, size.h * size.dpi);
+const predraw = new Canvas(size.w * size.dpi, size.h * size.dpi);
 let drawing = null;
 
 // based on the dtype set in, compare it to the objects available and if
@@ -66,6 +68,8 @@ for (const key in Drawables) {
       drawing = new Drawables[key]({
         palettes: palettes_hsv,
         canvas,
+        texture,
+        predraw,
         show_text
       });
       output_dir = output_dir + drawing.name;

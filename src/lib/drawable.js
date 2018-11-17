@@ -26,6 +26,8 @@ export default class Drawable extends EventEmitter {
 
     this.name = opts.name || '';
     this.canvas = opts.canvas;
+    this.texture = opts.texture || false;
+    this.predraw = opts.predraw || false;
     this.palettes = opts.palettes;
     this.border = opts.border || 0;
 
@@ -53,6 +55,13 @@ export default class Drawable extends EventEmitter {
     const opts = options || {};
 
     this.ctx = this.canvas.getContext('2d');
+    // get the texture / noise canvas
+    if (this.texture) {
+      this.tx_ctx = this.texture.getContext('2d');
+    }
+    if (this.predraw) {
+      this.pd_ctx = this.predraw.getContext('2d');
+    }
 
     const palette = this.palette;
     this.bg = opts.bg || palette[0];
@@ -100,11 +109,26 @@ export default class Drawable extends EventEmitter {
     this.canvas.height = this.height * this.dpi;
     this.canvas.width = this.width * this.dpi;
 
+    if (this.texture) {
+      this.texture.height = this.canvas.height;
+      this.texture.width = this.canvas.width;
+    }
+
+    if (this.predraw) {
+      this.predraw.height = this.canvas.height;
+      this.predraw.width = this.canvas.width;
+    }
+
     if (typeof(this.canvas.style) != 'undefined') {
       // account for this with scale factors in browser
       this.scale_factor = 2.0;
       this.canvas.style.height = (this.canvas.height / this.scale_factor) + 'px';
       this.canvas.style.width = (this.canvas.height / this.scale_factor) + 'px';
+
+      this.texture.style.height = (this.texture.height / this.scale_factor) + 'px';
+      this.texture.style.width = (this.texture.height / this.scale_factor) + 'px';
+      this.predraw.style.height = (this.predraw.height / this.scale_factor) + 'px';
+      this.predraw.style.width = (this.predraw.height / this.scale_factor) + 'px';
     }
 
     this._border = this.w(this.border); // pixel value of the border.

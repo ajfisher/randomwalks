@@ -14,6 +14,8 @@ import Drawables from './lib';
 import { convert } from './lib/utils.js';
 
 let Canvas = null;
+let Texture = null;
+let Predraw = null;
 let random_lines = null;
 let random_arcs = null;
 let sand_lines = null;
@@ -25,6 +27,8 @@ function init() {
   const palettes_hsv = convert(palettes);
 
   Canvas = document.getElementById('canv');
+  Texture = document.getElementById('texture');
+  Predraw = document.getElementById('predraw');
 
   console.log('initialising');
 
@@ -60,6 +64,8 @@ function init() {
       console.log(key);
       const drawable = new Drawables[key]({
         canvas: Canvas,
+        texture: Texture,
+        predraw: Predraw,
         palettes: palettes_hsv
       });
 
