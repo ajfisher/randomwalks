@@ -12,6 +12,7 @@ import Lamps from './lamps';
 import MaskedDots from './masked_dots';
 import MultiBands from './multi_bands';
 import Palette from './palette';
+import Rings from './rings';
 import Scratch from './scratch';
 import SimplexBands from './simplex_bands';
 import Split from './splits';
@@ -28,6 +29,7 @@ export default {
   MaskedDots,
   MultiBands,
   Palette,
+  Rings,
   Scratch,
   SimplexBands,
   Split,
