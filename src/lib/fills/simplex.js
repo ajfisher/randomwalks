@@ -19,7 +19,7 @@ export default class SimplexFill extends Fillable {
     this.steps = opts.steps || 256;
   }
 
-  fill(ctx, colour, ...rest) {
+  fill(ctx, colour=[0,0,0], ...rest) {
     // fills the location with simplex noise from 0 -> width and 0-> height
 
     const {width, height, scale, steps, translate } = this;
