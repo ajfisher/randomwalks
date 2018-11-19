@@ -17,6 +17,7 @@ import Scratch from './scratch';
 import SimplexBands from './simplex_bands';
 import Split from './splits';
 import Topography from './topo.js';
+import Trees from './trees.js';
 
 export default {
   CircleChord,
@@ -33,6 +34,7 @@ export default {
   Scratch,
   SimplexBands,
   Split,
-  Topography
+  Topography,
+  Trees
 };
 
