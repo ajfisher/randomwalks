@@ -5,6 +5,7 @@
 import CircleChord from './circles';
 import CircleField from './circle_field';
 import Concentrics from './concentrics';
+import Curves from './curves';
 import DeformedQuads from './deformed_quads';
 import FlowField from './flow';
 import Grasses from './grasses';
@@ -24,6 +25,7 @@ export default {
   CircleChord,
   CircleField,
   Concentrics,
+  Curves,
   DeformedQuads,
   FlowField,
   Grasses,
