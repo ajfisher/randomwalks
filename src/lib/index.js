@@ -9,6 +9,7 @@ import DeformedQuads from './deformed_quads';
 import FlowField from './flow';
 import Grasses from './grasses';
 import Lamps from './lamps';
+import LineSubdivision from './line_subdivision';
 import MaskedDots from './masked_dots';
 import MultiBands from './multi_bands';
 import Palette from './palette';
@@ -27,6 +28,7 @@ export default {
   FlowField,
   Grasses,
   Lamps,
+  LineSubdivision,
   MaskedDots,
   MultiBands,
   Palette,
