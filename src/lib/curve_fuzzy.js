@@ -33,90 +33,130 @@ class CurvePass extends Actionable {
 
     ctx.save();
     ctx.lineWidth = this.line_width * width;
-    ctx.globalAlpha = this.alpha;
+    // ctx.globalAlpha = this.alpha;
     ctx.strokeStyle = hsvts(colour);
     ctx.fillStyle = hsvts(colour);
 
     const no_dots = 20;
     const degree = 3;
     const no_knots = pts.length + degree + 1;
-    console.log(no_knots);
-    let knots = [];
-    const knots = [0,0,0,1,2,2,2];
+    const knots = [];
+
+    for (let k = 0; k < no_knots; k++) {
+      if (k < degree + 1) {
+        knots.push(0);
+      } else if (k >= pts.length - (degree + 1) ) {
+        knots.push(2);
+      } else {
+        knots.push(1);
+      }
+    }
     const curve_pts = [];
 
-    curve_pts.push(bspline(0, degree, pts, knots));
-    let no_points = 1; // use this to keep track of how many joints we have
+    let no_points = 0; // use this to keep track of how many joints we have
 
-    const interval = 0.01;
-    const y_sd = this.tightness;
-    for (let t = interval; t < 1.0; t = t + interval) {
+    const interval = 0.0005;
+    for (let t = 0; t < 1; t = t + interval) {
       // iterate over the curves together and get the points relevant for
       // each interval set
-      const curr_pt = bspline(t, degree, pts, knots);
-      curve_pts.push(curr_pt);
+      curve_pts.push(bspline(t, degree, pts, knots));
       no_points = no_points + 1;
     }
+    // add the last point for t=1.0
+    curve_pts.push(bspline(1.0, degree, pts, knots));
+    no_points = no_points + 1;
 
+    const miny = rnd_range(0.03, 0.05);
+    const maxy = rnd_range(0.055, 0.07);
+    const gap = rnd_range(0.003, 0.007);
+    const rs = 0.3;
+    const ps = (1 / no_points) * 0.1;
+    const split_pt = rnd_range(0.72, 1.1);
+
+    ctx.globalAlpha = 0.30;
+    ctx.strokeStyle = hsvts(colour);
     for (let p = 1; p < no_points; p++) {
       // get the angle made by the line from the last point to the current point
       const xd = (curve_pts[p][0] - curve_pts[p-1][0]);
       const yd = (curve_pts[p][1] - curve_pts[p-1][1]);
       const r = Math.atan2(xd, yd);
 
+      const xd2 = (curve_pts[p-1][0] - curve_pts[p][0]);
+      const yd2 = (curve_pts[p-1][1] - curve_pts[p][1]);
+      const r2 = Math.atan2(xd2, yd2);
+
+      if (p < split_pt * no_points) {
+        ctx.strokeStyle = hsvts(this.colours[2]);
+      } else {
+        ctx.strokeStyle = hsvts(colour);
+      }
       // move to the current point, rotate the canvas and then draw a line
       // perpendicular to the curve
       ctx.save();
+
+      const perc = p / no_points;
+
+      const x = 0; // Math.random() * -(0.5 * Math.abs(xd));
+      const y = rnd_range(miny, maxy) * perc; // nrand(0, y_sd);
+
+      // draw one leg
+      ctx.save();
       ctx.translate(curve_pts[p][0] * width, curve_pts[p][1] * height);
       // jitter the rotation
-      const noiser = this.simplex.noise2D(r, p/1000);
-      // ctx.rotate(r * noiser);
-      ctx.rotate(r);
+      const noiser = this.simplex.noise2D(r * rs, p * ps);
+      ctx.rotate(r * noiser);
 
-      ctx.globalAlpha = 1.0;
-      const x = 0; // Math.random() * -(Math.abs(xd));
-      const y = nrand(0, y_sd);
-      ctx.moveTo(x * width, 0);
+      ctx.beginPath();
+      ctx.moveTo(x * width, gap * perc * height);
       ctx.lineTo(x * width, y * height);
       ctx.stroke();
+      ctx.restore();
 
-      /**
+      // now draw the other
+      ctx.save();
+      ctx.translate(curve_pts[p][0] * width, curve_pts[p][1] * height);
+      // jitter the rotation
+      const noiser2 = this.simplex.noise2D(r2 * rs, p * ps);
+      ctx.rotate((r2 * noiser2) + (0.5 * TAU));
+
       ctx.beginPath();
-      for (let d = 0; d < no_dots; d++) {
-        // use nrand to plot a bunch of dots
-        const x = Math.random() * -(Math.abs(xd));
-        const y = nrand(0, y_sd);
-        const noisex = this.simplex.noise2D(x, d);
-        const noisey = this.simplex.noise2D(y, d);
-
-        // choose colour
-        let c = this.colours[0];
-        if (y < y_sd ) {
-          c = this.colours[1];
-        } if (y > y_sd) {
-          c = this.colours[2];
-        }
-
-        const ds = this.dot_size * width;
-        ctx.moveTo(x * width, y * height);
-
-        ctx.fillStyle = hsvts(c);
-        ctx.arc(x * width, y* height, ds, 0, TAU);
-      }
-      ctx.fill();
-      **/
+      ctx.moveTo(x * width, gap * perc * height);
+      ctx.lineTo(x * width, y * height);
+      ctx.stroke();
+      ctx.restore();
 
       ctx.restore();
     }
 
-    ctx.globalAlpha = 1.0; // 0.5 * this.alpha;
-    ctx.lineWidth = 0.005 * width;
+    // draw curve
+    ctx.lineCaps = 'round';
+    ctx.globalAlpha = 0.05;
+    ctx.strokeStyle = hsvts(this.colours[2]);
+    ctx.lineWidth = rnd_range(0.005, 0.015) * width;
     ctx.beginPath();
     for (let p = 1; p < no_points; p++) {
       ctx.moveTo(curve_pts[p-1][0] * width, curve_pts[p-1][1] * height);
       ctx.lineTo(curve_pts[p][0] * width, curve_pts[p][1] * height);
     }
     ctx.stroke();
+
+    /**
+    // draw points
+    for (let cp = 0; cp < pts.length; cp++) {
+      if (cp == 0) {
+        ctx.fillStyle = hsvts(this.colours[1]);
+      } else {
+        ctx.fillStyle = hsvts(this.colours[2]);
+      }
+
+      ctx.beginPath();
+      const x = pts[cp][0];
+      const y = pts[cp][1];
+      ctx.moveTo(x * width, y * height);
+      ctx.arc(x * width, y * height, 10, 0, TAU);
+      ctx.fill();
+    }
+    **/
     ctx.restore();
   }
 }
@@ -162,7 +202,7 @@ export default class FuzzyCurve extends Drawable {
 
     this.simplex = new SimplexNoise();
 
-    const no_points = rnd_range(4, 15);
+    const no_points = 8; // rnd_range(4, 15);
     const passes = 1; // rnd_range(20, 30);
     const tightness = rnd_range(0.18, 0.22);
     const points = [];
