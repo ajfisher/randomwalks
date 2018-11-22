@@ -9,6 +9,7 @@ import Connected from './connected';
 import Curves from './curves';
 import DeformedQuads from './deformed_quads';
 import FlowField from './flow';
+import FuzzyCurve from './curve_fuzzy';
 import Grasses from './grasses';
 import Lamps from './lamps';
 import LineSubdivision from './line_subdivision';
@@ -30,6 +31,7 @@ export default {
   Curves,
   DeformedQuads,
   FlowField,
+  FuzzyCurve,
   Grasses,
   Lamps,
   LineSubdivision,
