@@ -16,6 +16,7 @@ import LineSubdivision from './line_subdivision';
 import MaskedDots from './masked_dots';
 import MultiBands from './multi_bands';
 import Palette from './palette';
+import Path from './path';
 import Rings from './rings';
 import Scratch from './scratch';
 import SimplexBands from './simplex_bands';
@@ -38,6 +39,7 @@ export default {
   MaskedDots,
   MultiBands,
   Palette,
+  Path,
   Rings,
   Scratch,
   SimplexBands,
