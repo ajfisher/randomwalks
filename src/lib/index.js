@@ -4,6 +4,7 @@
 
 import CircleChord from './circles';
 import CircleField from './circle_field';
+import ChaikinPoly from './chaikin_poly';
 import Concentrics from './concentrics';
 import Connected from './connected';
 import Curves from './curves';
@@ -27,6 +28,7 @@ import Trees from './trees.js';
 export default {
   CircleChord,
   CircleField,
+  ChaikinPoly,
   Concentrics,
   Connected,
   Curves,
