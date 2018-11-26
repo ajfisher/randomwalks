@@ -5,6 +5,7 @@
 import CircleChord from './circles';
 import CircleField from './circle_field';
 import ChaikinPoly from './chaikin_poly';
+import ChaikinPolyDots from './chaikin_dots';
 import Concentrics from './concentrics';
 import Connected from './connected';
 import Curves from './curves';
@@ -29,6 +30,7 @@ export default {
   CircleChord,
   CircleField,
   ChaikinPoly,
+  ChaikinPolyDots,
   Concentrics,
   Connected,
   Curves,
