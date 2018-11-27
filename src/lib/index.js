@@ -19,6 +19,7 @@ import MaskedDots from './masked_dots';
 import MultiBands from './multi_bands';
 import Palette from './palette';
 import Path from './path';
+import PolyConnections from './poly_connections';
 import Rings from './rings';
 import Scratch from './scratch';
 import SimplexBands from './simplex_bands';
@@ -44,6 +45,7 @@ export default {
   MultiBands,
   Palette,
   Path,
+  PolyConnections,
   Rings,
   Scratch,
   SimplexBands,
