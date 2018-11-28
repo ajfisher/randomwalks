@@ -13,6 +13,7 @@ import DeformedQuads from './deformed_quads';
 import FlowField from './flow';
 import FuzzyCurve from './curve_fuzzy';
 import Grasses from './grasses';
+import GrafGeometry from './graf';
 import Lamps from './lamps';
 import LineSubdivision from './line_subdivision';
 import MaskedDots from './masked_dots';
@@ -24,6 +25,7 @@ import Rings from './rings';
 import Scratch from './scratch';
 import SimplexBands from './simplex_bands';
 import Split from './splits';
+import Tendrils from './tendrils.js';
 import Topography from './topo.js';
 import Trees from './trees.js';
 
@@ -39,6 +41,7 @@ export default {
   FlowField,
   FuzzyCurve,
   Grasses,
+  GrafGeometry,
   Lamps,
   LineSubdivision,
   MaskedDots,
@@ -50,7 +53,7 @@ export default {
   Scratch,
   SimplexBands,
   Split,
+  Tendrils,
   Topography,
   Trees
 };
-
