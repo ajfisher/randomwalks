@@ -18,6 +18,7 @@ import Lamps from './lamps';
 import LineSubdivision from './line_subdivision';
 import MaskedDots from './masked_dots';
 import MultiBands from './multi_bands';
+import NoiseBands from './noise_bands';
 import Palette from './palette';
 import Path from './path';
 import PolyConnections from './poly_connections';
@@ -46,6 +47,7 @@ export default {
   LineSubdivision,
   MaskedDots,
   MultiBands,
+  NoiseBands,
   Palette,
   Path,
   PolyConnections,
