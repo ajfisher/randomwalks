@@ -22,6 +22,7 @@ import NoiseBands from './noise_bands';
 import Palette from './palette';
 import Path from './path';
 import PolyConnections from './poly_connections';
+import PolyLinks from './poly_links';
 import Rings from './rings';
 import Scratch from './scratch';
 import SimplexBands from './simplex_bands';
@@ -51,6 +52,7 @@ export default {
   Palette,
   Path,
   PolyConnections,
+  PolyLinks,
   Rings,
   Scratch,
   SimplexBands,
