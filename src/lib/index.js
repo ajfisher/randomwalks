@@ -14,6 +14,7 @@ import FlowField from './flow';
 import FuzzyCurve from './curve_fuzzy';
 import Grasses from './grasses';
 import GrafGeometry from './graf';
+import Intersections from './intersections';
 import Lamps from './lamps';
 import LineSubdivision from './line_subdivision';
 import MaskedDots from './masked_dots';
@@ -44,6 +45,7 @@ export default {
   FuzzyCurve,
   Grasses,
   GrafGeometry,
+  Intersections,
   Lamps,
   LineSubdivision,
   MaskedDots,
