@@ -38,6 +38,7 @@ class Circle {
 
   update(t, mv, scale) {
     // this process updates the positions of all the points in the circle
+    const { x, y} = this;
 
     const s = scale;
 
@@ -46,8 +47,8 @@ class Circle {
     for (let p = 0; p < this.points.length; p++) {
       const pt = this.points[p];
 
-      const xnoise = this.simplex.noise2D(pt.x * s, t * s);
-      const ynoise = this.simplex.noise2D(pt.y * s, t * s);
+      const xnoise = this.simplex.noise2D((x + pt.x) * s, t * s);
+      const ynoise = this.simplex.noise2D((y + pt.y) * s, t * s);
 
       pt.x = pt.x + (xnoise * mv * this.pass_perc);
       pt.y = pt.y + (ynoise * mv * this.pass_perc);
@@ -74,6 +75,7 @@ class Pass extends Actionable {
     this.fill = opts.fill || 0.5;
     this.scale = opts.scale || 1.0;
     this.no_dots = opts.no_dots || 10;
+    this.pass_perc = opts.pass_perc || 1.0;
   }
 
   draw(ctx, colour, ...rest) {
@@ -84,6 +86,7 @@ class Pass extends Actionable {
     super.draw(ctx);
 
     ctx.save();
+    ctx.globalAlpha = this.alpha * this.pass_perc;
     ctx.lineWidth = this.dot_size * width;
     ctx.strokeStyle = hsvts(colour);
     ctx.fillStyle = hsvts(colour);
@@ -115,7 +118,7 @@ class Pass extends Actionable {
         const dy = p1.y + (pdy * dt);
 
         ctx.beginPath();
-        ctx.arc(dx * width, dy * height, dot_size * width, 0, TAU);
+        ctx.arc(dx * width, dy * height, dot_size * width * this.pass_perc, 0, TAU);
         ctx.fill();
       }
     }
@@ -166,16 +169,17 @@ export default class CircleWaves extends Drawable {
 
     this.simplex = new SimplexNoise();
 
-    const no_circles = rnd_range(1, 5);
+    const no_circles = rnd_range(1, 7);
     const circles = [];
-    const passes = 300; // rnd_range(100, 200);
-    const alpha = 0.02;
+    const passes = rnd_range(300, 400);
+    const alpha = 0.04;
     const dot_size = 0.001;
     const fill = 0.1; // rnd_range(0.01, 0.01);
-    const mv = 0.008; // rnd_range(0.02, 0.07);
-    const scale = 1.9; // rnd_range(0.05, 1.9);
+    const mv = rnd_range(0.004, 0.007);
+    const scale = rnd_range(0.8, 7.2);
+    const no_colours = rnd_range(1, opts.fgs.length - 1);
 
-    console.log(no_circles, passes, scale);
+    console.log(no_circles, passes, scale, mv, no_colours);
 
     // create some initial starting locations for the circles
     for (let c = 0; c < no_circles; c++) {
@@ -201,11 +205,10 @@ export default class CircleWaves extends Drawable {
           translate: circles[c],
           dot_size, fill, mv,
           simplex: this.simplex,
-          colours: opts.fgs,
           scale: (i+1) / passes * scale,
-          pass_perc: 1, // i / passes,
+          pass_perc: (i + 1) / passes,
           t: i
-        }), opts.fgs[c % (no_circles-1)]);
+        }), opts.fgs[c % no_colours]);
       }
     }
 
