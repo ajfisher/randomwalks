@@ -176,7 +176,7 @@ export default class CircleWaves extends Drawable {
     const dot_size = 0.001;
     const fill = 0.1; // rnd_range(0.01, 0.01);
     const mv = rnd_range(0.004, 0.007);
-    const scale = rnd_range(0.8, 7.2);
+    const scale = rnd_range(0.8, 5.2);
     const no_colours = rnd_range(1, opts.fgs.length - 1);
 
     console.log(no_circles, passes, scale, mv, no_colours);
