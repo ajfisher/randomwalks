@@ -4,6 +4,7 @@
 
 import CircleChord from './circles';
 import CircleField from './circle_field';
+import CircleWaves from './circle_waves';
 import ChaikinPoly from './chaikin_poly';
 import ChaikinPolyDots from './chaikin_dots';
 import Concentrics from './concentrics';
@@ -28,13 +29,14 @@ import Rings from './rings';
 import Scratch from './scratch';
 import SimplexBands from './simplex_bands';
 import Split from './splits';
-import Tendrils from './tendrils.js';
+// import Tendrils from './tendrils.js';
 import Topography from './topo.js';
 import Trees from './trees.js';
 
 export default {
   CircleChord,
   CircleField,
+  CircleWaves,
   ChaikinPoly,
   ChaikinPolyDots,
   Concentrics,
@@ -59,7 +61,7 @@ export default {
   Scratch,
   SimplexBands,
   Split,
-  Tendrils,
+  //  Tendrils,
   Topography,
   Trees
 };
