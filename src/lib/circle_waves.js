@@ -36,10 +36,10 @@ class Circle {
     }
   }
 
-  update(t, mv) {
+  update(t, mv, scale) {
     // this process updates the positions of all the points in the circle
 
-    const s = this.scale;
+    const s = scale;
 
     // this.points = [];
 
@@ -79,7 +79,7 @@ class Pass extends Actionable {
   draw(ctx, colour, ...rest) {
     // draw the line
 
-    const { width, height, circle, mv, dot_size, fill, scale: s, no_dots } = this;
+    const { width, height, circle, mv, dot_size, fill, scale: s } = this;
     const { x: cx, y: cy } = this.translate;
     super.draw(ctx);
 
@@ -88,6 +88,7 @@ class Pass extends Actionable {
     ctx.strokeStyle = hsvts(colour);
     ctx.fillStyle = hsvts(colour);
 
+    circle.update(this.t, mv, this.scale)
     /**
     // draw line boundary of the circle as points
     for (let p = 0; p < circle.points.length; p++) {
@@ -97,51 +98,28 @@ class Pass extends Actionable {
       ctx.fill();
     }
     **/
-    circle.update(this.t, mv)
-    ctx.beginPath();
+    const no_dots = 10;
+    // ctx.beginPath();
     for (let p = 0; p < circle.points.length; p++) {
       const p1 = (p == 0) ? circle.points[circle.points.length - 1] : circle.points[p-1];
       const p2 = circle.points[p];
 
-      ctx.moveTo(p1.x * width, p1.y * height);
-      ctx.lineTo(p2.x * width, p2.y * height);
-    }
-    ctx.stroke();
-
-    /**
-    // jitter the radius.
-    const rnoise = this.simplex.noise2D(circle.r, this.t * s);
-    const r = circle.r + (rnoise * this.mv);
-    // const r = circle.r;
-
-    // account for changing sizes of circles.
-    const circum = TAU * r;
-
-    // get random points on the perimeter of the circle and plot them in.
-    for (let p = 0; p < circle.focii.length; p++) {
-      // jump to a new point.
-      // if (Math.random() < fill / 10) {
-      const t = circle.focii[p];
-      // }
+      // ctx.moveTo(p1.x * width, p1.y * height);
+      // ctx.lineTo(p2.x * width, p2.y * height);
+      const pdx = p2.x - p1.x;
+      const pdy = p2.y - p1.y;
 
       for (let d = 0; d < no_dots; d++) {
-        // get the starting point
-        let x = Math.cos(t * TAU) * r;
-        let y = Math.sin(t * TAU) * r;
-
-        // now jitter the x,y near to the point we want to focus on.
-        const xnoise = this.simplex.noise2D(x * s, this.t * s);
-        const ynoise = this.simplex.noise2D(y * s, this.t * s);
-
-        x = x + (xnoise * mv);
-        y = y + (ynoise * mv);
+        const dt = d / no_dots;
+        const dx = p1.x + (pdx * dt);
+        const dy = p1.y + (pdy * dt);
 
         ctx.beginPath();
-        ctx.arc(x * width, y * height, dot_size * width, 0, TAU);
+        ctx.arc(dx * width, dy * height, dot_size * width, 0, TAU);
         ctx.fill();
       }
     }
-    **/
+    // ctx.stroke();
 
     ctx.restore();
   }
@@ -188,30 +166,27 @@ export default class CircleWaves extends Drawable {
 
     this.simplex = new SimplexNoise();
 
-    const no_circles = 4; // rnd_range(3, 8);
+    const no_circles = rnd_range(1, 5);
     const circles = [];
-    const passes = 100; // rnd_range(100, 200);
-    const alpha = 0.1;
+    const passes = 300; // rnd_range(100, 200);
+    const alpha = 0.02;
     const dot_size = 0.001;
     const fill = 0.1; // rnd_range(0.01, 0.01);
-    const mv = 0.01; // rnd_range(0.02, 0.07);
-    const scale = 0.5; // rnd_range(0.035, 0.05);
-    const no_dots = 1;
+    const mv = 0.008; // rnd_range(0.02, 0.07);
+    const scale = 1.9; // rnd_range(0.05, 1.9);
 
     console.log(no_circles, passes, scale);
 
     // create some initial starting locations for the circles
     for (let c = 0; c < no_circles; c++) {
       circles.push(new Circle({
-        x: rnd_range(0.4, 0.6),
-        y: rnd_range(0.4, 0.6),
-        r: rnd_range(0.05, 0.33),
+        x: rnd_range(0.2, 0.8),
+        y: rnd_range(0.2, 0.8),
+        r: rnd_range(0.1, 0.3),
         fill, scale,
         simplex: this.simplex
       }));
     }
-
-    console.log(circles);
 
     for (let i = 0; i < passes; i++) {
       // do an iteration of the whole frame
@@ -227,9 +202,9 @@ export default class CircleWaves extends Drawable {
           dot_size, fill, mv,
           simplex: this.simplex,
           colours: opts.fgs,
-          scale, no_dots,
-          pass_perc: i / passes,
-          t: (i+1) * (c+1) * scale
+          scale: (i+1) / passes * scale,
+          pass_perc: 1, // i / passes,
+          t: i
         }), opts.fgs[c % (no_circles-1)]);
       }
     }
