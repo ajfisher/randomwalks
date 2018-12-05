@@ -29,6 +29,7 @@ import Rings from './rings';
 import Scratch from './scratch';
 import SimplexBands from './simplex_bands';
 import Split from './splits';
+import Subdivision from './subdivision';
 // import Tendrils from './tendrils.js';
 import Tiles from './tiles';
 import Topography from './topo.js';
@@ -62,6 +63,7 @@ export default {
   Scratch,
   SimplexBands,
   Split,
+  Subdivision,
   //  Tendrils,
   Tiles,
   Topography,
