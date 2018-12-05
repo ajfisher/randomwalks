@@ -30,6 +30,7 @@ import Scratch from './scratch';
 import SimplexBands from './simplex_bands';
 import Split from './splits';
 // import Tendrils from './tendrils.js';
+import Tiles from './tiles';
 import Topography from './topo.js';
 import Trees from './trees.js';
 
@@ -62,6 +63,7 @@ export default {
   SimplexBands,
   Split,
   //  Tendrils,
+  Tiles,
   Topography,
   Trees
 };
