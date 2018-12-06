@@ -17,6 +17,7 @@ import Grasses from './grasses';
 import GrafGeometry from './graf';
 import Intersections from './intersections';
 import Lamps from './lamps';
+import LightGrass from './lightgrass';
 import LineSubdivision from './line_subdivision';
 import MaskedDots from './masked_dots';
 import MultiBands from './multi_bands';
@@ -51,6 +52,7 @@ export default {
   GrafGeometry,
   Intersections,
   Lamps,
+  LightGrass,
   LineSubdivision,
   MaskedDots,
   MultiBands,
