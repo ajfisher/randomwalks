@@ -100,14 +100,14 @@ export default class Drawable extends EventEmitter {
     Math.seedrandom(this.seed);
 
     // get the size to make the image
-    const {w, h, dpi} = opts.size || { w: 6.5, h: 6.5, dpi: 220};
+    const {w, h, dpi, border, border_cm} = opts.size ||
+      { w: 6.5, h: 6.5, dpi: 220, border: 0, border_cm: undefined};
     this.width = w;
     this.height = h;
     this.dpi = dpi;
     this.scale_factor = 1.0;
-    this.border = opts.size.border || this.border;
-    this.border_cm = opts.size.border_cm || undefined;
-
+    this.border = border || this.border;
+    this.border_cm = border_cm || undefined;
 
     // deal with different DPIs
     this.canvas.height = this.height * this.dpi;
@@ -136,12 +136,10 @@ export default class Drawable extends EventEmitter {
     }
 
     if (typeof(this.border) != 'undefined') {
-      console.log('using border');
       this._border = this.w(this.border); // pixel value of the border width.
     }
 
     if (typeof(this.border_cm) != 'undefined') {
-      console.log(`cm border would be ${this.cm(this.border_cm)}`);
       this._border = this.cm(this.border_cm); // pixel value of border width;
     }
 
