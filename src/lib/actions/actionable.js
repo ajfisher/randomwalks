@@ -12,7 +12,7 @@ export default class Actionable {
     // of each of the actions.
     const opts = options || {};
     this.height = opts.height || 100;
-    this.width = opts.height || 100;
+    this.width = opts.width || 100;
     this.alpha = opts.alpha || 0.5;
     this.translate = opts.translate || { x: 0, y:0 };
     this.rotate = opts.rotate || 0;
