@@ -87,6 +87,7 @@ export default class Drawable extends EventEmitter {
     // `size` is an object with `w`, `h` and `dpi` where
     // `w` and `h` are inches
     // `border` is the proportion of the canvas to be given as a border.
+    // `border_cm` is an actual amount of the canvas to be used as the border
 
     const opts = options || {};
 
@@ -104,6 +105,9 @@ export default class Drawable extends EventEmitter {
     this.height = h;
     this.dpi = dpi;
     this.scale_factor = 1.0;
+    this.border = opts.size.border || this.border;
+    this.border_cm = opts.size.border_cm || undefined;
+
 
     // deal with different DPIs
     this.canvas.height = this.height * this.dpi;
@@ -131,7 +135,15 @@ export default class Drawable extends EventEmitter {
       this.predraw.style.width = (this.predraw.width / this.scale_factor) + 'px';
     }
 
-    this._border = this.w(this.border); // pixel value of the border.
+    if (typeof(this.border) != 'undefined') {
+      console.log('using border');
+      this._border = this.w(this.border); // pixel value of the border width.
+    }
+
+    if (typeof(this.border_cm) != 'undefined') {
+      console.log(`cm border would be ${this.cm(this.border_cm)}`);
+      this._border = this.cm(this.border_cm); // pixel value of border width;
+    }
 
     // sort out the palettes
     this.palette = arrayShuffle(this.palettes)[0];
@@ -155,15 +167,15 @@ export default class Drawable extends EventEmitter {
     }
 
     this.ctx.save();
-    if (this.border > 0) {
+    if (this._border > 0) {
       // create clipping path for the border
-      const { border, _border } = this;
+      const { _border } = this;
 
       // note that it's possible to add additional clipping points in here
       // this is very handy. The default is to apply a border to the outside
       // of the image. But others are possible.
       this.ctx.beginPath()
-      this.ctx.rect(_border, _border, this.w(1.0-2*border), this.h(1.0-2*border));
+      this.ctx.rect(_border, _border, this.w()-2*_border, this.h()-2*_border);
       this.ctx.clip();
       /** leaving all of this in here because it's super useful.
       const ctx = this.ctx;
