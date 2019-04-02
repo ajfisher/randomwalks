@@ -123,12 +123,12 @@ export default class Drawable extends EventEmitter {
       // account for this with scale factors in browser
       this.scale_factor = 2.0;
       this.canvas.style.height = (this.canvas.height / this.scale_factor) + 'px';
-      this.canvas.style.width = (this.canvas.height / this.scale_factor) + 'px';
+      this.canvas.style.width = (this.canvas.width / this.scale_factor) + 'px';
 
       this.texture.style.height = (this.texture.height / this.scale_factor) + 'px';
-      this.texture.style.width = (this.texture.height / this.scale_factor) + 'px';
+      this.texture.style.width = (this.texture.width / this.scale_factor) + 'px';
       this.predraw.style.height = (this.predraw.height / this.scale_factor) + 'px';
-      this.predraw.style.width = (this.predraw.height / this.scale_factor) + 'px';
+      this.predraw.style.width = (this.predraw.width / this.scale_factor) + 'px';
     }
 
     this._border = this.w(this.border); // pixel value of the border.
