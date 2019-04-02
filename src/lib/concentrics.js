@@ -85,6 +85,11 @@ export class ApplyGrain extends Actionable {
       this.mask.clip(ctx);
     }
 
+    let ar_size = width;
+    if (width > height) {
+      ar_size = height;
+    }
+
     ctx.save();
     ctx.globalAlpha = this.alpha;
 
@@ -99,8 +104,8 @@ export class ApplyGrain extends Actionable {
       // find a location for the dot.
       const x = Math.random() * width * 0.98;
       const y = Math.random() * height * 0.98;
-      const r = rnd_range(0.5 * min, 0.5 * max) * width;
-      const w = rnd_range(min, max) * width;
+      const r = rnd_range(0.5 * min, 0.5 * max) * ar_size;
+      const w = rnd_range(min, max) * ar_size;
       const rot = Math.random() * TAU;
 
 
