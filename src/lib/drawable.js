@@ -212,6 +212,7 @@ export default class Drawable extends EventEmitter {
       if (typeof(window) !== 'undefined') {
         window.requestAnimationFrame(() => this.process());
       } else {
+        console.log('processing frame: ' + this.draw_queue.length);
         setTimeout((o) => {
           o.process();
         }, 1, this);
