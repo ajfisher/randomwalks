@@ -41,6 +41,7 @@ program
   .option('--dpi <n>', 'Dots per inch for scaling', parseInt)
   .option('-n, --no <n>', 'Number of images to produce', parseInt)
   .option('--no-text', 'Remove text from the bottom of the image')
+  .option('--bordercm <n>', 'Amount of border to apply in cm', parseFloat)
   .parse(process.argv);
 
 let seed = program.seed || undefined;
@@ -50,7 +51,8 @@ const no = program.no || 1;
 const size = {
   w: program.width || 6.5,
   h: program.height || 6.5,
-  dpi: program.dpi || 220
+  dpi: program.dpi || 220,
+  border_cm: program.bordercm || undefined
 };
 
 const show_text = program.text || false;
@@ -98,6 +100,7 @@ for (let d = 0; d < no; d++) {
   // now do a drawing
   if (no > 1) { seed = null }
 
+  console.log(`about to draw: ${seed} of type ${dtype}`);
   drawing.draw(seed, {size });
 
   drawing.on('completed', () => {
