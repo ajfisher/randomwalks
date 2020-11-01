@@ -30,8 +30,8 @@
     "color-space": "^1.16.0",
     "commander": "^2.15.1",
     "get-contrast": "^2.0.0",
-    "lodash": "^4.17.11",
-    "seedrandom": "^2.4.3",
+    "lodash": "^4.17.20",
+    "seedrandom": "^3.0.5",
     "simplex-noise": "^2.4.0",
     "wcag-contrast": "^0.1.1"
   }

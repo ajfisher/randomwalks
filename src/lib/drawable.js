@@ -97,7 +97,7 @@ export default class Drawable extends EventEmitter {
     }
 
     // kick off the PRNG
-    Math.seedrandom(this.seed);
+    seedrandom(this.seed, {global: true});
 
     // get the size to make the image
     const {w, h, dpi, border, border_cm} = opts.size ||
