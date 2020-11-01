@@ -9,7 +9,7 @@ help:
 	@echo "run:                  Runs the dev server"
 
 clean:
-	rm -rf ./node_modules/
+	rm -rf ./node_modules/ && rm -rf ./dist/assets/
 
 install:
 	npm install
