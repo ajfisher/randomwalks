@@ -5,6 +5,7 @@ help:
 	@echo "------------"
 	@echo "clean:                Cleans all the old files out"
 	@echo "install:              Installs all dependencies"
+	@echo "lint:                 Lint the code"
 	@echo "run:                  Runs the dev server"
 
 clean:
@@ -15,3 +16,6 @@ install:
 
 run:
 	npm run dev
+
+lint:
+	npm run lint
