@@ -10,6 +10,9 @@ import { ApplyGrain } from './concentrics';
 import { choose, rnd_range } from './utils/random';
 import { hsvts, rank_contrast } from './utils/draw';
 
+// bring in the Path2D polyfill if in node.
+import 'canvas-5-polyfill';
+
 const TAU = Math.PI * 2;
 
 class Stem extends Actionable {
@@ -34,9 +37,16 @@ class Stem extends Actionable {
     const scale = choose([0.7, 0.5, 0.6]);
     const s = scale;
 
+    // used to deal with aspect_ratio fixes.
+    let ar_size = width;
+    if (width > height) {
+      ar_size = height;
+    }
+
     ctx.strokeStyle = hsvts(colour);
     ctx.fillStyle = hsvts(colour);
-    ctx.lineWidth = this.stem_width * width;
+    // just get the stem width to something that looks roughly right
+    ctx.lineWidth = this.stem_width * ar_size;
     ctx.globalAlpha = this.alpha;
     ctx.lineCap = 'round';
 
@@ -103,10 +113,11 @@ class Stem extends Actionable {
         ctx.save();
         ctx.globalAlpha = this.alpha + (alpha_noise * this.alpha);
         ctx.shadowColor = hsvts([colour[0], 100.0, colour[2]]);
-        ctx.shadowBlur = glow_size * width;
+        ctx.shadowBlur = glow_size * ar_size;
 
         ctx.moveTo(dx, dy);
-        ctx.arc(dx*width, dy*height, dot_size*width, 0, TAU);
+
+        ctx.arc(dx*width, dy*height, dot_size*ar_size, 0, TAU);
         ctx.fill();
         ctx.restore();
       }
@@ -160,7 +171,7 @@ export default class Grasses extends Drawable {
     const width = this.w(); // - 2 * border;
     const height = this.h(); // - 2 * border;
 
-    const stems = rnd_range(10, 50);
+    const stems = rnd_range(40, 60);
 
     this.enqueue(new ApplyGrain({
       alpha: 0.25,
@@ -175,7 +186,7 @@ export default class Grasses extends Drawable {
     for (let s = 0; s < stems; s++) {
       // build a bunch of stems
 
-      const x = rnd_range(0.05, 0.95);
+      const x = rnd_range(0.15, 0.85);
 
       this.enqueue(new Stem({
         alpha: rnd_range(0.2, 0.4),
@@ -190,7 +201,7 @@ export default class Grasses extends Drawable {
     this.enqueue(new ApplyGrain({
       alpha: 0.5,
       width, height,
-      no: rnd_range(200, 400),
+      no: rnd_range(400, 400),
       min: 0.002,
       max: 0.004
     }), opts.fgs[1]);
