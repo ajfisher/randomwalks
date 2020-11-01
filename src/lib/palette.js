@@ -1,6 +1,6 @@
 'use strict';
 
-import { best_contrast, hsvts } from './utils';
+import { best_contrast, hsvts } from './utils.js';
 
 class PaletteMap {
   // draws a map of each of the palettes available and chooses the

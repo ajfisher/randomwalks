@@ -1,7 +1,7 @@
 'use strict';
 // A set of geometry fucntions that are useful
 
-import { reverse } from 'lodash';
+import reverse from 'lodash';
 
 export function chaikin(points) {
   // takes the set of polygon points and then uses the chaikin curve algoritm to

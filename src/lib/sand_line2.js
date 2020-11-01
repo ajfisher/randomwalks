@@ -4,7 +4,7 @@ import seedrandom from 'seedrandom';
 import arrayShuffle from 'array-shuffle';
 import simplex_noise from 'simplex-noise';
 
-import { best_contrast, range_map, rnd_range, sigmoid } from './utils';
+import { best_contrast, range_map, rnd_range, sigmoid } from './utils.js';
 
 const LINES = { MAX: 20, MIN: 1 };
 const GRAINS = { MAX: 80, MIN: 20 };

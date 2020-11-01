@@ -1,6 +1,6 @@
 'use strict';
 
-import Mask from './mask';
+import Mask from './mask.js';
 
 const TAU = Math.PI * 2;
 

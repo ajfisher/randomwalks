@@ -1,9 +1,9 @@
 'use strict';
 
-import Actionable from './actionable';
+import Actionable from './actionable.js';
 
-import { choose, nrand, rnd_range } from '../utils/random';
-import { hsvts } from '../utils/draw';
+import { choose, nrand, rnd_range } from '../utils/random.js';
+import { hsvts } from '../utils/draw.js';
 
 export default class FieldGrid extends Actionable {
   // Draws a grid of lines that represents the flow field.

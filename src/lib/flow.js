@@ -2,14 +2,14 @@
 
 import SimplexNoise from 'simplex-noise';
 
-import Drawable from './drawable';
+import Drawable from './drawable.js';
 
-import { Actionable, FieldGrid, ParticleUpdate } from './actions';
-import { ParticleSystem } from './systems';
-import { SimplexField } from './fields';
+import { Actionable, FieldGrid, ParticleUpdate } from './actions/index.js';
+import { ParticleSystem } from './systems/index.js';
+import { SimplexField } from './fields/index.js';
 
-import { choose, rnd_range } from './utils/random';
-import { hsvts, rank_contrast } from './utils/draw';
+import { choose, rnd_range } from './utils/random.js';
+import { hsvts, rank_contrast } from './utils/draw.js';
 
 export default class FlowField extends Drawable {
   // flow field drives a set of particles across a field of simplex noise

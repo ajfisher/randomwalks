@@ -1,6 +1,6 @@
 'use strict';
 
-import Mask from './mask';
+import Mask from './mask.js';
 
 export default class InvertedSquareMask extends Mask {
   // creates a mask that is an inversion of a square

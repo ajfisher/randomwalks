@@ -7,7 +7,7 @@ import SimplexNoise from 'simplex-noise';
 
 import Drawable from './drawable.js';
 
-import { SimplexFill } from './fills';
+import { SimplexFill } from './fills/index.js';
 
 import { choose, hsvts, rand_range, weight_rnd } from './utils.js';
 

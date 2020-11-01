@@ -2,15 +2,15 @@
 
 import SimplexNoise from 'simplex-noise';
 
-import Drawable from './drawable';
+import Drawable from './drawable.js';
 
-import { Actionable } from './actions';
-import { CircleFrame } from './primatives';
-import { ApplyGrain } from './concentrics';
+import { Actionable } from './actions/index.js';
+import { CircleFrame } from './primatives/index.js';
+import { ApplyGrain } from './concentrics.js';
 
-import { choose, rnd_range, nrand } from './utils/random';
-import { hsvts, rank_contrast } from './utils/draw';
-import { rescale } from './utils/maths';
+import { choose, rnd_range, nrand } from './utils/random.js';
+import { hsvts, rank_contrast } from './utils/draw.js';
+import { rescale } from './utils/maths.js';
 
 const TAU = Math.PI * 2;
 const EMPTY = Symbol('empty');

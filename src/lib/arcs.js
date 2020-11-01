@@ -3,7 +3,7 @@
 import seedrandom from 'seedrandom';
 import arrayShuffle from 'array-shuffle';
 
-import { best_contrast } from './utils';
+import { best_contrast } from './utils.js';
 
 const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41];
 

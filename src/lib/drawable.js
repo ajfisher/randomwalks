@@ -5,7 +5,7 @@ import EventEmitter from 'events';
 import seedrandom from 'seedrandom';
 import arrayShuffle from 'array-shuffle';
 
-import { best_contrast, hsvts } from './utils';
+import { best_contrast, hsvts } from './utils.js';
 
 export default class Drawable extends EventEmitter {
   constructor(options) {

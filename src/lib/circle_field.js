@@ -2,16 +2,16 @@
 
 import SimplexNoise from 'simplex-noise';
 
-import Drawable from './drawable';
+import Drawable from './drawable.js';
 
-import { Actionable, FieldGrid }  from './actions';
-import { SimplexField } from './fields';
+import { Actionable, FieldGrid }  from './actions/index.js';
+import { SimplexField } from './fields/index.js';
 
-import { CircleMask } from './masks';
-import { CircleFrame } from './primatives';
+import { CircleMask } from './masks/index.js';
+import { CircleFrame } from './primatives/index.js';
 
-import { choose, rnd_range } from './utils/random';
-import { hsvts, rank_contrast } from './utils/draw';
+import { choose, rnd_range } from './utils/random.js';
+import { hsvts, rank_contrast } from './utils/draw.js';
 
 export default class CircleField extends Drawable {
   // Circle field drives a set of particles across a circle of simplex noise

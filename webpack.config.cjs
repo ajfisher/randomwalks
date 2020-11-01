@@ -14,6 +14,15 @@ module.exports = {
     app: './app.js'
   },
 
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        type: 'javascript/esm',
+        exclude: /node_modules/
+      }
+    ]
+  },
   output: {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist/assets'),

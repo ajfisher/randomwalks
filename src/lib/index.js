@@ -2,37 +2,38 @@
 // use this as a method of compositing up the options for use for the CLI and
 // web app.
 
-import CircleChord from './circles';
-import CircleField from './circle_field';
-import CircleWaves from './circle_waves';
-import ChaikinPoly from './chaikin_poly';
-import ChaikinPolyDots from './chaikin_dots';
-import Concentrics from './concentrics';
-import Connected from './connected';
-import Curves from './curves';
-import DeformedQuads from './deformed_quads';
-import FlowField from './flow';
-import FuzzyCurve from './curve_fuzzy';
-import Grasses from './grasses';
-import GrafGeometry from './graf';
-import Intersections from './intersections';
-import Lamps from './lamps';
-import LightGrass from './lightgrass';
-import LineSubdivision from './line_subdivision';
-import MaskedDots from './masked_dots';
-import MultiBands from './multi_bands';
-import NoiseBands from './noise_bands';
-import Palette from './palette';
-import Path from './path';
-import PolyConnections from './poly_connections';
-import PolyLinks from './poly_links';
-import Rings from './rings';
-import Scratch from './scratch';
-import SimplexBands from './simplex_bands';
-import Split from './splits';
-import Subdivision from './subdivision';
+import CircleChord from './circles.js';
+import CircleField from './circle_field.js';
+import CircleWaves from './circle_waves.js';
+import ChaikinPoly from './chaikin_poly.js';
+import ChaikinPolyDots from './chaikin_dots.js';
+import Concentrics from './concentrics.js';
+import Connected from './connected.js';
+import Curves from './curves.js';
+import DeformedQuads from './deformed_quads.js';
+import FlowField from './flow.js';
+import FuzzyCurve from './curve_fuzzy.js';
+import Grids from './grids.js';
+import Grasses from './grasses.js';
+import GrafGeometry from './graf.js';
+import Intersections from './intersections.js';
+import Lamps from './lamps.js';
+import LightGrass from './lightgrass.js';
+import LineSubdivision from './line_subdivision.js';
+import MaskedDots from './masked_dots.js';
+import MultiBands from './multi_bands.js';
+import NoiseBands from './noise_bands.js';
+import Palette from './palette.js';
+import Path from './path.js';
+import PolyConnections from './poly_connections.js';
+import PolyLinks from './poly_links.js';
+import Rings from './rings.js';
+import Scratch from './scratch.js';
+import SimplexBands from './simplex_bands.js';
+import Split from './splits.js';
+import Subdivision from './subdivision.js';
 // import Tendrils from './tendrils.js';
-import Tiles from './tiles';
+import Tiles from './tiles.js';
 import Topography from './topo.js';
 import Trees from './trees.js';
 
@@ -50,6 +51,7 @@ export default {
   FuzzyCurve,
   Grasses,
   GrafGeometry,
+  Grids,
   Intersections,
   Lamps,
   LightGrass,

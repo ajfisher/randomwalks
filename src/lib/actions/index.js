@@ -1,8 +1,8 @@
 'use strict';
 
-import Actionable from './actionable';
-import FieldGrid from './fieldgrid';
-import { ParticleUpdate } from '../systems/particles'
+import Actionable from './actionable.js';
+import FieldGrid from './fieldgrid.js';
+import { ParticleUpdate } from '../systems/particles.js'
 
 export {
   Actionable,

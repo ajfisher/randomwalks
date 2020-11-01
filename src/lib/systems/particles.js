@@ -1,8 +1,8 @@
 'use strict';
 
-import { hsvts, rnd_range } from '../utils';
+import { hsvts, rnd_range } from '../utils.js';
 
-import Actionable from '../actions/actionable';
+import Actionable from '../actions/actionable.js';
 
 class Particle {
   // provides a single particle which x,y is represented as value between

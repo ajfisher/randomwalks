@@ -1,6 +1,6 @@
 'use strict';
 
-import Mask from './mask';
+import Mask from './mask.js';
 
 export default class BlockMask extends Mask {
   // creates a mask that basically creates a line going through

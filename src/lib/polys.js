@@ -4,9 +4,9 @@ import space from 'color-space';
 import seedrandom from 'seedrandom';
 import arrayShuffle from 'array-shuffle';
 
-import Drawable from './drawable';
+import Drawable from './drawable.js';
 
-import { best_contrast, hsvts, nrand, rank_contrast, range_map, rescale, rnd_range, weight_rnd } from './utils';
+import { best_contrast, hsvts, nrand, rank_contrast, range_map, rescale, rnd_range, weight_rnd } from './utils.js';
 
 let canv_height = 0; // placeholder for static prop equiv
 let canv_width = 0;

@@ -2,13 +2,13 @@
 
 import SimplexNoise from 'simplex-noise';
 
-import Actionable from './actions/actionable';
-import Drawable from './drawable';
+import Actionable from './actions/actionable.js';
+import Drawable from './drawable.js';
 
-import { BlockMask, InvertedSquareMask, LineMask } from './masks';
+import { BlockMask, InvertedSquareMask, LineMask } from './masks/index.js';
 
-import { choose, hsvts, rank_contrast, nrand } from './utils';
-import { rescale, rnd_range } from './utils';
+import { choose, hsvts, rank_contrast, nrand } from './utils.js';
+import { rescale, rnd_range } from './utils.js';
 
 const TAU = Math.PI * 2;
 

@@ -5,12 +5,12 @@ import palettes from './lib/palette.json';
 
 import space from 'color-space';
 
-import RandomLines from './lib/random_lines';
+import RandomLines from './lib/random_lines.js';
 import RandomArcs from './lib/arcs.js';
 import SandLines from './lib/sand_line2.js';
 import Poly from './lib/polys.js';
 
-import Drawables from './lib';
+import Drawables from './lib/index.js';
 import { convert } from './lib/utils.js';
 
 let Canvas = null;

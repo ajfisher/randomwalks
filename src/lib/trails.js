@@ -2,12 +2,12 @@
 
 import SimplexNoise from 'simplex-noise';
 
-import Drawable from './drawable';
+import Drawable from './drawable.js';
 
-import { Actionable } from './actions';
+import { Actionable } from './actions/index.js';
 
-import { choose, rnd_range, nrand } from './utils/random';
-import { hsvts, rank_contrast } from './utils/draw';
+import { choose, rnd_range, nrand } from './utils/random.js';
+import { hsvts, rank_contrast } from './utils/draw.js';
 
 const TAU = Math.PI * 2;
 

@@ -4,7 +4,7 @@ import seedrandom from 'seedrandom';
 import arrayShuffle from 'array-shuffle';
 import simplex_noise from 'simplex-noise';
 
-import { best_contrast, rnd_range } from './utils';
+import { best_contrast, rnd_range } from './utils.js';
 
 export default class SandLines {
   constructor(options) {

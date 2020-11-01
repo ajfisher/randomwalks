@@ -2,7 +2,7 @@
 
 // draws the border around the outside of a frame
 
-import { hsvts } from '../utils';
+import { hsvts } from '../utils.js';
 
 export default class Border {
   // puts a border around the image

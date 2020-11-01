@@ -1,9 +1,9 @@
 'use strict';
 
-import Fillable from './fillable';
+import Fillable from './fillable.js';
 
-import { hsvts } from '../utils/draw';
-import { rescale } from '../utils/maths';
+import { hsvts } from '../utils/draw.js';
+import { rescale } from '../utils/maths.js';
 
 export default class SimplexFill extends Fillable {
   // creates a fill on the object

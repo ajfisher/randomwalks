@@ -1,7 +1,7 @@
 'use strict';
 
-import { Actionable } from '../actions';
-import { hsvts } from '../utils';
+import { Actionable } from '../actions/index.js';
+import { hsvts } from '../utils.js';
 
 const TAU = Math.PI * 2;
 
