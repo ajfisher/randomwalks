@@ -24,7 +24,7 @@
     "array-shuffle": "^1.0.1",
     "b-spline": "^2.0.1",
     "babel-cli": "^6.26.0",
-    "canvas": "^1.6.11",
+    "canvas": "^2.6.1",
     "canvas-5-polyfill": "^0.1.5",
     "color-space": "^1.16.0",
     "commander": "^2.15.1",
