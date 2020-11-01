@@ -62,7 +62,7 @@ export default class RandomArcs {
     const txt = '#' + data;
     ctx.font = '20px Helvetica';
     const txt_width = ctx.measureText(txt).width;
-    const txt_height = parseInt(ctx.font);
+    const txt_height = parseInt(ctx.font, 10);
 
     // draw bg
     ctx.fillStyle = bg;
@@ -78,7 +78,7 @@ export default class RandomArcs {
   }
 
   draw(seed) {
-    this.seed = parseInt(seed) || Math.floor(Math.random() * (Math.pow(2,20)));
+    this.seed = parseInt(seed, 10) || Math.floor(Math.random() * (Math.pow(2,20)));
 
     console.log(this.seed);
     Math.seedrandom(this.seed);

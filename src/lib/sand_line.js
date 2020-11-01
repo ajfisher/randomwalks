@@ -67,7 +67,7 @@ export default class SandLines {
     const txt = '#' + data;
     ctx.font = '20px Helvetica';
     const txt_width = ctx.measureText(txt).width;
-    const txt_height = parseInt(ctx.font);
+    const txt_height = parseInt(ctx.font, 10);
 
     // draw bg
     ctx.fillStyle = bg;
@@ -83,7 +83,7 @@ export default class SandLines {
   }
 
   draw(seed) {
-    this.seed = parseInt(seed) || Math.floor(Math.random() * (Math.pow(2,20)));
+    this.seed = parseInt(seed, 10) || Math.floor(Math.random() * (Math.pow(2,20)));
     Math.seedrandom(this.seed);
     console.log(this.seed);
 
