@@ -4,20 +4,21 @@ import fs from 'fs';
 import path from 'path';
 
 import Canvas from 'canvas';
+const { createCanvas } = Canvas;
+
 import program from 'commander'
 import space from 'color-space';
 
-import RandomLines from './lib/random_lines';
+import RandomLines from './lib/random_lines.js';
 import RandomArcs from './lib/arcs.js';
 import SandLines from './lib/sand_line2.js';
 import Poly from './lib/polys.js';
 
-import Drawables from './lib';
+import Drawables from './lib/index.js';
 
 import { convert } from './lib/utils.js';
 
-// const palettes = require('./lib/palette.json');
-import palettes from './lib/palette.json';
+const palettes = JSON.parse(fs.readFileSync('./src/lib/palette.json'));
 const palettes_hsv = convert(palettes);
 
 const drawables_string = [];
@@ -55,11 +56,13 @@ const size = {
   border_cm: program.bordercm || undefined
 };
 
+console.log(no, size, dtype);
+
 const show_text = program.text || false;
 
-const canvas = new Canvas(size.w * size.dpi, size.h * size.dpi);
-const texture = new Canvas(size.w * size.dpi, size.h * size.dpi);
-const predraw = new Canvas(size.w * size.dpi, size.h * size.dpi);
+const canvas = createCanvas(size.w * size.dpi, size.h * size.dpi);
+const texture = createCanvas(size.w * size.dpi, size.h * size.dpi);
+const predraw = createCanvas(size.w * size.dpi, size.h * size.dpi);
 let drawing = null;
 
 // based on the dtype set in, compare it to the objects available and if
