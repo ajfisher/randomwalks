@@ -32,7 +32,7 @@ class BlockRow extends Actionable {
     this.cell_size = opts.cell_size || 0.1;
     this.cols = opts.cols || 13;
     this.base_flip_chance = 0.2;
-    this.max_run = 7;
+    this.max_run = 13;
   }
 
   /**
@@ -61,6 +61,7 @@ class BlockRow extends Actionable {
     // determine the makeup of the line.
     const cells = [];
     let run_count = 0;
+    let flip_chance;
     for (let cell = 0; cell < cols; cell++) {
       // choose the type of line we're going to draw on the block
       let line_type;
@@ -71,16 +72,19 @@ class BlockRow extends Actionable {
       if (cell == 0) {
         line_type = choose(['LOW_LINE', 'BLOCK']);
         run_count = 1;
+        flip_chance = base_flip_chance;
       } else {
         const rnd = Math.random(); // get random number
         const last_cell_type = cells[cell - 1];
 
         // increase the likelihood of flipping the longer the run happens.
-        const flip_chance = base_flip_chance + (run_count * 0.02);
+        flip_chance = flip_chance + rnd_range(0.01, 0.1);
 
         if (rnd <= flip_chance || run_count >= max_run) {
           line_type = (last_cell_type == 'BLOCK' ? 'LOW_LINE' : 'BLOCK');
+          // reset the run and flip chances back to start
           run_count = 1;
+          flip_chance = base_flip_chance;
         } else {
           line_type = last_cell_type;
           run_count = run_count + 1;
@@ -134,7 +138,7 @@ export default class LineBlocks extends Drawable {
     const opts = options || {};
 
     opts.name = 'lineblocks';
-    opts.border = 0.05;
+    opts.border = 0.03;
 
     super(opts);
   }
