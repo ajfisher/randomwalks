@@ -19,6 +19,7 @@ import GrafGeometry from './graf.js';
 import Intersections from './intersections.js';
 import Lamps from './lamps.js';
 import LightGrass from './lightgrass.js';
+import LineBlocks from './line_block.js';
 import LineSubdivision from './line_subdivision.js';
 import MaskedDots from './masked_dots.js';
 import MultiBands from './multi_bands.js';
@@ -55,6 +56,7 @@ export default {
   Intersections,
   Lamps,
   LightGrass,
+  LineBlocks,
   LineSubdivision,
   MaskedDots,
   MultiBands,
