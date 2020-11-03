@@ -34,6 +34,14 @@ export default class Drawable extends EventEmitter {
     // have to do it this way due to sending a false will always || to true
     this.show_text = (typeof(opts.show_text) == 'undefined') ? true : opts.show_text;
     this.draw_queue = [];
+
+    // determine if we're running the test suite or not.
+    this.IS_TEST = false;
+    if (typeof(process) !== 'undefined') {
+      if (process.env.IS_TEST) {
+        this.IS_TEST = true;
+      }
+    }
   }
 
   enqueue(action, colour='#ffffff') {
@@ -73,7 +81,9 @@ export default class Drawable extends EventEmitter {
     this.ctx.fillRect(0, 0, this.w(), this.h());
 
     // print the seed to the console for use
-    console.log(this.seed);
+    if (! this.IS_TEST) {
+      console.log(this.seed);
+    }
 
     // kick off the drawing queue processor.
     this.process();
@@ -212,7 +222,9 @@ export default class Drawable extends EventEmitter {
       if (typeof(window) !== 'undefined') {
         window.requestAnimationFrame(() => this.process());
       } else {
-        console.log('processing frame: ' + this.draw_queue.length);
+        if (! this.IS_TEST) {
+          console.log('processing frame: ' + this.draw_queue.length);
+        }
         setTimeout((o) => {
           o.process();
         }, 1, this);

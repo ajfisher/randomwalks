@@ -180,8 +180,6 @@ export default class LineBlocks extends Drawable {
     const line_width = 0.001; // Math.ceil((this.w()-border) / no_lines);
     const x = this.border;
 
-    console.log(border, width, height, rows, cols, cell_size, line_width);
-
     // iterate over the rows and then set up each for drawing
     for (let r = 0; r < rows; r++) {
       const y = this.border + (r * cell_size);
