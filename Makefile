@@ -8,6 +8,7 @@ help:
 	@echo "install:              Installs all dependencies"
 	@echo "lint:                 Lint the code"
 	@echo "run:                  Runs the dev server"
+	@echo "test:                 Tests the code"
 
 build: clean
 	npm run build
@@ -25,3 +26,5 @@ lint:
 run:
 	npm run dev
 
+test: lint
+	npm run test
