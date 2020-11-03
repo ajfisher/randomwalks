@@ -9,7 +9,8 @@ help:
 	@echo "install:              Installs all dependencies"
 	@echo "lint:                 Lint the code"
 	@echo "run:                  Runs the dev server"
-	@echo "test:                 Tests the code"
+	@echo "test:                 Tests the core code"
+	@echo "snapshot-test:        Does a full round of snapshot testing"
 
 build: clean
 	npm run build
@@ -32,3 +33,6 @@ run:
 
 test: lint
 	npm run test
+
+snapshot-test: test
+	npm run snapshot-test
