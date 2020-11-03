@@ -1,52 +1,54 @@
 {
-  "name": "randomwalks",
-  "version": "0.0.1",
-  "description": "",
-  "main": "./src/cli.js",
-  "type": "module",
-  "scripts": {
-      "lint": "./node_modules/.bin/eslint .",
-      "dev": "webpack serve --config webpack.config.cjs",
-      "build": "webpack --config webpack.config.cjs",
-      "test": "node --experimental-vm-modules ./node_modules/.bin/jest",
-      "coverage": "node --experimental-vm-modules ./node_modules/.bin/jest --collectCoverage=true"
-  },
-  "author": "ajfisher",
-  "license": "MIT",
-  "jest": {
-      "testEnvironment": "jest-environment-node",
-      "transform": {},
-      "testMatch": [
-          "**/?(*.)(spec|test).js?(x)"
-      ],
-      "collectCoverageFrom": [
-          "**/*.js"
-      ],
-      "coveragePathIgnorePatterns": [
-          "/node_modules/",
-          "/dist/",
-          "/coverage/",
-          "/output/"
-      ]
-  },
-  "devDependencies": {
-      "eslint": "^7.12.1",
-      "jest": "^26.6.2",
-      "webpack": "^5.3.2",
-      "webpack-cli": "^4.1.0",
-      "webpack-dev-server": "^3.11.0"
-  },
-  "dependencies": {
-    "array-shuffle": "^1.0.1",
-    "b-spline": "^2.0.1",
-    "canvas": "^2.6.1",
-    "canvas-5-polyfill": "^0.1.5",
-    "color-space": "^1.16.0",
-    "commander": "^6.2.0",
-    "get-contrast": "^2.0.0",
-    "lodash": "^4.17.20",
-    "seedrandom": "^3.0.5",
-    "simplex-noise": "^2.4.0",
-    "wcag-contrast": "^3.0.0"
-  }
+    "name": "randomwalks",
+    "version": "0.0.1",
+    "description": "",
+    "main": "./src/cli.js",
+    "type": "module",
+    "scripts": {
+        "lint": "./node_modules/.bin/eslint .",
+        "dev": "webpack serve --config webpack.config.cjs",
+        "build": "webpack --config webpack.config.cjs",
+        "test": "IS_TEST=true node --experimental-vm-modules ./node_modules/.bin/jest",
+        "coverage": "IS_TEST=true node --experimental-vm-modules ./node_modules/.bin/jest --collectCoverage=true",
+        "update-snapshot": "IS_TEST=true node --experimental-vm-modules ./node_modules/.bin/jest --updateSnapshot"
+    },
+    "author": "ajfisher",
+    "license": "MIT",
+    "jest": {
+        "testEnvironment": "jest-environment-node",
+        "transform": {},
+        "testMatch": [
+            "**/?(*.)(spec|test).js?(x)"
+        ],
+        "collectCoverageFrom": [
+            "**/*.js"
+        ],
+        "coveragePathIgnorePatterns": [
+            "/node_modules/",
+            "/dist/",
+            "/coverage/",
+            "/output/"
+        ]
+    },
+    "devDependencies": {
+        "eslint": "^7.12.1",
+        "jest": "^26.6.2",
+        "jest-image-snapshot": "^4.2.0",
+        "webpack": "^5.3.2",
+        "webpack-cli": "^4.1.0",
+        "webpack-dev-server": "^3.11.0"
+    },
+    "dependencies": {
+        "array-shuffle": "^1.0.1",
+        "b-spline": "^2.0.1",
+        "canvas": "^2.6.1",
+        "canvas-5-polyfill": "^0.1.5",
+        "color-space": "^1.16.0",
+        "commander": "^6.2.0",
+        "get-contrast": "^2.0.0",
+        "lodash": "^4.17.20",
+        "seedrandom": "^3.0.5",
+        "simplex-noise": "^2.4.0",
+        "wcag-contrast": "^3.0.0"
+    }
 }
