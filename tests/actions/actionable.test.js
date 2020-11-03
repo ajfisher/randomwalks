@@ -1,4 +1,4 @@
-import {jest} from '@jest/globals';
+import { jest } from '@jest/globals';
 
 import Actionable from '../../src/lib/actions/actionable.js';
 
