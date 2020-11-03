@@ -1,3 +1,4 @@
+import {jest} from '@jest/globals';
 
 import Actionable from '../../src/lib/actions/actionable.js';
 
@@ -39,5 +40,25 @@ describe('1. Actionable abstract class should have certain base values', () => {
     expect(actionable.rotate).toEqual(opts.rotate);
     expect(actionable.t).toEqual(opts.t);
     expect(actionable.op_order).toEqual(opts.op_order);
+  });
+});
+
+describe('2. Actionable.draw() should take global actions', () => {
+  test('2.1. Actionable.draw should set global alpha, rotation and translation on context', () => {
+    const mockContext = {
+      translate: jest.fn(),
+      rotate: jest.fn()
+    };
+    Object.defineProperty(mockContext, 'globalAlpha', {
+      set: (v) => { mockContext._alpha = v },
+      get: () => mockContext._alpha
+    });
+
+    const actionable = new Actionable();
+    actionable.draw(mockContext);
+
+    expect(mockContext.translate).toHaveBeenCalled();
+    expect(mockContext.rotate).toHaveBeenCalled();
+    expect(mockContext.globalAlpha).toBeDefined();
   });
 });
