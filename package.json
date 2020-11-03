@@ -24,7 +24,9 @@
       ],
       "coveragePathIgnorePatterns": [
           "/node_modules/",
-          "/dist/"
+          "/dist/",
+          "/coverage/",
+          "/output/"
       ]
   },
   "devDependencies": {
