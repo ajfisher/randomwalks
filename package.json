@@ -8,7 +8,8 @@
       "lint": "./node_modules/.bin/eslint .",
       "dev": "webpack serve --config webpack.config.cjs",
       "build": "webpack --config webpack.config.cjs",
-      "test": "node --experimental-vm-modules ./node_modules/.bin/jest"
+      "test": "node --experimental-vm-modules ./node_modules/.bin/jest",
+      "coverage": "node --experimental-vm-modules ./node_modules/.bin/jest --collectCoverage=true"
   },
   "author": "ajfisher",
   "license": "MIT",

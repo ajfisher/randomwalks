@@ -5,6 +5,7 @@ help:
 	@echo "------------"
 	@echo "build:                Builds all of the files if needed"
 	@echo "clean:                Cleans all the old files out"
+	@echo "coverage:             Generates a test code coverage report"
 	@echo "install:              Installs all dependencies"
 	@echo "lint:                 Lint the code"
 	@echo "run:                  Runs the dev server"
@@ -15,6 +16,9 @@ build: clean
 
 clean:
 	rm -rf ./dist/assets/
+
+coverage: lint
+	npm run coverage
 
 install: clean
 	rm -rf ./node_modules/
