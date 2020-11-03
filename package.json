@@ -8,9 +8,10 @@
         "lint": "./node_modules/.bin/eslint .",
         "dev": "webpack serve --config webpack.config.cjs",
         "build": "webpack --config webpack.config.cjs",
-        "test": "IS_TEST=true node --experimental-vm-modules ./node_modules/.bin/jest",
-        "coverage": "IS_TEST=true node --experimental-vm-modules ./node_modules/.bin/jest --collectCoverage=true",
-        "update-snapshot": "IS_TEST=true node --experimental-vm-modules ./node_modules/.bin/jest --updateSnapshot"
+        "test": "IS_TEST=true node --experimental-vm-modules ./node_modules/.bin/jest tests",
+        "coverage": "IS_TEST=true node --experimental-vm-modules ./node_modules/.bin/jest tests --collectCoverage=true",
+        "snapshot-test": "IS_TEST=true node --experimental-vm-modules ./node_modules/.bin/jest snapshots",
+        "snapshot-update": "IS_TEST=true node --experimental-vm-modules ./node_modules/.bin/jest snapshots --updateSnapshot"
     },
     "author": "ajfisher",
     "license": "MIT",

@@ -2,4 +2,4 @@ ndist/*
 dist/*
 output/*
 coverage/*
-tests/**/__image_snapshots__/__diff_output__/*
+snapshots/**/__image_snapshots__/__diff_output__/*
