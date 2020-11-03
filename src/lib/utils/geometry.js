@@ -3,10 +3,22 @@
 
 import reverse from 'lodash';
 
-export function chaikin(points) {
-  // takes the set of polygon points and then uses the chaikin curve algoritm to
-  // put in additional subdivisions to try and relax it into a curve.
+/**
+ * A point
+ * @typedef {Object} Point
+ * @property {number} x - the x value of the point
+ * @property {number} y - the y value of the point
+ */
 
+/**
+ * Take a set of convex polygon points and then use the chaikin curve
+ * algorithm to subdivide the segments and relax the polygon into a curve
+ *
+ * @param {Point[]} points - an array of {@link Point} objects that is a convex polygon
+ * @returns {Point[]} new array of {@link Point} objects
+ *
+ */
+export function chaikin(points) {
   const new_points = [];
   for (let p = 0; p < points.length; p++) {
     // for the special case where p == 0, need to get the last point
