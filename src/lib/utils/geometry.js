@@ -1,7 +1,6 @@
 'use strict';
 // A set of geometry fucntions that are useful
-
-import reverse from 'lodash';
+import _ from 'lodash';
 
 export const TAU = Math.PI * 2;
 
