@@ -27,6 +27,7 @@ import MultiBands from './multi_bands.js';
 import NoiseBands from './noise_bands.js';
 import Palette from './palette.js';
 import Path from './path.js';
+import ParticleDuel from './particle_duel.js';
 import PolyConnections from './poly_connections.js';
 import PolyLinks from './poly_links.js';
 import Rings from './rings.js';
@@ -65,6 +66,7 @@ export default {
   NoiseBands,
   Palette,
   Path,
+  ParticleDuel,
   PolyConnections,
   PolyLinks,
   Rings,
