@@ -1,7 +1,8 @@
 'use strict';
 // A set of geometry fucntions that are useful
+import _ from 'lodash';
 
-import reverse from 'lodash';
+export const TAU = Math.PI * 2;
 
 /**
  * A point
@@ -48,6 +49,15 @@ export function chaikin(points) {
   return new_points;
 }
 
+/**
+ * Converts a list of points and convert them to a convex hull
+ *
+ * @param {Point[]} points - array of Point objects
+ *
+ * @returns {Point[]} - array of ccw sorted Point objects in convex hull.
+ *
+ */
+
 export function convex(points) {
   // take a list of points and then convert them to a convex hull
   // use similar to Graham's Algorithm but we know that the points are
@@ -55,34 +65,49 @@ export function convex(points) {
 
   // find the left and rightmost items
   const xsorted = _.sortBy(points, ['x']);
-  const minpt = xsorted[0];
-  const maxpt = xsorted[xsorted.length-1];
-  // now iterate across the x positions and then add the points to the top
-  // and bottom hulls
-  const toppts = [];
-  let bottompts = [];
 
-  for (let i = 1; i < xsorted.length; i++) {
+  /**
+   * 2D cross product of the two vectors AO and BO
+   *
+   * @param {Point} a - first point in sequence
+   * @param {Point} b - second point in sequence
+   * @param {Point} o - last point in sequence
+   *
+   * @return {number} - negative is CCW turn, positive is cw turn, 0 is colinear
+   */
+  const cross = (a, b, o) => {
+    return ( (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x) );
+  };
+
+  // iterate over sorted points left to right and add points to the lower hull
+  const lower = [];
+
+  for (let i = 0; i < xsorted.length; i++) {
     const curr_pt = xsorted[i];
-    if (curr_pt.y < minpt.y) {
-      // check to see if we have a major dip problem
-      if (toppts.length >= 2) {
-        const lst_pt = toppts[toppts.length-1];
-        const sndlst_pt = toppts[toppts.length-2];
-        if (lst_pt.y > curr_pt.y && sndlst_pt.y < lst_pt.y) {
-          // we have a big dip so push that point to the bottom points instead
-          bottompts.push(toppts.pop());
-        }
-      }
-      toppts.push(curr_pt);
-    } else {
-      bottompts.push(curr_pt);
+    while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], curr_pt) <= 0 ) {
+      // pop any points off the lower hull that have a ccw turn in them which
+      // means they are concave
+      lower.pop();
     }
+    lower.push(curr_pt);
   }
-  bottompts = reverse(bottompts);
 
-  // reconstruct the array in order
-  return [minpt, ...toppts, ...bottompts];
+  // now go over the sorted points right to left and add points to the upper hull
+  const upper = [];
+
+  for (let i = xsorted.length -1; i >= 0; i--) {
+    const curr_pt = xsorted[i];
+    while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], curr_pt) <= 0 ) {
+      // pop any points off the upper hull that have a ccw turn in them which
+      // means they are concave
+      upper.pop();
+    }
+    upper.push(curr_pt);
+  }
+
+  upper.pop();
+  lower.pop();
+  return lower.concat(upper);
 }
 
 export function circle_intersections(c1, c2) {

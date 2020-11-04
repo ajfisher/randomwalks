@@ -5,6 +5,7 @@
 import CircleChord from './circles.js';
 import CircleField from './circle_field.js';
 import CircleWaves from './circle_waves.js';
+import ChaikinBursts from './chaikin_bursts.js';
 import ChaikinPoly from './chaikin_poly.js';
 import ChaikinPolyDots from './chaikin_dots.js';
 import Concentrics from './concentrics.js';
@@ -42,6 +43,7 @@ export default {
   CircleChord,
   CircleField,
   CircleWaves,
+  ChaikinBursts,
   ChaikinPoly,
   ChaikinPolyDots,
   Concentrics,
