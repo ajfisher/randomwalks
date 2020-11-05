@@ -9,6 +9,112 @@ import { choose, rnd_range, nrand } from './utils/random.js';
 import { hsvts, rank_contrast } from './utils/draw.js';
 import { TAU } from './utils/geometry.js';
 
+
+/**
+ * Draw sandline style lines as a strip from location
+ *
+ */
+
+class ParticleStrip extends Actionable {
+  /**
+   * Create the ParticleStrip actionable
+   *
+   * @param {Object=} options - Options object to setup the action
+   * @param {number} options.line_width - Width of line to draw as %
+   * @param {number} options.dot_size - Width of line to draw as %
+   * @param {Point} options.points - {@link Point} object for starting
+   * @param {number} options.angle - Rotation in rads to emit at
+   *
+   */
+  constructor(options={}) {
+    const opts = options;
+    super(opts);
+
+    this.dot_size = opts.dot_size || 0.01;
+    this.point = opts.point || [];
+    this.mv = opts.mv || 0.02;
+    this.fill = opts.fill || 0.5;
+    this.scale = opts.scale || 1.0;
+    this.simplex = opts.simplex;
+    this.angle = opts.angle || 0; // main angle of facing
+    this.line_length = opts.line_length || 0.5;
+    this.line_width = opts.line_width || 0.2;
+  }
+
+  /**
+   * Draw the Sandline to the context
+   *
+   * @param {Object} ctx - screen context to draw to
+   * @param {Object} colour - HSV colour object to draw with
+   */
+
+  draw(ctx, colour, ...rest) {
+    const { width, height,
+      point, dot_size, fill, angle, line_length, line_width, mv,
+      simplex, scale: s, t } = this;
+
+    super.draw(ctx);
+
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    ctx.fillStyle = hsvts(colour);
+    ctx.strokeStyle = hsvts(colour);
+
+    // go to the point, rotate, choose a length to extend the ray and then
+    // walk along it to fill it.
+
+    ctx.save();
+    ctx.translate(point.x * width, point.y * height);
+    ctx.rotate(angle);
+
+    const no_strokes = line_width / dot_size * fill;
+
+    for (let stroke = 0; stroke < no_strokes; stroke++) {
+      const stroke_y = nrand(0, 0.15) * line_width;
+      const p1 = {x: line_length, y: stroke_y};
+      const p2 = {x: rnd_range(-0.05, (0.4 * line_length)), y: stroke_y};
+
+      const p1x_noise = simplex.noise2D(p1.x * s, t * s);
+      const p1y_noise = simplex.noise2D(p1.y * s, t * s);
+      const p2x_noise = simplex.noise2D(p2.x * s, t * s);
+      const p2y_noise = simplex.noise2D(p2.y * s, t * s);
+
+      p1.x = p1.x + (p1x_noise * mv);
+      p1.y = p1.y + (p1y_noise * mv);
+
+      p2.x = p2.x + (p2x_noise * mv);
+      p2.y = p2.y + (p2y_noise * mv);
+
+      // get the differences between the two points.
+      const pdx = p2.x - p1.x;
+      const pdy = p2.y - p1.y;
+
+      const p1p2_dist = Math.sqrt(pdx * pdx + pdy * pdy);
+      const no_dots = p1p2_dist / dot_size * fill;
+
+      // draw random dots over the segment
+      for (let d = 0; d < no_dots; d++) {
+        // const u = Math.random();
+        const u = Math.abs(nrand(0, line_length));
+        const dx = p1.x + u * pdx;
+        const dy = p1.y + u * pdy;
+
+        ctx.beginPath();
+        ctx.moveTo(dx * width, dy * height);
+        ctx.arc(dx * width, dy * height, dot_size * width, 0, TAU);
+        ctx.fill();
+      }
+    }
+
+    // restore translate, rotation
+    ctx.restore();
+
+    // restore original transform
+    ctx.restore();
+  }
+}
+
+
 /**
  * Draw sandline style lines as emitted particles from the source
  *
@@ -186,17 +292,6 @@ export default class DuellingParticles extends Drawable {
     const width = this.w(); // - 2 * border;
     const height = this.h(); // - 2 * border;
 
-    const alpha = 0.10;
-    const dot_size = 0.001;
-
-    const points = []; // hold the points for the particle emitters
-    const angles = []; // hold the base angle direction
-    const passes = 800; // rnd_range(800, 1500);
-    const fill = 0.10; // rnd_range(0.1, 0.2);
-    const mv = 0.025; // rnd_range(0.021, 0.025);
-    const scale = 0.01; // rnd_range(0.33, 0.55);
-    const skew = rnd_range(0.99, 0.1);
-    const angular_deflection = rnd_range(0.08, 0.11); // doubled as can go either way -> 90deg
     /**
      * 1000 ends up very random
      * 100 convergest towards a point
@@ -210,36 +305,91 @@ export default class DuellingParticles extends Drawable {
     fgs[0][2] = 90;
     fgs[1][2] = 90;
 
-    // point 1
-    points.push({x: rnd_range(0.1, 0.33), y: rnd_range(0.3, 0.7)});
-    // point 2
-    points.push({x: rnd_range(0.67, 0.9), y: rnd_range(0.1, 0.9)});
+    const TYPE = 'STRIPS';
 
-    const pdx = points[1].x - points[0].x;
-    const pdy = points[1].y - points[0].y;
+    if (TYPE=='POINTS') {
+      const alpha = 0.10;
+      const dot_size = 0.001;
 
-    // calculate angle from point 1 to point 2
-    angles.push(Math.atan(pdy / pdx));
-    angles.push(angles[0] + Math.PI);
+      const points = []; // hold the points for the particle emitters
+      const angles = []; // hold the base angle direction
+      const passes = 800; // rnd_range(800, 1500);
+      const fill = 0.10; // rnd_range(0.1, 0.2);
+      const mv = 0.025; // rnd_range(0.021, 0.025);
+      const scale = 0.01; // rnd_range(0.33, 0.55);
+      const skew = rnd_range(0.99, 0.1);
+      const angular_deflection = rnd_range(0.08, 0.11); // doubled as can go either way -> 90deg
+      // point 1
+      points.push({x: rnd_range(0.1, 0.33), y: rnd_range(0.3, 0.7)});
+      // point 2
+      points.push({x: rnd_range(0.67, 0.9), y: rnd_range(0.1, 0.9)});
 
-    // get the differences between the two points.
-    const line_length = Math.sqrt(pdx * pdx + pdy * pdy);
+      const pdx = points[1].x - points[0].x;
+      const pdy = points[1].y - points[0].y;
 
-    for (let i = 0; i < passes; i++) {
-      // draw a line from each point
-      for (let p = 0; p < points.length; p++) {
-        // now draw this iteration
-        this.enqueue(new ParticleSandline({
-          alpha,
-          width, height,
-          point: points[p],
-          dot_size, mv, fill, scale,
-          simplex: this.simplex,
-          line_length,
-          angle: angles[p],
-          deflection: rnd_range(-1 * skew * angular_deflection * TAU, angular_deflection * TAU),
-          t: (i + 1) // / passes
-        }), fgs[p % 2]);
+      // calculate angle from point 1 to point 2
+      angles.push(Math.atan(pdy / pdx));
+      angles.push(angles[0] + Math.PI);
+
+      // get the differences between the two points.
+      const line_length = Math.sqrt(pdx * pdx + pdy * pdy);
+
+      for (let i = 0; i < passes; i++) {
+        // draw a line from each point
+        for (let p = 0; p < points.length; p++) {
+          // now draw this iteration
+          this.enqueue(new ParticleSandline({
+            alpha,
+            width, height,
+            point: points[p],
+            dot_size, mv, fill, scale,
+            simplex: this.simplex,
+            line_length,
+            angle: angles[p],
+            deflection: rnd_range(-1 * skew * angular_deflection * TAU, angular_deflection * TAU),
+            t: (i + 1) // / passes
+          }), fgs[p % 2]);
+        }
+      }
+    } else {
+      // calculate points & angles
+      const alpha = 0.05;
+      const dot_size = 0.001;
+
+      const strokes = []; // object array of strokes.
+      const passes = 200; // rnd_range(800, 1500);
+      const fill = 0.1; // rnd_range(0.1, 0.2);
+      const mv = 0.055; // rnd_range(0.021, 0.025);
+      const scale = 0.01; // rnd_range(0.33, 0.55);
+      const no_strips = choose([3, 5, 7]); // rnd_range(3, 11);
+
+      for (let a = 0; a < no_strips; a++) {
+        const stroke = {
+          point: {x: rnd_range(0.2, 0.8), y: rnd_range(0.2, 0.8)},
+          angle: rnd_range(0.0001, TAU),
+          length: rnd_range(0.3, 0.65),
+          width: rnd_range(0.08, 0.2)
+        };
+        strokes.push(stroke);
+      }
+
+      // go through each stroke
+      for (let s = 0; s < strokes.length; s++) {
+        // and then do the passes for this stroke
+        for (let i = 0; i < passes; i++) {
+          // now draw this iteration
+          this.enqueue(new ParticleStrip({
+            alpha,
+            width, height,
+            point: strokes[s].point,
+            dot_size, mv, fill, scale,
+            simplex: this.simplex,
+            line_length: strokes[s].length,
+            line_width: strokes[s].width,
+            angle: strokes[s].angle,
+            t: (i + 1) / passes * (s + 1) // / passes
+          }), fgs[s % (fgs.length - 1)]);
+        }
       }
     }
 

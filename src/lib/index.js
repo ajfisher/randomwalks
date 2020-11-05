@@ -14,7 +14,7 @@ import Curves from './curves.js';
 import DeformedQuads from './deformed_quads.js';
 import FlowField from './flow.js';
 import FuzzyCurve from './curve_fuzzy.js';
-import Grids from './grids.js';
+// import Grids from './grids.js';
 import Grasses from './grasses.js';
 import GrafGeometry from './graf.js';
 import Intersections from './intersections.js';
@@ -55,7 +55,7 @@ export default {
   FuzzyCurve,
   Grasses,
   GrafGeometry,
-  Grids,
+  // Grids,
   Intersections,
   Lamps,
   LightGrass,
