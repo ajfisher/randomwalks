@@ -40,7 +40,7 @@ class ParticleStrip extends Actionable {
     this.angle = opts.angle || 0; // main angle of facing
     this.line_length = opts.line_length || 0.5;
     this.line_width = opts.line_width || 0.2;
-    this.mask = opts.mask || {};
+    this.mask = opts.mask || false;
   }
 
   /**
@@ -61,7 +61,6 @@ class ParticleStrip extends Actionable {
       this.mask.clip(ctx);
     }
 
-    ctx.save();
     ctx.globalAlpha = this.alpha;
     ctx.fillStyle = hsvts(colour);
     ctx.strokeStyle = hsvts(colour);
@@ -118,7 +117,7 @@ class ParticleStrip extends Actionable {
     // restore original transform
     ctx.restore();
 
-    // restore the clip
+    // restore the clip position
     if (this.mask) {
       this.mask.clip(ctx);
     }
@@ -411,7 +410,7 @@ export default class DuellingParticles extends Drawable {
       const fill = 0.1; // rnd_range(0.1, 0.2);
       const mv = 0.055; // rnd_range(0.021, 0.025);
       const scale = 0.01; // rnd_range(0.33, 0.55);
-      const no_strips = rnd_range(10, 15); // choose([3, 5, 7]); // rnd_range(3, 11);
+      const no_strips = rnd_range(9, 15);
       const deflection = TAU * 0.03;
       const no_swatches = choose([3, 5]);
 
@@ -424,13 +423,13 @@ export default class DuellingParticles extends Drawable {
       swatch_bounds.height = (swatch_bounds.y2 - swatch_bounds.y1);
 
       for (let s = 0; s < no_swatches; s++) {
+        const x1 = swatch_bounds.x1 + (s * swatch_bounds.width);
+        const x2 = x1 + swatch_bounds.width;
+
         const swatch = {
-          x1: swatch_bounds.x1 + (s * swatch_bounds.width),
-          y1: swatch_bounds.y1,
-          x2: swatch_bounds.x1 + ((s+1) * swatch_bounds.width),
-          y2: swatch_bounds.y2,
+          x1, y1: swatch_bounds.y1,
+          x2, y2: swatch_bounds.y2,
           angle: rnd_range(0.0001, TAU),
-          // width: rnd_range(0.08, 0.15),
           colours: [fgs[s], s+1 > fgs.length ? fgs[0] : fgs[s+1]]
         };
 
@@ -439,14 +438,14 @@ export default class DuellingParticles extends Drawable {
             point: {x: rnd_range(swatch.x1, swatch.x2), y: rnd_range(swatch.y1, swatch.y2)},
             angle: swatch.angle + (rnd_range(-1 * deflection, deflection)),
             length: rnd_range(0.5*swatch.length, 0.95 * swatch.length),
-            width: rnd_range(0.08, 0.15),
-            colours: swatch.colours,
-            mask: new RectMask({
+            width:  rnd_range(0.08, 0.15),
+            colours: swatch.colours
+            /** mask: new RectMask({
               translate: {x: swatch.x1, y: swatch.y1},
               w: swatch_bounds.width * 0.95,
               h: swatch_bounds.height,
               width, height // For canvas sizes
-            })
+            }) **/
           };
           strokes.push(stroke);
         }
