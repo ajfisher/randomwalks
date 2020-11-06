@@ -9,6 +9,7 @@ import { choose, rnd_range, nrand } from './utils/random.js';
 import { hsvts, rank_contrast } from './utils/draw.js';
 import { TAU } from './utils/geometry.js';
 
+import { RectMask } from './masks/index.js';
 
 /**
  * Draw sandline style lines as a strip from location
@@ -39,6 +40,7 @@ class ParticleStrip extends Actionable {
     this.angle = opts.angle || 0; // main angle of facing
     this.line_length = opts.line_length || 0.5;
     this.line_width = opts.line_width || 0.2;
+    this.mask = opts.mask || {};
   }
 
   /**
@@ -54,6 +56,10 @@ class ParticleStrip extends Actionable {
       simplex, scale: s, t } = this;
 
     super.draw(ctx);
+
+    if (this.mask) {
+      this.mask.clip(ctx);
+    }
 
     ctx.save();
     ctx.globalAlpha = this.alpha;
@@ -71,8 +77,8 @@ class ParticleStrip extends Actionable {
 
     for (let stroke = 0; stroke < no_strokes; stroke++) {
       const stroke_y = nrand(0, 0.15) * line_width;
-      const p1 = {x: line_length, y: stroke_y};
-      const p2 = {x: rnd_range(-0.05, (0.4 * line_length)), y: stroke_y};
+      const p2 = {x: line_length, y: stroke_y};
+      const p1 = {x: rnd_range(-0.01, (0.05 * line_length)), y: stroke_y};
 
       const p1x_noise = simplex.noise2D(p1.x * s, t * s);
       const p1y_noise = simplex.noise2D(p1.y * s, t * s);
@@ -111,6 +117,11 @@ class ParticleStrip extends Actionable {
 
     // restore original transform
     ctx.restore();
+
+    // restore the clip
+    if (this.mask) {
+      this.mask.clip(ctx);
+    }
   }
 }
 
@@ -258,7 +269,7 @@ export default class DuellingParticles extends Drawable {
   constructor(options={}) {
     const opts = options;
     opts.name = 'duellingparticles';
-    opts.border = 0.01;
+    opts.border = 0.05;
     super(opts);
   }
 
@@ -305,7 +316,7 @@ export default class DuellingParticles extends Drawable {
     fgs[0][2] = 90;
     fgs[1][2] = 90;
 
-    const TYPE = 'STRIPS';
+    const TYPE = 'SWATCHES';
 
     if (TYPE=='POINTS') {
       const alpha = 0.10;
@@ -351,7 +362,7 @@ export default class DuellingParticles extends Drawable {
           }), fgs[p % 2]);
         }
       }
-    } else {
+    } else if (TYPE == 'STRIPS') {
       // calculate points & angles
       const alpha = 0.05;
       const dot_size = 0.001;
@@ -389,6 +400,76 @@ export default class DuellingParticles extends Drawable {
             angle: strokes[s].angle,
             t: (i + 1) / passes * (s + 1) // / passes
           }), fgs[s % (fgs.length - 1)]);
+        }
+      }
+    } else {
+      // do strokes in one space.
+      const alpha = 0.04;
+      const dot_size = 0.001;
+      const strokes = []; // object array of strokes.
+      const passes = rnd_range(80, 100); // rnd_range(800, 1500);
+      const fill = 0.1; // rnd_range(0.1, 0.2);
+      const mv = 0.055; // rnd_range(0.021, 0.025);
+      const scale = 0.01; // rnd_range(0.33, 0.55);
+      const no_strips = rnd_range(10, 15); // choose([3, 5, 7]); // rnd_range(3, 11);
+      const deflection = TAU * 0.03;
+      const no_swatches = choose([3, 5]);
+
+      console.log(no_swatches);
+
+      const swatch_bounds = {
+        x1: 0.1, y1: 0.3, x2: 0.9, y2: 0.7
+      };
+      swatch_bounds.width = (swatch_bounds.x2 - swatch_bounds.x1) / no_swatches;
+      swatch_bounds.height = (swatch_bounds.y2 - swatch_bounds.y1);
+
+      for (let s = 0; s < no_swatches; s++) {
+        const swatch = {
+          x1: swatch_bounds.x1 + (s * swatch_bounds.width),
+          y1: swatch_bounds.y1,
+          x2: swatch_bounds.x1 + ((s+1) * swatch_bounds.width),
+          y2: swatch_bounds.y2,
+          angle: rnd_range(0.0001, TAU),
+          // width: rnd_range(0.08, 0.15),
+          colours: [fgs[s], s+1 > fgs.length ? fgs[0] : fgs[s+1]]
+        };
+
+        for (let a = 0; a < no_strips; a++) {
+          const stroke = {
+            point: {x: rnd_range(swatch.x1, swatch.x2), y: rnd_range(swatch.y1, swatch.y2)},
+            angle: swatch.angle + (rnd_range(-1 * deflection, deflection)),
+            length: rnd_range(0.5*swatch.length, 0.95 * swatch.length),
+            width: rnd_range(0.08, 0.15),
+            colours: swatch.colours,
+            mask: new RectMask({
+              translate: {x: swatch.x1, y: swatch.y1},
+              w: swatch_bounds.width * 0.95,
+              h: swatch_bounds.height,
+              width, height // For canvas sizes
+            })
+          };
+          strokes.push(stroke);
+        }
+      }
+
+      // go through each stroke
+      for (let s = 0; s < strokes.length; s++) {
+        // and then do the passes for this stroke
+        const colour = Math.random() < 0.7 ? strokes[s].colours[0] : strokes[s].colours[1];
+        for (let i = 0; i < passes; i++) {
+          // now draw this iteration
+          this.enqueue(new ParticleStrip({
+            alpha,
+            width, height,
+            point: strokes[s].point,
+            dot_size, mv, fill, scale,
+            simplex: this.simplex,
+            mask: strokes[s].mask,
+            line_length: strokes[s].length,
+            line_width: strokes[s].width,
+            angle: strokes[s].angle,
+            t: (i + 1) / passes * (s + 1) // / passes
+          }), colour);
         }
       }
     }
