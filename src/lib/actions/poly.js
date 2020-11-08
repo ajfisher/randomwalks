@@ -18,6 +18,7 @@ export default class Polygon extends Actionable {
    * @param {Point[]} options.points - Array of {@link Point} objects
    * @param {string=} options.style - One of 'POINTS', 'LINES', 'BOTH'
    * @param {Point=} options.centroid - A {@link Point} representing the centre
+   * @param {Mask=} options.mask - A {@link Mask} to apply to this action
    *
    */
 
@@ -29,6 +30,7 @@ export default class Polygon extends Actionable {
     this.points = opts.points || [];
     this.style = opts.style || 'POINTS';
     this.centroid = opts.centroid || null;
+    this.mask = opts.mask || null;
   }
 
   /**
@@ -42,6 +44,11 @@ export default class Polygon extends Actionable {
     const { width, height, points, line_width, centroid } = this;
 
     super.draw(ctx);
+
+    if (this.mask) {
+      ctx.save();
+      this.mask.clip(ctx);
+    }
 
     ctx.save();
     ctx.lineWidth = this.line_width * width;
@@ -71,19 +78,23 @@ export default class Polygon extends Actionable {
         ctx.arc(pt.x * width, pt.y * height, 10, 0, TAU);
         ctx.fill();
       }
-    }
 
-    if (centroid) {
-      // draw the centre point
-      ctx.beginPath();
-      console.log(centroid);
-      ctx.moveTo(centroid.x * width, centroid.y * height);
-      ctx.arc(centroid.x * width, centroid.y * height, 10, 0, TAU);
-      ctx.fill();
+      if (centroid) {
+        // draw the centre point
+        ctx.beginPath();
+        console.log(centroid);
+        ctx.moveTo(centroid.x * width, centroid.y * height);
+        ctx.arc(centroid.x * width, centroid.y * height, 10, 0, TAU);
+        ctx.fill();
+      }
     }
 
     // restore original transform
     ctx.restore();
+
+    if (this.mask) {
+      ctx.restore();
+    }
   }
 }
 
