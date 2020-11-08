@@ -1,36 +1,35 @@
 import Mask from './mask.js';
-import { TAU } from '../utils/geometry.js';
 
 /**
- * Creates a circular {@link Mask} on the canvas for drawing
+ * Creates a polygon {@link Mask} on the canvas for drawing
  * @class
  * @extends Mask
  *
  */
 
-export default class CircleMask extends Mask {
+export class PolyMask extends Mask {
   /**
-   * Create the circular mask.
+   * Create the polygonal mask.
    * @param {MaskOptions} options - standard {@link MaskOptions} options
-   * @param {Number} options.radius - the radius of the mask from the centre
+   * @param {Number} options.points - the points for the polygon.
    */
 
   constructor(options={}) {
     const opts = options;
     super (opts);
 
-    this.radius = opts.radius || 0.4;
+    this.points = options.points || [];
   }
 
   /**
-   * Draw a circular clipping mask to the context
+   * Draw a polygon clipping mask to the context
    *
    * @param {Context2D} ctx - 2D canvas context to apply the mask to
    *
    */
 
   clip(ctx) {
-    const { radius, width, height, rotate, translate } = this;
+    const { points, width, height, rotate, translate } = this;
     super.clip(ctx);
 
     const xt = translate.x * width;
@@ -42,20 +41,28 @@ export default class CircleMask extends Mask {
     // in the stack, which gets passed back. At the end of this we'll have
     // an appropriately rotated clip plane but the canvas will obey standard
     // orientation rules.
-    const r = radius * width;
 
     ctx.beginPath()
     ctx.save();
     ctx.translate(xt, yt);
-    ctx.arc(0, 0, r, 0, TAU);
+
+    // draw the polygon
+    ctx.moveTo(points[0].x * width, points[0].y * height);
+    for (let p = 1; p < points.length; p++) {
+      const pt = points[p];
+      ctx.lineTo(pt.x * width, pt.y * height);
+    }
+    ctx.lineTo(points[0].x * width, points[0].y * height);
 
     if (this.invert) {
       // if inverted then we draw a "negative" plane across the whole canvas
       // this uses the winding rules to create a reverse mask between the two shapes
-      ctx.rect(width-xt, -1 * yt, -1 * width, height);
+      // ctx.rect(width-xt, height-yt, -1 * width, height);
+      ctx.rect(width-xt, -1*yt, -width, height);
     }
 
     ctx.restore();
     ctx.clip();
   }
 }
+
