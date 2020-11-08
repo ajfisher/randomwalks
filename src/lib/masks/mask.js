@@ -26,7 +26,7 @@ export default class Mask {
     this.height = opts.height || 10;
     this.width = opts.width || 10;
     this.rotate = opts.rotate || 0;
-    this.translate = opts.translate || {x: 0.5, y: 0.5};
+    this.translate = opts.translate || {x: 0, y: 0};
     this.invert = opts.invert || false;
   }
 
