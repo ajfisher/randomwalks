@@ -1,4 +1,3 @@
-
 import Actionable from './actionable.js';
 
 import { hsvts } from '../utils/draw.js';
@@ -16,8 +15,9 @@ export default class Polygon extends Actionable {
    *
    * @param {Object=} options - The options object to control
    * @param {number} options.line_width - Width of line to draw as %
-   * @param {Object[]} options.points - Array of {@link Point} objects
+   * @param {Point[]} options.points - Array of {@link Point} objects
    * @param {string=} options.style - One of 'POINTS', 'LINES', 'BOTH'
+   * @param {Point=} options.centroid - A {@link Point} representing the centre
    *
    */
 
@@ -28,6 +28,7 @@ export default class Polygon extends Actionable {
     this.line_width = opts.line_width || 0.001;
     this.points = opts.points || [];
     this.style = opts.style || 'POINTS';
+    this.centroid = opts.centroid || null;
   }
 
   /**
@@ -38,7 +39,7 @@ export default class Polygon extends Actionable {
    */
 
   draw(ctx, colour, ...rest) {
-    const { width, height, points, line_width } = this;
+    const { width, height, points, line_width, centroid } = this;
 
     super.draw(ctx);
 
@@ -70,6 +71,15 @@ export default class Polygon extends Actionable {
         ctx.arc(pt.x * width, pt.y * height, 10, 0, TAU);
         ctx.fill();
       }
+    }
+
+    if (centroid) {
+      // draw the centre point
+      ctx.beginPath();
+      console.log(centroid);
+      ctx.moveTo(centroid.x * width, centroid.y * height);
+      ctx.arc(centroid.x * width, centroid.y * height, 10, 0, TAU);
+      ctx.fill();
     }
 
     // restore original transform
