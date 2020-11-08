@@ -52,7 +52,7 @@ export default class CircleMask extends Mask {
     if (this.invert) {
       // if inverted then we draw a "negative" plane across the whole canvas
       // this uses the winding rules to create a reverse mask between the two shapes
-      ctx.rect(0.5 * width, -0.5 * height, -1 * width, height);
+      ctx.rect(width-xt, -1 * yt, -1 * width, height);
     }
 
     ctx.restore();
