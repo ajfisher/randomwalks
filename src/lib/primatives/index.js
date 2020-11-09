@@ -5,6 +5,7 @@
 import Block from './block.js';
 import Border from './border.js';
 import CircleFrame from './circle_frame.js';
+export { Circle } from './Circle.js';
 
 export {
   Block,
