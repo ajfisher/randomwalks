@@ -12,6 +12,7 @@ import Concentrics from './concentrics.js';
 import Connected from './connected.js';
 import Curves from './curves.js';
 import DeformedQuads from './deformed_quads.js';
+import Dotty from './dotty.js';
 import FlowField from './flow.js';
 import FuzzyCurve from './curve_fuzzy.js';
 // import Grids from './grids.js';
@@ -51,6 +52,7 @@ export default {
   Connected,
   Curves,
   DeformedQuads,
+  Dotty,
   FlowField,
   FuzzyCurve,
   Grasses,
