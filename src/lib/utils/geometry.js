@@ -5,13 +5,6 @@ import _ from 'lodash';
 export const TAU = Math.PI * 2;
 
 /**
- * A point
- * @typedef {Object} Point
- * @property {number} x - the x value of the point
- * @property {number} y - the y value of the point
- */
-
-/**
  * Take a set of convex polygon points and then use the chaikin curve
  * algorithm to subdivide the segments and relax the polygon into a curve
  *
