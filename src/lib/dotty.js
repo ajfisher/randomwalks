@@ -99,7 +99,6 @@ class DottyMask extends Mask {
     ctx.save();
     ctx.translate(xt, yt);
 
-    // TODO
     // Iterate over the circles, and draw them in then clip the canvas
     // draw the polygon
     for (let c = 0; c < circles.length; c++) {
@@ -135,6 +134,7 @@ class DottyBackground extends Actionable {
     super(options);
 
     this.bg_colour = options.bg_colour || [0, 0, 0];
+    this.mini_colour = options.mini_colour || [0, 0, 0];
     this.no_circles = options.no_circles || 3;
     this.min_gap = options.min_gap || 0.01;
     this.mask = options.mask || null;
@@ -184,7 +184,7 @@ class DottyBackground extends Actionable {
    */
 
   draw(ctx, colour, ...rest) {
-    const { width, height, circles, bg_colour } = this;
+    const { width, height, circles, bg_colour, mini_colour } = this;
 
     super.draw(ctx);
 
@@ -204,15 +204,47 @@ class DottyBackground extends Actionable {
     ctx.fill();
 
     // now draw the circles over the top
-    ctx.fillStyle = hsvts(colour);
     ctx.globalAlpha = this.alpha;
 
     for (let c = 0; c < circles.length; c++) {
       const circle = circles[c];
+      ctx.fillStyle = hsvts(colour);
       ctx.beginPath();
       ctx.moveTo(circle.x * width, circle.y * height);
       ctx.arc(circle.x * width, circle.y * height, circle.r * width, 0, TAU);
       ctx.fill();
+
+      // now we're going to create another clip on the circle itself.
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(circle.x * width, circle.y * height);
+      ctx.arc(circle.x * width, circle.y * height, circle.r * width, 0, TAU);
+      ctx.clip();
+
+      // and now we make the inner circle stripey.
+      ctx.fillStyle = hsvts(mini_colour);
+      ctx.save();
+      ctx.translate(circle.x * width, circle.y * height);
+      ctx.rotate(rnd_range(0.001, TAU));
+
+      const x = -1 * circle.r; // start to the left.
+      const y = -1 * circle.r; // go to the top
+      const h = circle.r * 2; // get the height.
+      const no_stripes = 10;
+      const w = circle.r / no_stripes;
+      for (let r = 0; r < no_stripes; r++) {
+        const rx = x + (w * 2 * r); // will make this candy striped
+        ctx.beginPath();
+        ctx.moveTo(rx * width, 0);
+        ctx.rect(rx * width, y * height, w * width, h * height);
+        ctx.fill();
+      }
+
+      // restore the transform for the stripes
+      ctx.restore();
+
+      // restore the clip
+      ctx.restore();
     }
 
     // restore original transform
@@ -271,20 +303,27 @@ export default class Dotty extends Drawable {
     const width = this.w(); // - 2 * border;
     const height = this.h(); // - 2 * border;
 
-    const mask = new DottyMask({
-      width, height,
-      no_dots: rnd_range(40, 100),
-      min_gap: rnd_range(0.005, 0.02)
-    });
+    const TYPE = 'PLAIN';
 
-    this.enqueue(new DottyBackground({
-      alpha: 1.0,
-      width, height,
-      no_circles: rnd_range(3, 9),
-      min_gap: rnd_range(0.01, 0.03),
-      bg_colour: opts.fgs[2],
-      mask
-    }), opts.fg);
+    if (TYPE == 'PLAIN') {
+      const mask = new DottyMask({
+        width, height,
+        no_dots: rnd_range(40, 100),
+        min_gap: rnd_range(0.005, 0.02)
+      });
+
+      this.enqueue(new DottyBackground({
+        alpha: 1.0,
+        width, height,
+        no_circles: rnd_range(3, 9),
+        min_gap: rnd_range(0.01, 0.03),
+        bg_colour: opts.fgs[2],
+        mini_colour: opts.fgs[1],
+        mask
+      }), opts.fg);
+    } else {
+
+    }
 
     super.execute(opts);
   }
