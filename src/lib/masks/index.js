@@ -6,6 +6,7 @@ import CircleGridMask from './circlegridmask.js';
 import InvertedSquareMask from './invertedsquaremask.js';
 import LineMask from './linemask.js';
 export { PolyMask } from './PolyMask.js';
+export { RectMask } from './RectMask.js';
 
 export {
   BlockMask,
