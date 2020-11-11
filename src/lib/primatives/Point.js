@@ -20,7 +20,8 @@ export class Point {
   }
 
   /**
-   * @type {number}
+   *
+   * @property {number} x - The x position of the point.
    *
    * @example
    *
@@ -39,7 +40,7 @@ export class Point {
   }
 
   /**
-   * @type {number}
+   * @property {number} y - The y position of the point.
    *
    * @example
    *

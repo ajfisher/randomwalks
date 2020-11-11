@@ -1,7 +1,7 @@
 import { Point } from './Point.js';
 
 /**
- * A rectable that comprises a point and it's width and height
+ * A rectangle that comprises a point and it's width and height
  *
  * @extends Point
  *
@@ -29,7 +29,9 @@ export class Rect extends Point {
   }
 
   /**
-   * @type {number}
+   * @property {number} width - The width of the Rect.
+   *
+   * Equivalent to Rect.w
    *
    * @example
    *
@@ -48,7 +50,9 @@ export class Rect extends Point {
   }
 
   /**
-   * @type {number}
+   * @property {number} w - The width of the Rect.
+   *
+   * Equivalent to Rect.width
    *
    */
   get w() {
