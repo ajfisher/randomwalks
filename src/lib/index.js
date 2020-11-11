@@ -26,6 +26,7 @@ import LineSubdivision from './line_subdivision.js';
 import MaskedDots from './masked_dots.js';
 import MultiBands from './multi_bands.js';
 import NoiseBands from './noise_bands.js';
+import NoiseFills from './fill_masks.js';
 import Palette from './palette.js';
 import Path from './path.js';
 import ParticleDuel from './particle_duel.js';
@@ -66,6 +67,7 @@ export default {
   MaskedDots,
   MultiBands,
   NoiseBands,
+  NoiseFills,
   Palette,
   Path,
   ParticleDuel,
