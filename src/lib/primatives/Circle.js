@@ -1,3 +1,5 @@
+import { Point } from './Point.js';
+
 /**
  * Circle primative. Comprises a point and radius
  *
@@ -31,5 +33,32 @@ export class Circle {
      * @public
      */
     this.r = options.r || 0.4;
+  }
+
+  /**
+   * Given an angle around the circle provide the {@link Point} on the
+   * Circle's permiter at that angle
+   *
+   * @param {Number} angle - the angle from the origin for the point
+   *
+   * @returns {Point} - a {@link Point} at that angle around the circle perimeter
+   *
+   */
+  point_at(angle=0) {
+    // Calculate the position using the angle and the radius of the circle
+    const { r } = this;
+
+    const x = r * Math.cos(angle);
+    const y = r * Math.sin(angle);
+
+    return new Point(this.x + x, this.y + y);
+  }
+
+  /**
+   * @type {Number} perimeter - the perimeter length of the circle
+   * @public
+   */
+  get perimeter() {
+    return 2 * Math.PI * this.r;
   }
 }
