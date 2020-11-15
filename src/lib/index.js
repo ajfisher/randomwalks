@@ -35,6 +35,7 @@ import PolyLinks from './poly_links.js';
 import Rings from './rings.js';
 import Scratch from './scratch.js';
 import SimplexBands from './simplex_bands.js';
+import Spiro from './spiro.js';
 import Split from './splits.js';
 import Subdivision from './subdivision.js';
 // import Tendrils from './tendrils.js';
@@ -76,6 +77,7 @@ export default {
   Rings,
   Scratch,
   SimplexBands,
+  Spiro,
   Split,
   Subdivision,
   //  Tendrils,
