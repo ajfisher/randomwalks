@@ -1,7 +1,17 @@
 import { Point } from './Point.js';
+import { Triangle } from './Triangle.js';
+
+import { TAU } from '../utils/geometry.js';
+import { rnd_range } from '../utils/random.js';
 
 /**
  * Circle primative. Comprises a point and radius
+ * @class
+ *
+ * @property {Number} x - the x position of the circle centre
+ * @property {Number} y - the y position of the circle centre
+ * @property {Number} r - the radius of the circle
+ * @property {Number} perimeter - the perimeter distance of the circle
  *
  */
 
@@ -16,22 +26,8 @@ export class Circle {
    *
    */
   constructor(options={}) {
-    /**
-     * @type {Number} x - the x point of the centre
-     * @public
-     */
     this.x = options.x || 0.5;
-
-    /**
-     * @type {Number} y - the y point of the centre
-     * @public
-     */
     this.y = options.y || 0.5;
-
-    /**
-     * @type {Number} r - the radius of the Circle
-     * @public
-     */
     this.r = options.r || 0.4;
   }
 
@@ -41,7 +37,7 @@ export class Circle {
    *
    * @param {Number} angle - the angle from the origin for the point
    *
-   * @returns {Point} - a {@link Point} at that angle around the circle perimeter
+   * @returns {Point} The {@link Point} at the given angle around the circle perimeter
    *
    */
   point_at(angle=0) {
@@ -54,11 +50,21 @@ export class Circle {
     return new Point(this.x + x, this.y + y);
   }
 
-  /**
-   * @type {Number} perimeter - the perimeter length of the circle
-   * @public
-   */
   get perimeter() {
     return 2 * Math.PI * this.r;
+  }
+
+  /**
+   * Generates a random triangle whose points are circumscribed by this circle.
+   *
+   * @returns {Triangle} A random {@link Triangle} from this circle
+   */
+  random_triangle() {
+    const pts = [];
+    for (let v=0; v < 3; v++) {
+      pts.push(this.point_at(rnd_range(-TAU, TAU)));
+    }
+
+    return new Triangle(pts);
   }
 }
