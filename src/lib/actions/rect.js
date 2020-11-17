@@ -8,7 +8,7 @@ import { hsvts } from '../utils/draw.js';
  * @extends Actionable
  */
 
-export default class Rectangle extends Actionable {
+export class Rectangle extends Actionable {
   /**
    * Create a Rectangle actionable to draw it.
    *

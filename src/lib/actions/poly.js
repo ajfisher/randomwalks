@@ -9,7 +9,7 @@ import { TAU } from '../utils/geometry.js';
  * @extends Actionable
  */
 
-export default class Polygon extends Actionable {
+export class Polygon extends Actionable {
   /**
    * Create a Polygon actionable to draw it.
    *
