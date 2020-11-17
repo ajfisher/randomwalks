@@ -3,75 +3,13 @@ import SimplexNoise from 'simplex-noise';
 import Actionable from './actions/actionable.js';
 import Drawable from './drawable.js';
 
+import { DrawDot } from './actions/Basics.js';
 import { Circle, Point, PointVector, Triangle } from './primatives/Shape.js';
 
 import { choose, rnd_range, nrand } from './utils/random.js';
 import { hsvts, rank_contrast } from './utils/draw.js';
 import { rescale } from './utils/maths.js';
 import { TAU } from './utils/geometry.js';
-
-class DrawDot extends Actionable {
-  /**
-   * Create the actionable
-   *
-   * @param {Object=} options - the various options for this drawing
-   * @param {Mask=} options.mask - a mask to apply to this drawing
-   * @param {Point} options.dot - A {@link Point} to draw with
-   * @param {Number=} options.r - The radius to draw the dot
-   *
-   */
-  constructor(options={}) {
-    super(options);
-
-    this.dot_width = options.dot_width || 0.001;
-    this.mask = options.mask || null;
-    this.dot = options.dot || null;
-    this.r = options.r || 0.01;
-    this.line_width = options.line_width || null;
-  }
-
-  /**
-   * Draw the Dot to the screen
-   *
-   * @param {Object} ctx - screen context to draw to
-   * @param {Object} colour - HSV colour object to draw with
-   */
-
-  draw(ctx, colour, ...rest) {
-    const { width, height, dot, r } = this;
-
-    super.draw(ctx);
-
-    if (this.mask) {
-      ctx.save();
-      this.mask.clip(ctx);
-    }
-
-    ctx.save();
-    ctx.globalAlpha = this.alpha;
-    ctx.strokeStyle = hsvts(colour);
-    ctx.fillStyle = hsvts(colour);
-    if (this.line_width) {
-      ctx.lineWidth = this.line_width * width;
-    }
-
-    ctx.beginPath();
-    ctx.arc(dot.x * width, dot.y * height, r * width, 0, TAU);
-    if (this.line_width) {
-      ctx.stroke();
-    } else {
-      ctx.fill();
-    }
-
-    // restore initial save
-    ctx.restore();
-
-    // restore any clip transforms.
-    if (this.mask) {
-      ctx.restore();
-    }
-  }
-}
 
 /**
  * Draw the a set of triangles from the queue
@@ -144,76 +82,6 @@ class DrawTriangles extends Actionable {
         ctx.fill();
       }
     }
-
-    // restore initial save
-    ctx.restore();
-
-    // restore any clip transforms.
-    if (this.mask) {
-      ctx.restore();
-    }
-  }
-}
-/**
- * Draw the a triangle from the queue
- *
- * @extends Actionable
- *
- */
-class DrawTriangle extends Actionable {
-  /**
-   * Create the actionable
-   *
-   * @param {Object=} options - the various options for this drawing
-   * @param {Mask=} options.mask - a mask to apply to this drawing
-   * @param {Triangle} options.triangle - A {@link Triangle} to draw with
-   * @param {Noise} options.noise - a noise object to use for this drawing
-   *
-   */
-  constructor(options={}) {
-    super(options);
-
-    this.dot_width = options.dot_width || 0.001;
-    this.mask = options.mask || null;
-    this.triangle = options.triangle || null;
-    this.noise = options.noise || null;
-  }
-
-  /**
-   * Draw the Triangle to the screen
-   *
-   * @param {Object} ctx - screen context to draw to
-   * @param {Object} colour - HSV colour object to draw with
-   */
-
-  draw(ctx, colour, ...rest) {
-    const { width, height, triangle, dot_width, t } = this;
-
-    super.draw(ctx);
-
-    if (this.mask) {
-      ctx.save();
-      this.mask.clip(ctx);
-    }
-
-    ctx.save();
-    ctx.globalAlpha = this.alpha;
-    ctx.strokeStyle = hsvts(colour);
-    ctx.fillStyle = hsvts(colour);
-
-    ctx.lineWidth = dot_width * width;
-
-    const points = triangle.points;
-    // here we might relax them a bit.
-
-    // just walk the points of the triangle and draw the lines between them
-    ctx.beginPath();
-    ctx.moveTo(points[0].x * width, points[0].y * height);
-    for (let p = 1; p < points.length; p++) {
-      ctx.lineTo(points[p].x * width, triangle.points[p].y * height);
-    }
-    ctx.closePath();
-    ctx.stroke();
 
     // restore initial save
     ctx.restore();
