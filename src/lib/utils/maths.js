@@ -39,10 +39,21 @@ export const sigmoid = (k=12) => {
   }
 };
 
+/**
+ * Maps the given value between the lower and upper bound to a function to
+ * determine distance along that domain.
+ *
+ * @namespace
+ * @function
+ *
+ * @param {Number=} l - The lower bound of the range
+ * @param {Number=} u - The upper bound of the range
+ * @param {Number=} v - The value to map
+ * @param {Function=} fn - A function to do the mapping. Defaults to linear interpolation
+ *
+ * @returns {Number} Mapped value is returned indicating how far along the path the value is.
+ */
 export const range_map = (l=0, u=1, v=0.5, fn) => {
-  // maps a value `v` between the lower `l` and upper `u` points of the
-  // range using the provided function.
-
   // fn is always assumed to have bounds of  0..1
   if (typeof(fn) == 'undefined') {
     // linear function

@@ -1,5 +1,9 @@
 /**
  * Defines a Point to be used in the system using local coordinate values
+ *
+ * @class
+ * @property {Number} x - The X position of the Point
+ * @property {Number} y - The Y position of the Point
  */
 export class Point {
   /**
@@ -20,9 +24,6 @@ export class Point {
   }
 
   /**
-   *
-   * @property {number} x - The x position of the point.
-   *
    * @example
    *
    * let p = new Point(0.5, 0.5);
@@ -40,8 +41,6 @@ export class Point {
   }
 
   /**
-   * @property {number} y - The y position of the point.
-   *
    * @example
    *
    * let p = new Point(0.5, 0.5);
@@ -57,12 +56,41 @@ export class Point {
   set y(val=0) {
     this._y = val;
   }
+
+  /**
+   * @param {Point} p - The point you want to know the distance to
+   *
+   * @returns {Number} The distance between this point and the one given.
+   */
+  distance(p) {
+    const dx = p.x - this.x;
+    const dy = p.y - this.y;
+
+    return Math.sqrt((dx * dx) + (dy * dy));
+  }
+
+  /**
+   * @param {Point} p - The point you want to know the angle to.
+   *
+   * @returns {Number} The angle in radians to the point.
+   */
+  angle_to(p) {
+    // assume this point is the centre, and p is on a cicle perimeter
+    // thus we can use the arc tangent of (p - this) to get the angle
+    return Math.atan2(p.y - this.y, p.x - this.x);
+  }
 }
 
 /**
  * Point vector is a point that also has an angle and magnitude
  *
  * @extends Point
+ *
+ * @property {Number} x - The X position of the Point
+ * @property {Number} y - The Y position of the Point
+ * @property {Number} angle - The angle of the vector in radians.
+ * @property {Number} length - The size of the vector.
+ *
  */
 export class PointVector extends Point {
   /**
@@ -82,8 +110,6 @@ export class PointVector extends Point {
   }
 
   /**
-   * @type {number}
-   *
    * @example
    *
    * let p = new PointVector(0.5, 0.5, 2.5, 0.9);
@@ -101,8 +127,6 @@ export class PointVector extends Point {
   }
 
   /**
-   * @type {number}
-   *
    * @example
    *
    * let p = new PointVector(0.5, 0.5, 2.5, 0.9);
