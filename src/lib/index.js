@@ -41,6 +41,7 @@ import Subdivision from './subdivision.js';
 // import Tendrils from './tendrils.js';
 import Tiles from './tiles.js';
 import Topography from './topo.js';
+import TriangleFall from './triangle_fall.js';
 import Trees from './trees.js';
 
 export default {
@@ -83,5 +84,6 @@ export default {
   //  Tendrils,
   Tiles,
   Topography,
+  TriangleFall,
   Trees
 };
