@@ -35,6 +35,7 @@ import PolyLinks from './poly_links.js';
 import Rings from './rings.js';
 import Scratch from './scratch.js';
 import SimplexBands from './simplex_bands.js';
+import Simple from './simple_tests.js';
 import Spiro from './spiro.js';
 import Split from './splits.js';
 import Subdivision from './subdivision.js';
@@ -77,6 +78,7 @@ export default {
   PolyLinks,
   Rings,
   Scratch,
+  Simple,
   SimplexBands,
   Spiro,
   Split,
