@@ -6,6 +6,8 @@
 import contrast from 'get-contrast';
 import space from 'color-space';
 
+export const EGGSHELL = [47, 6, 100];
+
 export const hsvts = (c)  => {
   // convert first from hsv to hsl
   c = space.hsv.hsl(c);
