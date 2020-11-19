@@ -6,6 +6,72 @@ import { hsvts } from '../utils/draw.js';
 import { TAU } from '../utils/geometry.js';
 
 /**
+ * A drawable arc that can be drawn to the context.
+ * @extends Actionable
+ */
+export class DrawArc extends Actionable {
+  /**
+   * Create the actionable
+   *
+   * @param {Object=} options - the various options for this drawing
+   * @param {Mask=} options.mask - a mask to apply to this drawing
+   * @param {Point} options.circle - A {@link Circle} to draw with
+   * @param {Number=} options.start - The starting point of the arc
+   * @param {Number=} options.end - The ending point of the arc
+   * @param {Number=} options.line_width - Stroke width of the arc
+   *
+   */
+  constructor(options={}) {
+    super(options);
+
+    this.mask = options.mask || null;
+    this.circle = options.circle || null;
+    this.start = options.start || 0;
+    this.end = options.end || TAU;
+    this.line_width = options.line_width || null;
+    this.line_cap = options.line_cap || null;
+  }
+
+  /**
+   * Draw the Arc to the screen
+   *
+   * @param {Object} ctx - screen context to draw to
+   * @param {Object} colour - HSV colour object to draw with
+   */
+
+  draw(ctx, colour, ...rest) {
+    const { width, height, circle, start, end, line_width } = this;
+
+    super.draw(ctx);
+
+    if (this.mask) {
+      ctx.save();
+      this.mask.clip(ctx);
+    }
+
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    ctx.strokeStyle = hsvts(colour);
+    ctx.lineWidth = line_width * width;
+    if (this.line_cap) {
+      ctx.lineCap = this.line_cap;
+    }
+
+    ctx.beginPath();
+    ctx.arc(circle.x * width, circle.y * height, circle.r * width, start, end);
+    ctx.stroke();
+
+    // restore initial save
+    ctx.restore();
+
+    // restore any clip transforms.
+    if (this.mask) {
+      ctx.restore();
+    }
+  }
+}
+
+/**
  * A drawable dot / circle that can be drawn to the context.
  * @extends Actionable
  */
