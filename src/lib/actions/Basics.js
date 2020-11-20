@@ -68,6 +68,9 @@ export class DrawArc extends Actionable {
     if (this.mask) {
       ctx.restore();
     }
+
+    // now apply the fill
+    super.fill(ctx, colour);
   }
 }
 
@@ -137,6 +140,9 @@ export class DrawDot extends Actionable {
     if (this.mask) {
       ctx.restore();
     }
+
+    // now apply the fill
+    super.fill(ctx, colour);
   }
 }
 
@@ -209,5 +215,8 @@ export class DrawTriangle extends Actionable {
     if (this.mask) {
       ctx.restore();
     }
+
+    // now apply the fill
+    super.fill(ctx, colour);
   }
 }
