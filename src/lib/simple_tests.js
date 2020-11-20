@@ -1,8 +1,12 @@
+import SimplexNoise from 'simplex-noise';
+
 import Actionable from './actions/actionable.js';
 import Drawable from './drawable.js';
 
 import { DrawDot, DrawArc } from './actions/Basics.js';
 import { Circle, Point, PointVector, Triangle } from './primatives/Shape.js';
+import { CircleMask } from './masks/index.js';
+import { VectorHatchFill } from './fills/index.js';
 
 import { choose, rnd_range, nrand } from './utils/random.js';
 import { hsvts, rank_contrast, EGGSHELL } from './utils/draw.js';
@@ -28,13 +32,13 @@ export default class Simple extends Drawable {
   }
 
   /**
-   * Sets up the Triangle Fall to be drawn to the screen
+   * Sets up the Stacked arc drawing to be drawn to the screen
    *
    * @param {number} seed - random seed to be used for this design
    * @param {DrawOptions} options - the {@link DrawOptions} for this drawing
    *
    */
-  draw(seed, options) {
+  stacked_arc_draw(seed, options) {
     // get or create the seed
     this.seed = parseInt(seed, 10) || null;
     const opts = options || {};
@@ -119,6 +123,81 @@ export default class Simple extends Drawable {
         start_angle = start_angle + arc_amt + gap_amt;
         angle_count = angle_count + gap_amt;
       }
+    }
+
+    super.execute(opts);
+  }
+
+  /**
+   * Create a circle and test hatched vector fills on it.
+   *
+   * @param {number} seed - random seed to be used for this design
+   * @param {DrawOptions} options - the {@link DrawOptions} for this drawing
+   *
+   */
+  draw(seed, options) {
+    // get or create the seed
+    this.seed = parseInt(seed, 10) || null;
+    const opts = options || {};
+
+    // prep the object with all the base conditions
+    super.init(opts);
+
+    // add the specific drawing actions now
+    const palette = this.palette;
+
+    const { bg, fgs } = rank_contrast(palette);
+
+    opts.bg = EGGSHELL;
+    opts.fg = fgs[0];
+    opts.fgs = fgs;
+
+    // get the basic dimensions of what we need to draw
+    const width = this.w(); // - 2 * this.border;
+    const height = this.h(); // - 2 * this.border;
+
+    const simplex = new SimplexNoise();
+
+    const line_width = 0.001;
+    const c = new Circle({x: 0.5, y: 0.5, r: 0.3});
+
+    const no_hatches = 5;
+
+    const mask = new CircleMask({
+      height, width,
+      translate: { x: c.x, y: c.y },
+      radius: c.r
+    });
+
+    let angle = rnd_range(-TAU, TAU);
+    for (let h = 0; h < no_hatches; h++) {
+      const x = rnd_range(0.4, 0.6);
+      const y = rnd_range(0.4, 0.6);
+      angle = angle + rnd_range(-TAU / 4, TAU / 4);
+      const length = rnd_range(0.2, 0.9);
+
+      const fill = new VectorHatchFill({
+        alpha: 1,
+        width, height,
+        mask,
+        line_width,
+        fill_width: rnd_range(0.5, 0.9),
+        vector: new PointVector(x, y, angle, length),
+        colour: [0, 0, 0],
+        density: rnd_range(0.05, 0.2),
+        noise: simplex
+      });
+
+      this.enqueue(new DrawArc({
+        alpha: 0.8,
+        width, height,
+        line_width: 0.005,
+        circle: c,
+        start: 0,
+        end: TAU,
+        fill,
+        t: h
+      }), [0, 0, 0]);
     }
 
     super.execute(opts);
