@@ -1,12 +1,19 @@
-'use strict';
+import { TAU } from '../utils/geometry.js';
 
-const TAU = Math.PI * 2;
-
+/**
+ * Actionable defines an abstract class for an action to be taken on the
+ * drawable interface. Each instance of an actionable is added to the
+ * Drawable draw queue and then implemented in sequence.
+ *
+ * @abstract
+ */
 export default class Actionable {
-  // Actionable defines an abstract class for an action to be taken on the
-  // Drawable interface. Each instance of an Actionable is added to the
-  // Drawable draw queue and is then implemented in sequence.
-
+  /**
+   * Create the actionable
+   *
+   * @param {Object} options - an Actionable options object
+   *
+   */
   constructor(options) {
     // constructor always is by object due to the relative complexity
     // of each of the actions.
@@ -19,8 +26,20 @@ export default class Actionable {
     this.t = opts.t || 0; // time or pass number
     // order of transformation operations - default translate -> rotate
     this.op_order = (opts.op_order || 'TR').toUpperCase();
+
+    this.fill = opts.fill || null;
   }
 
+  /**
+   * Draws the action to the canvas. This super version only handles the
+   * base transformations and manages the transformation order. It is assumed
+   * to be called by the implementing class.
+   *
+   * @abstract
+   *
+   * @param {Context2D} ctx - context to act upon
+   * @param {HSVColour} colour - HSV colour object to draw.
+   */
   draw(ctx, colour, ...rest) {
     // draws the action to the canvas. This only handles the appropriate
     // transformation steps depending on the order that is provided.
@@ -37,5 +56,18 @@ export default class Actionable {
     }
 
     ctx.globalAlpha = this.alpha;
+  }
+
+  /**
+   * Apply a fill to this actionable
+   *
+   * @param {Context2D} ctx - context to act upon
+   */
+
+  fill(ctx) {
+    // check first we have a fill. Otherwise do nothing.
+    if (this.fill) {
+      this.fill.fill(ctx);
+    }
   }
 }

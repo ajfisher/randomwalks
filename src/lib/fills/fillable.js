@@ -1,11 +1,16 @@
-'use strict';
+import { TAU } from '../utils/geometry.js';
 
-const TAU = Math.PI * 2;
-
-export default class Fillable {
-  // Fillable defines an abstract class for a method of filling a space
-  // normally provided by a clipping path (so it doesn't over spill).
-
+/**
+ * Fillable is an abstract class that defines a type of fill on an object
+ * @abstract
+ *
+ */
+export class Fillable {
+  /**
+   * Create the fill
+   * @param {Object} options - FillOptions for this fill
+   *
+   */
   constructor(options) {
     // create a fillable
     const opts = options || {};
@@ -13,6 +18,8 @@ export default class Fillable {
     this.height = opts.height || 100;
     this.width = opts.width || 100;
 
+    // order of transformation operations - default translate -> rotate
+    this.op_order = (opts.op_order || 'TR').toUpperCase();
     this.rotate = opts.rotate || 0.0;
     this.translate = opts.translate || {x: 0, y: 0};
     this.alpha = opts.alpha || 0.5;
@@ -25,25 +32,64 @@ export default class Fillable {
 
     // how much fill are are we providing
     this.density = opts.density || 0.5;
+
+    this.colour = opts.colour || [0, 0, 0];
+
+    this.noise = opts.noise || null;
   }
 
-  fill(ctx, colour, ...rest) {
-    // defines a method to fill the masked path.
-    // default is to simply fill it with the colour supplied at 100%
-    ctx.save();
-    if (this.mask) {
-      this.mask.clip();
-    } else {
-      ctx.translate(this.translate.x, this.translate.y);
-      ctx.rotate(this.rotate);
+  /**
+   * Setup for the fill action. Should be called by the implementing class
+   * before implementing their own fill method.
+   *
+   * @param {Context2D} ctx - Context to paint to
+   */
+  init(ctx, ...rest) {
+    const {op_order, translate, rotate, width, height, alpha } = this;
+    for (let i = 0; i < op_order.length; i++) {
+      const op = op_order[i];
+
+      if (op === 'T') {
+        ctx.translate(translate.x * width, translate.y * height);
+      } else if (op === 'R') {
+        ctx.rotate(rotate * TAU);
+      }
     }
 
+    ctx.globalAlpha = alpha;
+  }
+
+  /**
+   * Defines a method for filling. This base version simply fills the screen
+   * @abstract
+   *
+   * @param {Context2D} ctx - context to pain to
+   */
+  fill(ctx, ...rest) {
+    const { width, height, alpha, colour } = this;
+
+    this.init(ctx);
+
+    if (this.mask) {
+      ctx.save();
+      this.mask.clip(ctx);
+    }
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
     ctx.fillStyle = hsvts(colour);
-    ctx.globalAlpha = this.alpha;
-    ctx.beginPath()
-    ctx.rect(0, 0, this.width, this.height)
+
+    ctx.beginPath();
+    ctx.rect(0, 0, width, height);
     ctx.fill();
+
+    // restore initial save
     ctx.restore();
+
+    // restore any clip transforms.
+    if (this.mask) {
+      ctx.restore();
+    }
   }
 }
 

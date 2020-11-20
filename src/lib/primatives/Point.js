@@ -142,4 +142,16 @@ export class PointVector extends Point {
   set length(v) {
     this._length = v;
   }
+
+  /**
+   * Get the end point for this vector
+   *
+   * @returns {Point} the {@link Point} at the end of the vector
+   */
+  end_point() {
+    return new Point(
+      this._x + (this._length * Math.cos(this._angle)),
+      this._y + (this._length * Math.sin(this._angle))
+    );
+  }
 }
