@@ -5,7 +5,7 @@
     "main": "./src/cli.js",
     "type": "module",
     "scripts": {
-        "lint": "./node_modules/.bin/eslint .",
+        "lint": "./node_modules/.bin/eslint ./src/*",
         "dev": "webpack serve --config webpack.config.cjs",
         "docs": "./node_modules/.bin/jsdoc -d ./docs/ -R ./README.md src/lib/* -t ./node_modules/better-docs -c ./.jsdoc.json",
         "build": "webpack --config webpack.config.cjs",
