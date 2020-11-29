@@ -5,29 +5,54 @@ import { TAU } from '../utils/geometry.js';
  * drawable interface. Each instance of an actionable is added to the
  * Drawable draw queue and then implemented in sequence.
  *
- * @abstract
+ * @interface
+ * @category Action
  */
-export default class Actionable {
+export class Actionable {
   /**
    * Create the actionable
    *
    * @param {Object} options - an Actionable options object
    *
    */
-  constructor(options) {
-    // constructor always is by object due to the relative complexity
-    // of each of the actions.
-    const opts = options || {};
-    this.height = opts.height || 100;
-    this.width = opts.width || 100;
-    this.alpha = opts.alpha || 0.5;
-    this.translate = opts.translate || { x: 0, y:0 };
-    this.rotate = opts.rotate || 0;
-    this.t = opts.t || 0; // time or pass number
-    // order of transformation operations - default translate -> rotate
-    this.op_order = (opts.op_order || 'TR').toUpperCase();
-
-    this.fill = opts.fill || null;
+  constructor(options={}) {
+    /**
+     * The overall height of the canvas to draw to in pixels
+     * @type {Number}
+     */
+    this.height = options.height || 100;
+    /**
+     * The overall width of the canvas i pixels
+     * @type {Number}
+     */
+    this.width = options.width || 100;
+    /**
+     * The global alpha level to be set for any drawing actions 0..1
+     * @type {Number}
+     */
+    this.alpha = options.alpha || 0.5;
+    this.translate = options.translate || { x: 0, y:0 };
+    /**
+     * The rotation to be applied to this action before drawing in radians
+     * @type {Number}
+     */
+    this.rotate = options.rotate || 0;
+    /**
+     * The time or pass number - can be used as an input to noise function or
+     * animation sequences
+     * @type {Number}
+     */
+    this.t = options.t || 0;
+    /**
+     * order of transformation operations - default translate -> rotate
+     * @type {'TR' | 'RT'}
+     */
+    this.op_order = (options.op_order || 'TR').toUpperCase();
+    /**
+     * A fill object to specify a fill type on this drawing
+     * @type {Fill}
+     */
+    this.fill = options.fill || null;
   }
 
   /**
@@ -71,3 +96,6 @@ export default class Actionable {
     }
   }
 }
+
+// Be explicit about the default export and also don't confuse JSDOC
+export default Actionable;

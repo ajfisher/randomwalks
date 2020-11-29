@@ -1,5 +1,3 @@
-'use strict';
-
 import EventEmitter from 'events';
 
 import seedrandom from 'seedrandom';
@@ -7,7 +5,17 @@ import arrayShuffle from 'array-shuffle';
 
 import { best_contrast, hsvts } from './utils.js';
 
-export default class Drawable extends EventEmitter {
+/**
+ * An abstract class that sets up the drawing queue to draw
+ * @class
+ * @category Drawable
+ */
+export class Drawable extends EventEmitter {
+  /**
+   * Construct the Drawable
+   * @constructor
+   * @param {Object=} options - The options object for this drawable
+   */
   constructor(options) {
     const opts = options || {};
     super(opts);
@@ -44,9 +52,13 @@ export default class Drawable extends EventEmitter {
     }
   }
 
+  /**
+   * Take an {@link Actionable} and put it onto the draw queue
+   * @param {Actionable} action - The action to add to the queue
+   * @param {Colour=} colour - the base colour to use for this action
+   *
+   */
   enqueue(action, colour='#ffffff') {
-    // takes an action and then puts it onto the draw queue.
-
     if (typeof(action) === 'undefined') {
       throw Error('Queue must take an action');
     }
@@ -56,6 +68,12 @@ export default class Drawable extends EventEmitter {
       colour
     });
   }
+
+  /**
+   * Executes the drawing process
+   *
+   * @param {Object} options - the Options to pass into this execution
+   */
   execute(options) {
     // executes the drawing process
     // options can provide a `bg` and a `fg`
@@ -89,17 +107,21 @@ export default class Drawable extends EventEmitter {
     this.process();
   }
 
-  init(options) {
-    // initialises things to get ready to draw.
-    // `options` is an object
-    // `neutral` is a `boolean` which if set determines whether to use
-    // a palette (false or undef) or the black and white palette (true)
-    // `size` is an object with `w`, `h` and `dpi` where
-    // `w` and `h` are inches
-    // `border` is the proportion of the canvas to be given as a border.
-    // `border_cm` is an actual amount of the canvas to be used as the border
-
-    const opts = options || {};
+  /**
+   * Initialise the drawing ready for drawing.
+   *
+   * @param {Object} options - A set of Drawing Initialisation options
+   * @param {Boolean=} options.neutral - if not set or false, use the palette, if true, use black and white
+   * @param {Object=} options.size - The size settings for this drawing
+   * @param {Number} options.size.w - The width of the output image in inches
+   * @param {Number} options.size.h - The height of the output image in inches
+   * @param {Number} options.size.dpi - The dots per inch resolution of the image
+   * @param {Number} options.border - The proportion (0..1) of the canvas to use as a border
+   * @param {Number=} options.border_cm - An actual cm size for the canvas border.
+   *
+   */
+  init(options={}) {
+    const opts = options;
 
     if (this.seed === null) {
       // choose a random seed to use
@@ -162,9 +184,10 @@ export default class Drawable extends EventEmitter {
     }
   }
 
+  /**
+   * Undertake the processing of the draw queue
+   */
   process() {
-    // undertakes the processing of the draw queue
-
     // take the first item off the draw queue and process it
     const item = this.draw_queue.shift();
 
@@ -249,9 +272,16 @@ export default class Drawable extends EventEmitter {
     this.ctx.restore();
   }
 
+  /**
+   * Draw the seed value text on the bottom of the image
+   *
+   * @param {Context2D} ctx - The 2D canvas context to draw to.
+   * @param {String} data - The data to write
+   * @param {Colour} bg - The background colour
+   * @param {Colour} fg - The foreground colour of the text
+   *
+   */
   text(ctx, data, bg, fg) {
-    // draw the text on the bottom of the image
-    //
     ({fg, bg} = this);
     ctx.save();
 
@@ -279,14 +309,39 @@ export default class Drawable extends EventEmitter {
   // various helper functions
   //
 
-  // transforms a percentage to concrete pixel value
-  // default to 100% to cope with empty requests
+  /**
+   * Transform a proportional height to a concrete pixel value of the canvas
+   *
+   * @param {Number} v - Proportion of the canvas height you want 0..1
+   *
+   * @returns {Number} The pixel value of that proportion
+   */
   h(v=1.0) { return v * this.height * this.dpi; }
+  /**
+   * Transform a proportional width to a concrete pixel value of the canvas
+   *
+   * @param {Number} v - Proportion of the canvas width you want 0..1
+   *
+   * @returns {Number} The pixel value of that proportion
+   */
   w(v=1.0) { return v * this.width * this.dpi;  }
-  // takes a number of centimeters and gives an approximation of pixels
-  // back.
+  /**
+   * Takes a number of centimeters and gives an approximation of pixels back.
+   *
+   * @param {Number} v - Number of centimeters you want to convert into pixels
+   * @returns {Number} The number of pixels represented in that cm value
+   */
   cm(v=1.0) { return Math.round(v * this.dpi / 2.54); }
 
-  // deals with clearing out canvases
+  /**
+   * Clear out the canvas
+   *
+   * @param {Canvas} canv - the canvas object to clear out
+   * @param {Context2D} ctx - The context object of the canvas
+   */
   clear(canv, ctx) { ctx.clearRect(0,0, canv.width, canv.height); }
 }
+
+// Export the class as the default export. Do it this way to be explicit
+// and also not mess up JSDOC.
+export default Drawable;

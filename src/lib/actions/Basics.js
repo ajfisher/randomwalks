@@ -284,7 +284,7 @@ export class DrawDot extends Actionable {
 /**
  * Draw a set of lines from the queue to the screen
  * @extends Actionable
- * @category DrawAction
+ * @category Action
  * @subcategory BasicAction
  */
 export class DrawLineList extends Actionable {
