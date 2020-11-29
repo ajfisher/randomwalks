@@ -2,8 +2,7 @@
  * Defines a Point to be used in the system using local coordinate values
  *
  * @class
- * @property {Number} x - The X position of the Point
- * @property {Number} y - The Y position of the Point
+ * @category Primitives
  */
 export class Point {
   /**
@@ -19,11 +18,14 @@ export class Point {
    *
    */
   constructor(x=0, y=0) {
-    this._x = x;
-    this._y = y;
+    this._x = x; /** @private */
+    this._y = y; /** @private */
   }
 
   /**
+   * The X coordinate of this {@link Point}
+   * @type {Number}
+   *
    * @example
    *
    * let p = new Point(0.5, 0.5);
@@ -41,8 +43,10 @@ export class Point {
   }
 
   /**
-   * @example
+   * The Y coordinate of this {@link Point}
+   * @type {Number}
    *
+   * @example
    * let p = new Point(0.5, 0.5);
    * console.log(p.y);
    * p.y = 0.2;
@@ -85,12 +89,8 @@ export class Point {
  * Point vector is a point that also has an angle and magnitude
  *
  * @extends Point
- *
- * @property {Number} x - The X position of the Point
- * @property {Number} y - The Y position of the Point
- * @property {Number} angle - The angle of the vector in radians.
- * @property {Number} length - The size of the vector.
- *
+ * @class
+ * @category Primitives
  */
 export class PointVector extends Point {
   /**
@@ -105,11 +105,14 @@ export class PointVector extends Point {
   constructor(x=0, y=0, angle=0, length=0) {
     super(x, y);
 
-    this._angle = angle;
-    this._length = length;
+    this._angle = angle; /** @private */
+    this._length = length; /** @private */
   }
 
   /**
+   * The angle of the vector in radians
+   * @type {Number}
+   *
    * @example
    *
    * let p = new PointVector(0.5, 0.5, 2.5, 0.9);
@@ -127,6 +130,9 @@ export class PointVector extends Point {
   }
 
   /**
+   * The size of the vector.
+   * @type {Number}
+   *
    * @example
    *
    * let p = new PointVector(0.5, 0.5, 2.5, 0.9);

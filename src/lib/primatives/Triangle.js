@@ -1,5 +1,7 @@
 import { Point } from './Point.js';
 
+import { rnd_range } from '../utils/random.js';
+
 /**
  * A triangle in 2 dimensional space.
  *
@@ -79,10 +81,13 @@ export class Triangle {
    *
    * @param {Number} count - when calling recursively, mow much deeper to go
    * @param {Number} stop - percentage chance to stop at this level
+   * @param {Number} distortion - how much distortion to apply to choice of midpoint
+   *  as a proportion of the edge. 0..1 0 is none, always choose midpoint and
+   *  1.0 is anywhere between the midpoint and the containing vertex
    *
    * @returns {Triangle[]} List of triangles recursively subdivided
    */
-  subdivide(count=0, stop=0.05) {
+  subdivide(count=0, stop=0.05, distortion=0) {
     const longest_vertices = this.longest_edge();
 
     // find the vertex which isn't in the longest edge
@@ -98,9 +103,15 @@ export class Triangle {
     const lev_1 = this.points[longest_vertices[0]];
     const lev_2 = this.points[longest_vertices[1]];
 
+    // get the amount we move off the midpoint.
+    let mp_offset = 0.5;
+    if (distortion != 0) {
+      mp_offset = mp_offset + rnd_range(-distortion * mp_offset, distortion * mp_offset);
+    }
+
     // calculate the midpoint
-    const mx = lev_1.x + ((lev_2.x - lev_1.x) / 2);
-    const my = lev_1.y + ((lev_2.y - lev_1.y) / 2);
+    const mx = lev_1.x + ((lev_2.x - lev_1.x) * mp_offset);
+    const my = lev_1.y + ((lev_2.y - lev_1.y) * mp_offset);
     const midpoint = new Point(mx, my);
 
     const t1 = new Triangle([this.points[dividing_vertex], lev_1, midpoint]);
@@ -118,13 +129,13 @@ export class Triangle {
       if (Math.random() < stop) {
         sub_triangles.push(t1);
       } else {
-        sub_triangles = [...t1.subdivide(count-1)];
+        sub_triangles = [...t1.subdivide(count-1, stop, distortion)];
       }
 
       if (Math.random() < stop) {
         sub_triangles.push(t2);
       } else {
-        sub_triangles = [...sub_triangles, ...t2.subdivide(count-1)];
+        sub_triangles = [...sub_triangles, ...t2.subdivide(count-1, stop, distortion)];
       }
     }
 
