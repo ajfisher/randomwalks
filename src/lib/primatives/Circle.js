@@ -7,12 +7,7 @@ import { rnd_range } from '../utils/random.js';
 /**
  * Circle primative. Comprises a point and radius
  * @class
- *
- * @property {Number} x - the x position of the circle centre
- * @property {Number} y - the y position of the circle centre
- * @property {Number} r - the radius of the circle
- * @property {Number} perimeter - the perimeter distance of the circle
- *
+ * @category Primitives
  */
 
 export class Circle {
@@ -25,10 +20,22 @@ export class Circle {
    * @param {Number} options.r - the radius of the circle
    *
    */
-  constructor(options={}) {
-    this.x = options.x || 0.5;
-    this.y = options.y || 0.5;
-    this.r = options.r || 0.4;
+  constructor(options={x:0.5, y:0.5, r: 0.4}) {
+    /**
+     * The X coordinate of the circle centre
+     * @type {Number}
+     */
+    this.x = options.x;
+    /**
+     * The Y coordinate of the circle centre
+     * @type {Number}
+     */
+    this.y = options.y;
+    /**
+     * The radius of the circle
+     * @type {Number}
+     */
+    this.r = options.r;
   }
 
   /**
@@ -50,6 +57,11 @@ export class Circle {
     return new Point(this.x + x, this.y + y);
   }
 
+  /**
+   * The length of the perimeter of the circle
+   * @type {Number}
+   * @readonly
+   */
   get perimeter() {
     return 2 * Math.PI * this.r;
   }
