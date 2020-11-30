@@ -317,6 +317,7 @@ export class Drawable extends EventEmitter {
    * @returns {Number} The pixel value of that proportion
    */
   h(v=1.0) { return v * this.height * this.dpi; }
+
   /**
    * Transform a proportional width to a concrete pixel value of the canvas
    *
@@ -325,6 +326,7 @@ export class Drawable extends EventEmitter {
    * @returns {Number} The pixel value of that proportion
    */
   w(v=1.0) { return v * this.width * this.dpi;  }
+
   /**
    * Takes a number of centimeters and gives an approximation of pixels back.
    *
@@ -332,6 +334,14 @@ export class Drawable extends EventEmitter {
    * @returns {Number} The number of pixels represented in that cm value
    */
   cm(v=1.0) { return Math.round(v * this.dpi / 2.54); }
+
+  /**
+   * Takes a number of pixels and gives the proportion of the canvas back
+   *
+   * @param {Integer} [v=1] - Number of pixels you want to convert to proportions
+   * @returns {Float} The proportion of the canvas representing that many pixels
+   */
+  px(v=1) { return v / (this.width * this.dpi) }
 
   /**
    * Clear out the canvas

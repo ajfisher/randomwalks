@@ -4,7 +4,7 @@ import Actionable from './actions/actionable.js';
 import Drawable from './drawable.js';
 
 import { DrawDot, DrawDotList, DrawArc, DrawLineList, DrawPath, DrawTriangle, DrawTriangles } from './actions/Basics.js';
-import { Rectangle } from './actions/rect.js';
+import { DrawRect } from './actions/rect.js';
 import { BezierCurve, Circle, Line, Point, PointVector, Rect, Triangle } from './primatives/Shape.js';
 import { CircleMask, PolyMask } from './masks/index.js';
 import { VectorHatchFill } from './fills/index.js';

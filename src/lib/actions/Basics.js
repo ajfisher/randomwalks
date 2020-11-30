@@ -4,7 +4,8 @@ import { hsvts } from '../utils/draw.js';
 import { TAU } from '../utils/geometry.js';
 
 export { Polygon } from './poly.js';
-export { Rectangle } from './rect.js';
+export { DrawRect } from './rect.js';
+export { DrawRect as Rectangle, DrawRectList } from './rect.js';
 
 /**
  * A drawable path that can be drawn to the context.

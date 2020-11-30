@@ -38,6 +38,7 @@ import SimplexBands from './simplex_bands.js';
 import Simple from './simple_tests.js';
 import Spiro from './spiro.js';
 import Split from './splits.js';
+import { Stripe } from './stripes.js';
 import Subdivision from './subdivision.js';
 // import Tendrils from './tendrils.js';
 import Tiles from './tiles.js';
@@ -82,6 +83,7 @@ export default {
   SimplexBands,
   Spiro,
   Split,
+  Stripe,
   Subdivision,
   //  Tendrils,
   Tiles,
